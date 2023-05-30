@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="app_name">eSports Prodigy</string>
+    <string name="other">Other</string>
+    <string name="user">User</string>
+    <string name="counter_strike">Counter-Strike</string>
+    <string name="home">Home</string>
+    <string name="settings">Settings</string>
+    <string name="dxvk_contains_invalid_entries">DXVK cache contains invalid entries</string>
+    <string name="play">Play</string>
+    <string name="could_not_start_game">Could not start game</string>
+    <string name="rocket_league">Rocket League</string>
+</resources>

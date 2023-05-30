@@ -1,0 +1,41 @@
+package dev.datlag.esports.prodigy.color.scheme
+
+import dev.datlag.esports.prodigy.color.hct.Hct
+import dev.datlag.esports.prodigy.color.palettes.TonalPalette
+import dev.datlag.esports.prodigy.color.utils.MathUtils.sanitizeDegreesDouble
+
+
+open class DynamicScheme(
+    val sourceColorHct: Hct,
+    val variant: Variant,
+    val isDark: Boolean,
+    val contrastLevel: Double,
+    val primaryPalette: TonalPalette,
+    val secondaryPalette: TonalPalette,
+    val tertiaryPalette: TonalPalette,
+    val neutralPalette: TonalPalette,
+    val neutralVariantPalette: TonalPalette
+) {
+    val sourceColorArgb: Int = sourceColorHct.toInt()
+    val errorPalette: TonalPalette = TonalPalette.fromHueAndChroma(25.0, 84.0)
+
+    companion object {
+        fun getRotatedHue(sourceColorHct: Hct, hues: DoubleArray, rotations: DoubleArray): Double {
+            val sourceHue = sourceColorHct.hue
+            if (rotations.size == 1) {
+                return sanitizeDegreesDouble(sourceHue + rotations[0])
+            }
+            val size = hues.size
+            for (i in 0..size - 2) {
+                val thisHue = hues[i]
+                val nextHue = hues[i + 1]
+                if (thisHue < sourceHue && sourceHue < nextHue) {
+                    return sanitizeDegreesDouble(sourceHue + rotations[i])
+                }
+            }
+            // If this statement executes, something is wrong, there should have been a rotation
+            // found using the arrays.
+            return sourceHue
+        }
+    }
+}
