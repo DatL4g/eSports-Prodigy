@@ -1,5 +1,6 @@
 package dev.datlag.esports.prodigy.ui.screen.home.info.device.game
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -166,14 +167,18 @@ fun GameView(component: GameComponent) {
                         }.getOrNull() ?: false
                     ) }
 
-                    Button(
+                    OutlinedButton(
                         onClick = {
                             val result = scopeCatching {
                                 Desktop.getDesktop().open(component.game.directory)
                             }
                             openSupported = result.isSuccess
                         },
-                        enabled = openSupported
+                        enabled = openSupported,
+                        border = BorderStroke(
+                            width = ButtonDefaults.outlinedButtonBorder.width,
+                            color = if (openSupported) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F)
+                        )
                     ) {
                         Icon(
                             imageVector = Icons.Default.Folder,
