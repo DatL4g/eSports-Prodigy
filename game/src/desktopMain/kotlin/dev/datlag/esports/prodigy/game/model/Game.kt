@@ -6,6 +6,7 @@ import java.io.File
 
 sealed class Game(
     open val name: String,
+    open val directory: File?,
     open val headerUrl: String?,
     open val heroUrl: String?,
     open val dxvkCaches: List<DxvkStateCache>
@@ -13,11 +14,13 @@ sealed class Game(
 
     data class Steam(
         val manifest: AppManifest,
+        override val directory: File?,
         val headerFile: File?,
         val heroFile: File?,
         override val dxvkCaches: List<DxvkStateCache>
     ) : Game(
         manifest.name,
+        directory,
         buildHeaderUrl(manifest.appId),
         buildHeroUrl(manifest.appId),
         dxvkCaches

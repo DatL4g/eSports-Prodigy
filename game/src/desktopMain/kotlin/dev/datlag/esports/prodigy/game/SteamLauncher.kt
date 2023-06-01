@@ -126,6 +126,11 @@ object SteamLauncher {
     suspend fun asGame(appManifest: AppManifest): Game.Steam {
         return Game.Steam(
             appManifest,
+            suspendCatching {
+                steamDirectories.map {
+                    File(it, "steamapps/common/${appManifest.installDir}")
+                }.normalize()
+            }.getOrNull()?.firstOrNull(),
             steamDirectories.flatMap {
                 listOf(
                     File(it, "appcache/librarycache/${appManifest.appId}_header.jpg"),

@@ -2,13 +2,13 @@ package dev.datlag.esports.prodigy.game.dxvk
 
 import dev.datlag.esports.prodigy.game.common.readU32
 import dev.datlag.esports.prodigy.game.common.writeU32
+import dev.datlag.esports.prodigy.game.dxvk.entry.DxvkStateCacheEntry
 import dev.datlag.esports.prodigy.model.common.openReadChannel
 import dev.datlag.esports.prodigy.model.common.scopeCatching
 import dev.datlag.esports.prodigy.model.common.suspendCatching
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
-import kotlin.math.abs
 import kotlin.math.max
 
 data class DxvkStateCache(
@@ -19,23 +19,18 @@ data class DxvkStateCache(
     suspend fun writeTo(writer: FileChannel) = suspendCatching {
         header.writeTo(writer).getOrThrow()
         entries.forEach {
-            it.writeTo(writer, header.edition).getOrThrow()
+            it.writeTo(writer).getOrThrow()
         }
     }
 
     data class Header(
-        val magic: ByteBuffer,
+        val magic: String,
         val version: UInt,
         val entrySize: UInt
     ) {
-        val edition: DxvkStateCacheEdition
-            get() = when {
-                version > DXVK.LEGACY_VERSION.toUInt() -> DxvkStateCacheEdition.Standard
-                else -> DxvkStateCacheEdition.Legacy
-            }
 
         fun writeTo(writer: FileChannel) = scopeCatching {
-            writer.write(ByteBuffer.wrap(magic.array()))
+            writer.write(ByteBuffer.wrap(magic.toByteArray()))
             writer.writeU32(version, DXVK.ENDIAN)
             writer.writeU32(entrySize, DXVK.ENDIAN)
         }
@@ -45,7 +40,8 @@ data class DxvkStateCache(
                 val magic = ByteBuffer.allocate(DXVK.MAGIC_BYTE_BUFFER_CAPACITY)
                 reader.read(magic)
 
-                if (String(magic.array()) != DXVK.MAGIC) {
+                val magicString = String(magic.array())
+                if (magicString != DXVK.MAGIC) {
                     throw DXVKException.ReadError(ReadErrorType.MAGIC)
                 }
 
@@ -53,7 +49,7 @@ data class DxvkStateCache(
                 val entrySize = reader.readU32(DXVK.ENDIAN).getOrThrow()
 
                 Header(
-                    magic,
+                    magicString,
                     version,
                     entrySize
                 )
@@ -64,19 +60,15 @@ data class DxvkStateCache(
     companion object {
         suspend fun fromFile(file: File): Result<DxvkStateCache> = suspendCatching {
             val reader = file.openReadChannel()
-            val cache = fromReader(reader).getOrThrow()
-            reader.close()
-            cache
+            reader.use {
+                fromReader(it).getOrThrow()
+            }
         }
 
         suspend fun fromReader(reader: FileChannel): Result<DxvkStateCache> = suspendCatching {
             val entries: MutableList<DxvkStateCacheEntry> = mutableListOf()
             val header = Header.fromReader(reader).getOrThrow()
             var invalidEntries = 0
-
-            if (header.version.toInt() >= DXVK.UNSUPPORTED_VERSION) {
-                throw DXVKException.UnsupportedVersion
-            }
 
             while (true) {
                 val entryResult = suspendCatching {
