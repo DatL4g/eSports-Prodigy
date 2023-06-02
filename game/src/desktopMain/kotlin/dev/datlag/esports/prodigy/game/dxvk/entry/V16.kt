@@ -31,9 +31,9 @@ data class V16(
             val byteArray = ByteArray(4)
 
             if (entryType.toInt() != 0) {
-                byteArray[0] = (entryType.toInt() or 0x01).toByte()
+                byteArray[0] = (byteArray[0].toInt() or 0x01).toByte()
             } else {
-                byteArray[0] = (entryType.toInt() and 0xFE).toByte()
+                byteArray[0] = (byteArray[0].toInt() and 0xFE).toByte()
             }
 
             byteArray[0] = (byteArray[0].toInt() or (stageMask.toInt() shl 1)).toByte()

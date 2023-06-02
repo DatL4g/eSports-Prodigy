@@ -5,7 +5,7 @@ import java.nio.ByteOrder
 
 fun Byte.unsignedInt(order: ByteOrder?): UInt {
     val byte = this.toUByte()
-    return if (order == DXVK.ENDIAN) {
+    return if (order == ByteOrder.LITTLE_ENDIAN) {
         byte.toUShort().toUInt()
     } else {
         byte.toUInt()
@@ -13,7 +13,7 @@ fun Byte.unsignedInt(order: ByteOrder?): UInt {
 }
 
 fun UInt.unsignedByte(order: ByteOrder?): UByte {
-    return if (order == DXVK.ENDIAN) {
+    return if (order == ByteOrder.LITTLE_ENDIAN) {
         this.toUShort().toUByte()
     } else {
         this.toUByte()

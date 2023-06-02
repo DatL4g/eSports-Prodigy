@@ -1,5 +1,6 @@
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("multiplatform")
@@ -74,8 +75,8 @@ kotlin {
             dependencies {
                 implementation("androidx.appcompat:appcompat:1.6.1")
                 implementation("androidx.core:core-ktx:1.10.1")
-                implementation("androidx.activity:activity-ktx:1.7.1")
-                implementation("androidx.activity:activity-compose:1.7.1")
+                implementation("androidx.activity:activity-ktx:1.7.2")
+                implementation("androidx.activity:activity-compose:1.7.2")
                 implementation("androidx.multidex:multidex:2.0.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines")
                 implementation("com.google.android.material:material:1.9.0")
@@ -132,9 +133,37 @@ compose {
                 packageVersion = appVersion
                 description = "Get your eSports Information here."
                 copyright = "© 2020 Jeff Retz (DatLag). All rights reserved."
+                licenseFile.set(rootProject.file("LICENSE"))
 
                 outputBaseDir.set(rootProject.buildDir.resolve("release"))
 
+                when (getHost()) {
+                    Host.Linux -> targetFormats(
+                        TargetFormat.AppImage, TargetFormat.Deb, TargetFormat.Rpm
+                    )
+                    Host.MAC -> targetFormats(
+                        TargetFormat.Dmg
+                    )
+                    Host.Windows -> targetFormats(
+                        TargetFormat.Exe, TargetFormat.Msi
+                    )
+                }
+
+
+                linux {
+                    iconFile.set(file("src/commonMain/resources/MR/assets/png/launcher_128.png"))
+                    rpmLicenseType = "AGPL-3.0"
+                    debMaintainer = "Jeff Retz (DatLag)"
+                }
+                windows {
+                    iconFile.set(file("src/commonMain/resources/MR/assets/ico/launcher_128.ico"))
+                    upgradeUuid = "8f3be63c-60aa-4b77-a63c-dce53b962a75"
+                }
+                macOS {
+                    iconFile.set(file("src/commonMain/resources/MR/assets/icns/launcher.icns"))
+                }
+
+                includeAllModules = true
             }
         }
     }
@@ -154,4 +183,29 @@ aboutLibraries {
     duplicationMode = DuplicateMode.MERGE
     duplicationRule = DuplicateRule.GROUP
     excludeFields = arrayOf("generated")
+}
+
+fun getHost(): Host {
+    return when (osdetector.os) {
+        "linux" -> Host.Linux
+        "osx" -> Host.MAC
+        "windows" -> Host.Windows
+        else -> {
+            val hostOs = System.getProperty("os.name")
+            val isMingwX64 = hostOs.startsWith("Windows")
+
+            when {
+                hostOs == "Linux" -> Host.Linux
+                hostOs == "Mac OS X" -> Host.MAC
+                isMingwX64 -> Host.Windows
+                else -> throw IllegalStateException("Unknown OS: ${osdetector.classifier}")
+            }
+        }
+    }
+}
+
+enum class Host(val label: String) {
+    Linux("linux"),
+    Windows("win"),
+    MAC("mac");
 }

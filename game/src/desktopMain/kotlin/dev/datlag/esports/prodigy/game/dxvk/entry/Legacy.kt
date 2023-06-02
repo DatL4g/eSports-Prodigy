@@ -18,7 +18,6 @@ data class Legacy(
     override fun dataSHA1(): ByteArray {
         val hasher = MessageDigest.getInstance("SHA-1")
         hasher.update(data.array())
-        hasher.update(DXVK.SHA1_EMPTY)
 
         return hasher.digest()
     }

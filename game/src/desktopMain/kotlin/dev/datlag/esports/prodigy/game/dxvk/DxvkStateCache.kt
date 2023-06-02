@@ -4,10 +4,12 @@ import dev.datlag.esports.prodigy.game.common.readU32
 import dev.datlag.esports.prodigy.game.common.writeU32
 import dev.datlag.esports.prodigy.game.dxvk.entry.DxvkStateCacheEntry
 import dev.datlag.esports.prodigy.model.common.openReadChannel
+import dev.datlag.esports.prodigy.model.common.openWriteChannel
 import dev.datlag.esports.prodigy.model.common.scopeCatching
 import dev.datlag.esports.prodigy.model.common.suspendCatching
 import java.io.File
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.nio.channels.FileChannel
 import kotlin.math.max
 
@@ -23,6 +25,13 @@ data class DxvkStateCache(
         }
     }
 
+    suspend fun writeToFile(file: File) = suspendCatching {
+        val writer = file.openWriteChannel()
+        writer.use {
+            writeTo(it).getOrThrow()
+        }
+    }
+
     data class Header(
         val magic: String,
         val version: UInt,
@@ -31,13 +40,13 @@ data class DxvkStateCache(
 
         fun writeTo(writer: FileChannel) = scopeCatching {
             writer.write(ByteBuffer.wrap(magic.toByteArray()))
-            writer.writeU32(version, DXVK.ENDIAN)
-            writer.writeU32(entrySize, DXVK.ENDIAN)
+            writer.writeU32(version, ByteOrder.LITTLE_ENDIAN)
+            writer.writeU32(entrySize, ByteOrder.LITTLE_ENDIAN)
         }
 
         companion object {
             suspend fun fromReader(reader: FileChannel): Result<Header> = suspendCatching {
-                val magic = ByteBuffer.allocate(DXVK.MAGIC_BYTE_BUFFER_CAPACITY)
+                val magic = ByteBuffer.allocate(4)
                 reader.read(magic)
 
                 val magicString = String(magic.array())
@@ -45,8 +54,8 @@ data class DxvkStateCache(
                     throw DXVKException.ReadError(ReadErrorType.MAGIC)
                 }
 
-                val version = reader.readU32(DXVK.ENDIAN).getOrThrow()
-                val entrySize = reader.readU32(DXVK.ENDIAN).getOrThrow()
+                val version = reader.readU32(ByteOrder.LITTLE_ENDIAN).getOrThrow()
+                val entrySize = reader.readU32(ByteOrder.LITTLE_ENDIAN).getOrThrow()
 
                 Header(
                     magicString,

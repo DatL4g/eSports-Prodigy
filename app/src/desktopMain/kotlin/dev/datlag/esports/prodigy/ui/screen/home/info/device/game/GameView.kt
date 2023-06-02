@@ -26,6 +26,7 @@ import com.seiko.imageloader.rememberAsyncImagePainter
 import dev.datlag.esports.prodigy.SharedRes
 import dev.datlag.esports.prodigy.common.openInBrowser
 import dev.datlag.esports.prodigy.game.model.Game
+import dev.datlag.esports.prodigy.model.common.homeDirectory
 import dev.datlag.esports.prodigy.model.common.scopeCatching
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
 import dev.datlag.esports.prodigy.ui.WindowSize
@@ -33,7 +34,9 @@ import dev.datlag.esports.prodigy.ui.screen.home.asyncImageLoader
 import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
+import kotlinx.coroutines.runBlocking
 import java.awt.Desktop
+import java.io.File
 
 @Composable
 fun GameView(component: GameComponent) {

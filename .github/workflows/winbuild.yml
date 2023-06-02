@@ -1,0 +1,28 @@
+name: Win-Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Create package on Windows
+        run: .\gradlew app:packageExe
+        working-directory: ${{ github.workspace }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-app
+          path: build/release/main/exe/*.exe
+          retention-days: 1
