@@ -124,11 +124,13 @@ object SteamLauncher {
     }
 
     suspend fun asGame(appManifest: AppManifest): Game.Steam {
+        val steamAppsFolders = getSteamAppFolders(steamDirectories)
+
         return Game.Steam(
             appManifest,
             suspendCatching {
-                steamDirectories.map {
-                    File(it, "steamapps/common/${appManifest.installDir}")
+                steamAppsFolders.map {
+                    File(it, "common/${appManifest.installDir}")
                 }.normalize()
             }.getOrNull()?.firstOrNull(),
             steamDirectories.flatMap {
@@ -146,8 +148,8 @@ object SteamLauncher {
                 )
             }.normalize().firstOrNull(),
             suspendCatching {
-                steamDirectories.map {
-                        File(it, "steamapps/shadercache/${appManifest.appId}/DXVK_state_cache")
+                steamAppsFolders.map {
+                        File(it, "shadercache/${appManifest.appId}/DXVK_state_cache")
                 }.flatMap { it.listFilesSafely() }.filter {
                     it.extension.equals("dxvk-cache", true)
                 }.normalize().mapNotNull {
