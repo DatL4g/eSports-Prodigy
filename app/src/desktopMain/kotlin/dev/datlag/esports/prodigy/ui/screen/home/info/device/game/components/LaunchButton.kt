@@ -1,4 +1,4 @@
-package dev.datlag.esports.prodigy.ui.screen.home.info.device.game.buttons
+package dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons

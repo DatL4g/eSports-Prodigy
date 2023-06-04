@@ -1,6 +1,5 @@
 package dev.datlag.esports.prodigy.ui.screen.home.info.device.game
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,29 +7,24 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.datlag.esports.prodigy.SharedRes
-import dev.datlag.esports.prodigy.game.model.Game
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
 import dev.datlag.esports.prodigy.ui.WindowSize
-import dev.datlag.esports.prodigy.ui.screen.home.info.device.FallbackImage
-import dev.datlag.esports.prodigy.ui.screen.home.info.device.LoadingImage
-import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.buttons.DirectoryButton
-import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.buttons.LaunchButton
+import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.DirectoryButton
+import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.GameHero
+import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.GameLauncherIcons
+import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.LaunchButton
 import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
-import dev.icerock.moko.resources.compose.painterResource
-import io.kamel.core.Resource
-import io.kamel.image.lazyPainterResource
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun GameView(component: GameComponent) {
     SchemeTheme.themes[component.game.name]?.let {
@@ -88,45 +82,7 @@ fun GameView(component: GameComponent) {
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold
                     )
-                    when (val game = component.game) {
-                        is Game.Steam -> {
-                            Icon(
-                                modifier = Modifier.size(24.dp),
-                                painter = painterResource(SharedRes.images.steam),
-                                contentDescription = "Steam"
-                            )
-                        }
-                        is Game.Heroic -> {
-                            Icon(
-                                modifier = Modifier.size(24.dp),
-                                painter = painterResource(SharedRes.images.heroic),
-                                contentDescription = "Heroic"
-                            )
-                        }
-                        is Game.Multi -> {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                game.games.forEach {
-                                    if (it is Game.Steam) {
-                                        Icon(
-                                            modifier = Modifier.size(24.dp),
-                                            painter = painterResource(SharedRes.images.steam),
-                                            contentDescription = "Steam"
-                                        )
-                                    }
-                                    if (it is Game.Heroic) {
-                                        Icon(
-                                            modifier = Modifier.size(24.dp),
-                                            painter = painterResource(SharedRes.images.heroic),
-                                            contentDescription = "Heroic"
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    GameLauncherIcons(component.game)
                 }
             }
             item {
@@ -138,57 +94,41 @@ fun GameView(component: GameComponent) {
                     DirectoryButton(component.game)
                 }
             }
-        }
-    }
-}
 
-@Composable
-fun BoxScope.GameHero(game: Game) {
-    when (val resource = lazyPainterResource(game.heroUrl ?: run {
-        when (game) {
-            is Game.Steam -> game.heroFile
-            is Game.Multi -> game.heroFile
-            else -> null
-        }
-    } ?: String())) {
-        is Resource.Loading -> {
-            LoadingImage(game.name, resource.progress)
-        }
-        is Resource.Success -> {
-            Image(
-                modifier = Modifier.fillMaxWidth(),
-                painter = resource.value,
-                contentDescription = game.name,
-                contentScale = ContentScale.FillWidth
-            )
-        }
-        is Resource.Failure -> {
-            val fallbackFile = when (game) {
-                is Game.Steam -> game.heroFile
-                is Game.Multi -> game.heroFile
-                else -> null
-            }
-
-            if (fallbackFile != null) {
-                when (val fallbackResource = lazyPainterResource(fallbackFile)) {
-                    is Resource.Loading -> {
-                        LoadingImage(game.name, fallbackResource.progress)
-                    }
-                    is Resource.Success -> {
-                        Image(
-                            modifier = Modifier.fillMaxWidth(),
-                            painter = fallbackResource.value,
-                            contentDescription = game.name,
-                            contentScale = ContentScale.FillWidth
-                        )
-                    }
-                    is Resource.Failure -> {
-                        FallbackImage(game.name)
+            if (component.game.dxvkCaches.isNotEmpty()) {
+                item {
+                    var expand by remember { mutableStateOf(false) }
+                    OutlinedCard(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp).fillMaxWidth(),
+                        onClick = {
+                            expand = !expand
+                        }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "DXVK Cache",
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.headlineSmall
+                            )
+                            Spacer(modifier = Modifier.weight(1F))
+                            Icon(
+                                imageVector = Icons.Default.ExpandMore,
+                                contentDescription = "Expand"
+                            )
+                        }
+                        if (expand) {
+                            Divider()
+                            Text(text = "Expanded")
+                        }
                     }
                 }
-            } else {
-                FallbackImage(game.name)
             }
+
         }
     }
 }
+
+
