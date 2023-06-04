@@ -141,7 +141,7 @@ object SchemeTheme {
 
 @Composable
 fun SchemeTheme(content: @Composable () -> Unit) {
-    val colorScheme by SchemeTheme.itemColorScheme.collectAsStateSafe()
+    val colorScheme by SchemeTheme.itemColorScheme.collectAsStateSafe { null }
 
     MaterialTheme(
         colorScheme = colorScheme ?: SchemeTheme.colorScheme,

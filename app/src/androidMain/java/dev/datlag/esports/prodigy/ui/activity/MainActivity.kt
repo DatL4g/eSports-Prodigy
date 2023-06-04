@@ -8,10 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.arkivanov.decompose.defaultComponentContext
-import com.seiko.imageloader.ImageLoader
-import com.seiko.imageloader.LocalImageLoader
-import com.seiko.imageloader.cache.memory.maxSizePercent
-import com.seiko.imageloader.component.setupDefaultComponents
 import dev.datlag.esports.prodigy.App
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
 import dev.datlag.esports.prodigy.ui.App
@@ -22,6 +18,12 @@ import okio.Path.Companion.toOkioPath
 import dev.datlag.esports.prodigy.R
 import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.common.basedOnWidth
+import io.kamel.core.config.KamelConfig
+import io.kamel.core.config.takeFrom
+import io.kamel.image.config.Default
+import io.kamel.image.config.LocalKamelConfig
+import io.kamel.image.config.resourcesFetcher
+import io.kamel.image.config.resourcesIdMapper
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,19 +36,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val di = ((applicationContext as? App) ?: (application as App)).di
-        val imageLoader = ImageLoader {
-            components {
-                setupDefaultComponents(context = this@MainActivity)
-            }
-            interceptor {
-                memoryCacheConfig {
-                    maxSizePercent(this@MainActivity, 0.25)
-                }
-                diskCacheConfig {
-                    directory(this@MainActivity.cacheDir.resolve("imageCache").toOkioPath())
-                    maxSizeBytes(256L * 1024 * 1024)
-                }
-            }
+        val imageConfig = KamelConfig {
+            takeFrom(KamelConfig.Default)
+            resourcesFetcher(this@MainActivity)
+            resourcesIdMapper(this@MainActivity)
         }
         val root = NavHostComponent.create(
             componentContext = defaultComponentContext(),
@@ -60,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 else -> Orientation.PORTRAIT
             }
             CompositionLocalProvider(
-                LocalImageLoader provides imageLoader,
+                LocalKamelConfig provides imageConfig,
                 LocalOrientation provides orientation,
                 LocalWindowSize provides WindowSize.basedOnWidth(this)
             ) {

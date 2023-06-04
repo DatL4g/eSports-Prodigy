@@ -15,9 +15,6 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import com.seiko.imageloader.ImageRequestState
-import com.seiko.imageloader.model.ImageRequest
-import com.seiko.imageloader.rememberAsyncImagePainter
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
 import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.icerock.moko.resources.ImageResource
@@ -30,46 +27,6 @@ fun HomeScreen(component: HomeComponent) {
         WindowSize.COMPACT -> CompactScreen(component)
         WindowSize.MEDIUM -> MediumScreen(component)
         WindowSize.EXPANDED -> ExpandedScreen(component)
-    }
-}
-
-@Composable
-fun asyncImageLoader(
-    url: String,
-    contentScale: ContentScale = ContentScale.Fit,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    onLoading: (@Composable () -> Painter?)? = null,
-    onFailure: (@Composable () -> Painter?)? = null
-): Painter {
-    val painter = rememberAsyncImagePainter(
-        url = url,
-        contentScale = contentScale,
-        filterQuality = filterQuality
-    )
-    return when(painter.requestState) {
-        is ImageRequestState.Failure -> onFailure?.invoke() ?: painter
-        is ImageRequestState.Success -> painter
-        is ImageRequestState.Loading -> onLoading?.invoke() ?: painter
-    }
-}
-
-@Composable
-fun asyncImageLoader(
-    request: ImageRequest,
-    contentScale: ContentScale = ContentScale.Fit,
-    filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-    onLoading: (@Composable () -> Painter?)? = null,
-    onFailure: (@Composable () -> Painter?)? = null
-): Painter {
-    val painter = rememberAsyncImagePainter(
-        request = request,
-        contentScale = contentScale,
-        filterQuality = filterQuality
-    )
-    return when(painter.requestState) {
-        is ImageRequestState.Failure -> onFailure?.invoke() ?: painter
-        is ImageRequestState.Success -> painter
-        is ImageRequestState.Loading -> onLoading?.invoke() ?: painter
     }
 }
 

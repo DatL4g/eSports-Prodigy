@@ -22,7 +22,11 @@ kotlin {
             apply(plugin = "org.gradle.android.cache-fix")
             apply(plugin = "kotlin-parcelize")
         }
-        val desktopMain by getting
+        val desktopMain by getting {
+            dependencies {
+                implementation("org.apache.commons:commons-lang3:3.12.0")
+            }
+        }
     }
 }
 

@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.transform
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
+import org.apache.commons.lang3.SystemUtils
 import java.io.File
 
 object SteamLauncher {
@@ -31,29 +32,36 @@ object SteamLauncher {
 
     const val STEAM_MAC_DEFAULT_ROOT = "Library/Application Support/Steam/"
 
-    private val steamSystemDirectories by lazy {
+    private val steamDirectories by lazy {
         val home = homeDirectory()
 
-        listOf(
-            File(home, STEAM_LINUX_ROOT),
-            File(home, STEAM_LINUX_SYMLINK_ROOT),
-            File(STEAM_WINDOWS_DEFAULT_ROOT),
-            File(STEAM_WINDOWS_NEW_ROOT),
-            File(home, STEAM_MAC_DEFAULT_ROOT)
-        )
-    }
-
-    private val steamFlatpakDirectories by lazy {
-        val home = homeDirectory()
-
-        listOf(
-            File(home, STEAM_LINUX_FLATPAK_ROOT),
-            File(home, STEAM_LINUX_FLATPAK_SYMLINK_ROOT)
-        )
-    }
-
-    val steamDirectories by lazy {
-        listFrom(steamSystemDirectories, steamFlatpakDirectories).normalize()
+        (if (SystemUtils.IS_OS_LINUX) {
+            listOf(
+                File(home, STEAM_LINUX_ROOT),
+                File(home, STEAM_LINUX_SYMLINK_ROOT),
+                File(home, STEAM_LINUX_FLATPAK_ROOT),
+                File(home, STEAM_LINUX_FLATPAK_SYMLINK_ROOT)
+            )
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            listOf(
+                File(STEAM_WINDOWS_DEFAULT_ROOT),
+                File(STEAM_WINDOWS_NEW_ROOT)
+            )
+        } else if (SystemUtils.IS_OS_MAC) {
+            listOf(
+                File(home, STEAM_MAC_DEFAULT_ROOT)
+            )
+        } else {
+            listOf(
+                File(home, STEAM_LINUX_ROOT),
+                File(home, STEAM_LINUX_SYMLINK_ROOT),
+                File(home, STEAM_LINUX_FLATPAK_ROOT),
+                File(home, STEAM_LINUX_FLATPAK_SYMLINK_ROOT),
+                File(STEAM_WINDOWS_DEFAULT_ROOT),
+                File(STEAM_WINDOWS_NEW_ROOT),
+                File(home, STEAM_MAC_DEFAULT_ROOT)
+            )
+        }).normalize()
     }
 
     private fun getSteamAppFolders(list: Collection<File>): List<File> {
@@ -95,14 +103,14 @@ object SteamLauncher {
         } ?: emptyList()
     }
 
-    private val systemSteamAppsFolders: MutableStateFlow<List<File>> by lazy {
-        MutableStateFlow(getSteamAppFolders(steamSystemDirectories))
+    private val defaultSteamAppsFolders: MutableStateFlow<List<File>> by lazy {
+        MutableStateFlow(getSteamAppFolders(steamDirectories))
     }
-    private val flatpakSteamAppsFolders: MutableStateFlow<List<File>> by lazy {
-        MutableStateFlow(getSteamAppFolders(steamFlatpakDirectories))
+    private val userSteamAPpFolders: MutableStateFlow<List<File>> by lazy {
+        MutableStateFlow(emptyList())
     }
     private val steamAppFolders by lazy {
-        combine(systemSteamAppsFolders, flatpakSteamAppsFolders) { t1, t2 ->
+        combine(defaultSteamAppsFolders, userSteamAPpFolders) { t1, t2 ->
             listFrom(t1, t2).normalize()
         }
     }

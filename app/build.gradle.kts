@@ -20,7 +20,7 @@ val decompose = "1.0.0"
 val kodein = "7.20.1"
 val ktor = "2.3.0"
 val moko = "0.22.0"
-val image = "1.4.2"
+val kamel = "0.5.0"
 val napier = "2.6.1"
 
 val artifact = "dev.datlag.esports.prodigy"
@@ -62,7 +62,7 @@ kotlin {
                 implementation("com.mikepenz:aboutlibraries-core:10.6.3")
 
                 api("dev.icerock.moko:resources-compose:$moko")
-                api("io.github.qdsfdhvh:image-loader:$image")
+                api("media.kamel:kamel-image:$kamel")
                 api("io.github.aakira:napier:$napier")
                 api(project(":color"))
                 api(project(":game"))
@@ -90,7 +90,6 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutines")
-                implementation("io.github.qdsfdhvh:image-loader-extension-imageio:$image")
             }
         }
     }
@@ -171,6 +170,9 @@ compose {
 
 configure<de.jensklingenberg.ktorfit.gradle.KtorfitGradleConfiguration>() {
     version = "1.3.0"
+}
+dependencies {
+    implementation("io.ktor:ktor-client-okhttp-jvm:2.3.1")
 }
 
 multiplatformResources {

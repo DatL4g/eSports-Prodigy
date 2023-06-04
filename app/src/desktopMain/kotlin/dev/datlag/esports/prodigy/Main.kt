@@ -8,23 +8,21 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.seiko.imageloader.ImageLoader
-import com.seiko.imageloader.LocalImageLoader
-import com.seiko.imageloader.cache.memory.maxSizePercent
-import com.seiko.imageloader.component.setupDefaultComponents
 import dev.datlag.esports.prodigy.common.basedOnSize
 import dev.datlag.esports.prodigy.common.basedOnWidth
-import dev.datlag.esports.prodigy.model.common.getRealFile
-import dev.datlag.esports.prodigy.model.common.isSymlinkSafely
 import dev.datlag.esports.prodigy.ui.*
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
+import io.kamel.core.config.KamelConfig
+import io.kamel.core.config.takeFrom
+import io.kamel.image.config.*
+import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
 import org.kodein.di.DI
-import java.io.File
-import java.nio.file.Files
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalDecomposeApi::class)
 fun main() {
@@ -38,15 +36,11 @@ fun main() {
     }
 
     val root = NavHostComponent.create(DefaultComponentContext(lifecycle), di)
-    val imageLoader = ImageLoader {
-        components {
-            setupDefaultComponents()
-        }
-        interceptor {
-            memoryCacheConfig {
-                maxSizePercent()
-            }
-        }
+    val imageConfig = KamelConfig {
+        takeFrom(KamelConfig.Default)
+        resourcesFetcher()
+        svgDecoder()
+        imageVectorDecoder()
     }
     Napier.base(DebugAntilog())
 
@@ -55,7 +49,7 @@ fun main() {
         title = appTitle
     ) {
         LifecycleController(lifecycle, windowState)
-        
+
         AppIO.loadAppIcon(
             this.window,
             rememberCoroutineScope(),
@@ -83,7 +77,7 @@ fun main() {
         CompositionLocalProvider(
             LocalWindowSize provides WindowSize.basedOnWidth(windowState),
             LocalOrientation provides Orientation.basedOnSize(windowState),
-            LocalImageLoader provides imageLoader
+            LocalKamelConfig provides imageConfig
         ) {
             App(di) {
                 root.render()
