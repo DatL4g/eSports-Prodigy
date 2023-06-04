@@ -144,7 +144,7 @@ private fun DirectoryDropDown(
             if (t != ignoreType) {
                 val (painter, prefix) = when (t) {
                     is Game.TYPE.STEAM -> painterResource(SharedRes.images.steam) to "Steam"
-                    is Game.TYPE.HEROIC -> painterResource(SharedRes.images.rocket_league) to "Heroic"
+                    is Game.TYPE.HEROIC -> painterResource(SharedRes.images.heroic) to "Heroic"
                 }
 
                 DropdownMenuItem(

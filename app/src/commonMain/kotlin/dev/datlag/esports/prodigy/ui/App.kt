@@ -14,7 +14,7 @@ import org.kodein.di.DI
 @Composable
 fun App(
     di: DI,
-    systemDarkTheme: Boolean = true,
+    systemDarkTheme: Boolean = isSystemInDarkTheme() || getSystemDarkMode(),
     content: @Composable () -> Unit
 ) {
 
@@ -39,3 +39,6 @@ fun App(
         }
     }
 }
+
+@Composable
+expect fun getSystemDarkMode(): Boolean

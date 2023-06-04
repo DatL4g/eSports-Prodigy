@@ -88,12 +88,44 @@ fun GameView(component: GameComponent) {
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold
                     )
-                    if (component.game is Game.Steam) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            painter = painterResource(SharedRes.images.steam),
-                            contentDescription = "Steam"
-                        )
+                    when (val game = component.game) {
+                        is Game.Steam -> {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(SharedRes.images.steam),
+                                contentDescription = "Steam"
+                            )
+                        }
+                        is Game.Heroic -> {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(SharedRes.images.heroic),
+                                contentDescription = "Heroic"
+                            )
+                        }
+                        is Game.Multi -> {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                game.games.forEach {
+                                    if (it is Game.Steam) {
+                                        Icon(
+                                            modifier = Modifier.size(24.dp),
+                                            painter = painterResource(SharedRes.images.steam),
+                                            contentDescription = "Steam"
+                                        )
+                                    }
+                                    if (it is Game.Heroic) {
+                                        Icon(
+                                            modifier = Modifier.size(24.dp),
+                                            painter = painterResource(SharedRes.images.heroic),
+                                            contentDescription = "Heroic"
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

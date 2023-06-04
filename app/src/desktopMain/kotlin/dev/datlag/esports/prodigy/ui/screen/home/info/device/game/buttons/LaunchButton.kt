@@ -114,7 +114,7 @@ private fun MultiGameLaunchButton(game: Game.Multi, launching: (Game) -> Boolean
         ) {
             val painter = when (preferredGame) {
                 is Game.Steam -> painterResource(SharedRes.images.steam)
-                is Game.Heroic -> painterResource(SharedRes.images.rocket_league)
+                is Game.Heroic -> painterResource(SharedRes.images.heroic)
                 else -> null
             }
             if (painter != null) {
@@ -174,9 +174,9 @@ private fun LaunchDropDown(
     ) {
         game.games.forEach {
             if (it.type != ignoreType && it.type != null) {
-                val (painter, prefix) = when (it.type!!) {
+                val (painter, launcher) = when (it.type!!) {
                     is Game.TYPE.STEAM -> painterResource(SharedRes.images.steam) to "Steam"
-                    is Game.TYPE.HEROIC -> painterResource(SharedRes.images.rocket_league) to "Heroic"
+                    is Game.TYPE.HEROIC -> painterResource(SharedRes.images.heroic) to "Heroic"
                 }
 
                 DropdownMenuItem(
@@ -187,10 +187,10 @@ private fun LaunchDropDown(
                             Icon(
                                 modifier = Modifier.size(24.dp),
                                 painter = painter,
-                                contentDescription = prefix
+                                contentDescription = launcher
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                            Text("$prefix Launch")
+                            Text("Launch")
                         }
                     },
                     onClick = {
