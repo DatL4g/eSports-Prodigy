@@ -3,12 +3,11 @@ package dev.datlag.esports.prodigy.game.model
 import dev.datlag.esports.prodigy.game.dxvk.DxvkStateCache
 import dev.datlag.esports.prodigy.game.model.legendary.App
 import dev.datlag.esports.prodigy.game.model.steam.AppManifest
-import dev.datlag.esports.prodigy.model.common.listFrom
 import java.io.File
 
 sealed class Game(
     open val name: String,
-    open val directory: File?,
+    open val directories: Map<TYPE, File?>,
     open val headerUrl: String?,
     open val heroUrl: String?,
     open val dxvkCaches: List<DxvkStateCache>
@@ -16,17 +15,31 @@ sealed class Game(
 
     data class Steam(
         val manifest: AppManifest,
-        override val directory: File?,
+        override val directories: Map<TYPE, File?>,
         val headerFile: File?,
         val heroFile: File?,
         override val dxvkCaches: List<DxvkStateCache>
     ) : Game(
         name = manifest.name,
-        directory = directory,
+        directories = directories,
         headerUrl = buildHeaderUrl(manifest.appId),
         heroUrl = buildHeroUrl(manifest.appId),
         dxvkCaches = dxvkCaches
     ) {
+
+        constructor(
+            manifest: AppManifest,
+            directory: File?,
+            headerFile: File?,
+            heroFile: File?,
+            dxvkCaches: List<DxvkStateCache>
+        ) : this(
+            manifest,
+            mapOf(TYPE.STEAM to directory),
+            headerFile,
+            heroFile,
+            dxvkCaches
+        )
 
         companion object {
             fun buildHeaderUrl(appId: String) = "https://cdn.akamai.steamstatic.com/steam/apps/$appId/header.jpg"
@@ -36,22 +49,41 @@ sealed class Game(
 
     data class Heroic(
         val app: App,
-        override val directory: File?,
+        override val directories: Map<TYPE, File?>,
         override val dxvkCaches: List<DxvkStateCache>
     ): Game(
         name = app.title,
-        directory = directory,
+        directories = directories,
         headerUrl = app.artCover,
         heroUrl = app.artCover,
         dxvkCaches = dxvkCaches
-    )
+    ) {
+
+        constructor(
+            app: App,
+            directory: File?,
+            dxvkCaches: List<DxvkStateCache>
+        ) : this(
+            app,
+            mapOf(TYPE.HEROIC to directory),
+            dxvkCaches
+        )
+    }
 
     data class Multi private constructor(
         private val games: List<Game>,
         private val sortedGames: List<Game> = games.sortedBy { it !is Steam }
     ) : Game(
         name = sortedGames.first().name,
-        directory = sortedGames.firstNotNullOfOrNull { it.directory },
+        directories = sortedGames.associate {
+            val type = if (it is Steam) {
+                TYPE.STEAM
+            } else {
+                TYPE.HEROIC
+            }
+
+            type to it.directories[type]
+        },
         headerUrl = sortedGames.first().headerUrl,
         heroUrl = sortedGames.firstNotNullOfOrNull {
             if (it.heroUrl != sortedGames.first().headerUrl) {
@@ -82,6 +114,25 @@ sealed class Game(
                 null
             }
         }
+
+        val steam = games.firstNotNullOfOrNull {
+            if (it is Steam) {
+                it
+            } else {
+                null
+            }
+        }
+
+        val heroic = games.firstNotNullOfOrNull {
+            if (it is Heroic) {
+                it
+            } else {
+                null
+            }
+        }
+
+        val hasSteam: Boolean = steam != null
+        val hasHeroic: Boolean = heroic != null
     }
 
     companion object {
@@ -112,5 +163,10 @@ sealed class Game(
                 }
             }
         }
+    }
+
+    sealed interface TYPE {
+        object STEAM : TYPE
+        object HEROIC : TYPE
     }
 }
