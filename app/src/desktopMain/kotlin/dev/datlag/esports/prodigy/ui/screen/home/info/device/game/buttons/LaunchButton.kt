@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,29 +26,45 @@ fun RowScope.LaunchButton(game: Game) {
     when (game) {
         is Game.Steam -> {
             SingleGameLaunchButton {
-                val appId = game.manifest.appId
-                var result = "steam://rungameid/$appId".openInBrowser(startError)
-                if (result.isFailure) {
-                    result = "steam://run/$appId".openInBrowser(startError)
-                }
-                result.isFailure
+                launchSteam(startError, game)
             }
         }
 
         is Game.Heroic -> {
             SingleGameLaunchButton {
-                val launchId = game.app.appName ?: game.app.title
-                val result = "heroic://launch/$launchId".openInBrowser(startError)
-                result.isFailure
+                launchHeroic(startError, game)
             }
         }
 
         is Game.Multi -> {
-            MultiGameLaunchButton(game) {
-                it to true
+            MultiGameLaunchButton(game) { launchGame ->
+                when (launchGame) {
+                    is Game.Steam -> {
+                        launchSteam(startError, launchGame)
+                    }
+                    is Game.Heroic -> {
+                        launchHeroic(startError, launchGame)
+                    }
+                    else -> true
+                }
             }
         }
     }
+}
+
+private fun launchSteam(startError: String, game: Game.Steam): Boolean {
+    val appId = game.manifest.appId
+    var result = "steam://rungameid/$appId".openInBrowser(startError)
+    if (result.isFailure) {
+        result = "steam://run/$appId".openInBrowser(startError)
+    }
+    return result.isFailure
+}
+
+private fun launchHeroic(startError: String, game: Game.Heroic): Boolean {
+    val launchId = game.app.appName ?: game.app.title
+    val result = "heroic://launch/$launchId".openInBrowser(startError)
+    return result.isFailure
 }
 
 @Composable
@@ -81,10 +94,10 @@ private fun SingleGameLaunchButton(launching: () -> Boolean) {
 }
 
 @Composable
-private fun MultiGameLaunchButton(game: Game.Multi, launching: (Game.TYPE) -> Pair<Game.TYPE, Boolean>) {
+private fun MultiGameLaunchButton(game: Game.Multi, launching: (Game) -> Boolean) {
     var launchClickable by remember { mutableStateOf(true) }
-
     val preferredGame = game.steam ?: game.heroic
+    var showMenu by remember { mutableStateOf(false) }
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -125,7 +138,7 @@ private fun MultiGameLaunchButton(game: Game.Multi, launching: (Game.TYPE) -> Pa
         }
         Button(
             onClick = {
-
+                showMenu = true
             },
             shape = RightRoundedShape
         ) {
@@ -133,6 +146,60 @@ private fun MultiGameLaunchButton(game: Game.Multi, launching: (Game.TYPE) -> Pa
                 imageVector = Icons.Default.ExpandMore,
                 contentDescription = "more"
             )
+        }
+        LaunchDropDown(
+            expanded = showMenu,
+            game = game,
+            ignoreType = preferredGame?.type,
+            launching = { launching(it) },
+        ) {
+            showMenu = false
+        }
+    }
+}
+
+@Composable
+private fun LaunchDropDown(
+    expanded: Boolean,
+    game: Game.Multi,
+    ignoreType: Game.TYPE?,
+    launching: (Game) -> Boolean,
+    onDismiss: () -> Unit
+) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = {
+            onDismiss()
+        }
+    ) {
+        game.games.forEach {
+            if (it.type != ignoreType && it.type != null) {
+                val (painter, prefix) = when (it.type!!) {
+                    is Game.TYPE.STEAM -> painterResource(SharedRes.images.steam) to "Steam"
+                    is Game.TYPE.HEROIC -> painterResource(SharedRes.images.rocket_league) to "Heroic"
+                }
+
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painter,
+                                contentDescription = prefix
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text("$prefix Launch")
+                        }
+                    },
+                    onClick = {
+                        launching(it)
+                        onDismiss()
+                    },
+                    enabled = it.type != null
+                )
+            }
         }
     }
 }

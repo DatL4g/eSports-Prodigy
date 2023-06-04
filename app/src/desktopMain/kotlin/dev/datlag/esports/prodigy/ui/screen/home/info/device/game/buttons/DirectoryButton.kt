@@ -6,19 +6,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.datlag.esports.prodigy.SharedRes
 import dev.datlag.esports.prodigy.game.model.Game
 import dev.datlag.esports.prodigy.model.common.scopeCatching
 import dev.datlag.esports.prodigy.ui.theme.LeftRoundedShape
 import dev.datlag.esports.prodigy.ui.theme.RightRoundedShape
+import dev.icerock.moko.resources.compose.painterResource
 import java.awt.Desktop
 import java.io.File
 
@@ -72,11 +71,12 @@ private fun RowScope.SingleDirectoryButton(openSupported: Boolean, directory: Fi
 @Composable
 private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: Game.Multi) {
     val preferredGame = game.steam ?: game.heroic
-    val preferredDirectory = preferredGame?.directories?.firstNotNullOfOrNull { it.value }
+    val preferredDirectory = preferredGame?.directories?.firstNotNullOfOrNull { it }
     val borderStroke = BorderStroke(
         width = ButtonDefaults.outlinedButtonBorder.width,
         color = if (openSupported) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F)
     )
+    var showMenu by remember { mutableStateOf(false) }
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -85,10 +85,10 @@ private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: Game.Mul
         OutlinedButton(
             onClick = {
                 scopeCatching {
-                    Desktop.getDesktop().open(preferredDirectory)
+                    Desktop.getDesktop().open(preferredDirectory?.value)
                 }
             },
-            enabled = openSupported && preferredDirectory != null,
+            enabled = openSupported && preferredDirectory?.value != null,
             shape = LeftRoundedShape,
             border = borderStroke
         ) {
@@ -105,7 +105,7 @@ private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: Game.Mul
         }
         OutlinedButton(
             onClick = {
-
+                showMenu = true
             },
             border = borderStroke,
             shape = RightRoundedShape
@@ -114,6 +114,62 @@ private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: Game.Mul
                 imageVector = Icons.Default.ExpandMore,
                 contentDescription = "more"
             )
+        }
+        DirectoryDropDown(
+            showMenu,
+            game,
+            preferredDirectory?.key,
+            openSupported
+        ) {
+            showMenu = false
+        }
+    }
+}
+
+@Composable
+private fun DirectoryDropDown(
+    expanded: Boolean,
+    game: Game.Multi,
+    ignoreType: Game.TYPE?,
+    openSupported: Boolean,
+    onDismiss: () -> Unit
+) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = {
+            onDismiss()
+        }
+    ) {
+        game.directories.forEach { (t, u) ->
+            if (t != ignoreType) {
+                val (painter, prefix) = when (t) {
+                    is Game.TYPE.STEAM -> painterResource(SharedRes.images.steam) to "Steam"
+                    is Game.TYPE.HEROIC -> painterResource(SharedRes.images.rocket_league) to "Heroic"
+                }
+
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painter,
+                                contentDescription = prefix
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text("$prefix Location")
+                        }
+                    },
+                    onClick = {
+                        scopeCatching {
+                            Desktop.getDesktop().open(u)
+                        }
+                        onDismiss()
+                    },
+                    enabled = openSupported && u != null
+                )
+            }
         }
     }
 }

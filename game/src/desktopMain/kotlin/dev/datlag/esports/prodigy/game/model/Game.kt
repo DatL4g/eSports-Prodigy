@@ -13,6 +13,8 @@ sealed class Game(
     open val dxvkCaches: List<DxvkStateCache>
 ) {
 
+    abstract val type: TYPE?
+
     data class Steam(
         val manifest: AppManifest,
         override val directories: Map<TYPE, File?>,
@@ -41,6 +43,8 @@ sealed class Game(
             dxvkCaches
         )
 
+        override val type: TYPE = TYPE.STEAM
+
         companion object {
             fun buildHeaderUrl(appId: String) = "https://cdn.akamai.steamstatic.com/steam/apps/$appId/header.jpg"
             fun buildHeroUrl(appId: String) = "https://cdn.akamai.steamstatic.com/steam/apps/$appId/library_hero.jpg"
@@ -68,10 +72,12 @@ sealed class Game(
             mapOf(TYPE.HEROIC to directory),
             dxvkCaches
         )
+
+        override val type: TYPE = TYPE.HEROIC
     }
 
     data class Multi private constructor(
-        private val games: List<Game>,
+        val games: List<Game>,
         private val sortedGames: List<Game> = games.sortedBy { it !is Steam }
     ) : Game(
         name = sortedGames.first().name,
@@ -133,6 +139,8 @@ sealed class Game(
 
         val hasSteam: Boolean = steam != null
         val hasHeroic: Boolean = heroic != null
+
+        override val type: TYPE? = null
     }
 
     companion object {
