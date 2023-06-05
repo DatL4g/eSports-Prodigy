@@ -16,7 +16,8 @@ import kotlin.math.max
 data class DxvkStateCache(
     val header: Header,
     val entries: List<DxvkStateCacheEntry>,
-    val invalidEntries: Int
+    val invalidEntries: Int,
+    val file: File
 ) {
     suspend fun writeTo(writer: FileChannel) = suspendCatching {
         header.writeTo(writer).getOrThrow()
@@ -70,11 +71,11 @@ data class DxvkStateCache(
         suspend fun fromFile(file: File): Result<DxvkStateCache> = suspendCatching {
             val reader = file.openReadChannel()
             reader.use {
-                fromReader(it).getOrThrow()
+                fromReader(file, it).getOrThrow()
             }
         }
 
-        suspend fun fromReader(reader: FileChannel): Result<DxvkStateCache> = suspendCatching {
+        private suspend fun fromReader(file: File, reader: FileChannel): Result<DxvkStateCache> = suspendCatching {
             val entries: MutableList<DxvkStateCacheEntry> = mutableListOf()
             val header = Header.fromReader(reader).getOrThrow()
             var invalidEntries = 0
@@ -102,7 +103,8 @@ data class DxvkStateCache(
             DxvkStateCache(
                 header,
                 distinctEntries,
-                invalidEntries
+                invalidEntries,
+                file
             )
         }
     }

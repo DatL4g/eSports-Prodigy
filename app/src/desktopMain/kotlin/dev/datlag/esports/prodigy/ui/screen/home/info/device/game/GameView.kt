@@ -7,24 +7,26 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
 import dev.datlag.esports.prodigy.ui.WindowSize
-import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.DirectoryButton
-import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.GameHero
-import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.GameLauncherIcons
-import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.LaunchButton
+import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.*
 import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
+import kotlinx.serialization.json.JsonNull.content
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GameView(component: GameComponent) {
     SchemeTheme.themes[component.game.name]?.let {
@@ -97,31 +99,28 @@ fun GameView(component: GameComponent) {
 
             if (component.game.dxvkCaches.isNotEmpty()) {
                 item {
-                    var expand by remember { mutableStateOf(false) }
-                    OutlinedCard(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp).fillMaxWidth(),
-                        onClick = {
-                            expand = !expand
-                        }
+                    Text(
+                        modifier = Modifier.padding(top = 32.dp, bottom = 16.dp, start = 8.dp, end = 8.dp),
+                        text = "DXVK State Cache",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+                item {
+                    FlowRow(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "DXVK Cache",
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.headlineSmall
-                            )
-                            Spacer(modifier = Modifier.weight(1F))
-                            Icon(
-                                imageVector = Icons.Default.ExpandMore,
-                                contentDescription = "Expand"
-                            )
-                        }
-                        if (expand) {
-                            Divider()
-                            Text(text = "Expanded")
+                        var width by remember { mutableStateOf(0) }
+                        var height by remember { mutableStateOf(0) }
+
+                        component.game.dxvkCaches.forEach { (caches, type) ->
+                            caches.forEach { cache ->
+                                CacheCard(type, cache, width, height) {
+                                    width = it.first
+                                    height = it.second
+                                }
+                            }
                         }
                     }
                 }

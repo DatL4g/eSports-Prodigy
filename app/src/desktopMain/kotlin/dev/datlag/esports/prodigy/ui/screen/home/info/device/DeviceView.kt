@@ -161,7 +161,7 @@ fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    if (game.dxvkCaches.containsInvalidEntries()) {
+                    if (game.dxvkCaches.keys.flatten().containsInvalidEntries()) {
                         TooltipArea(
                             tooltip = {
                                 Text(

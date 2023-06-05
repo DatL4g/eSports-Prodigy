@@ -10,7 +10,7 @@ sealed class Game(
     open val directories: Map<TYPE, File?>,
     open val headerUrl: String?,
     open val heroUrl: String?,
-    open val dxvkCaches: List<DxvkStateCache>
+    open val dxvkCaches: Map<List<DxvkStateCache>, TYPE>
 ) {
 
     abstract val type: TYPE?
@@ -20,7 +20,7 @@ sealed class Game(
         override val directories: Map<TYPE, File?>,
         val headerFile: File?,
         val heroFile: File?,
-        override val dxvkCaches: List<DxvkStateCache>
+        override val dxvkCaches: Map<List<DxvkStateCache>, TYPE>
     ) : Game(
         name = manifest.name,
         directories = directories,
@@ -40,7 +40,7 @@ sealed class Game(
             mapOf(TYPE.STEAM to directory),
             headerFile,
             heroFile,
-            dxvkCaches
+            mapOf(dxvkCaches to TYPE.STEAM)
         )
 
         override val type: TYPE = TYPE.STEAM
@@ -54,7 +54,7 @@ sealed class Game(
     data class Heroic(
         val app: App,
         override val directories: Map<TYPE, File?>,
-        override val dxvkCaches: List<DxvkStateCache>
+        override val dxvkCaches: Map<List<DxvkStateCache>, TYPE>
     ): Game(
         name = app.title,
         directories = directories,
@@ -70,7 +70,7 @@ sealed class Game(
         ) : this(
             app,
             mapOf(TYPE.HEROIC to directory),
-            dxvkCaches
+            mapOf(dxvkCaches to TYPE.HEROIC)
         )
 
         override val type: TYPE = TYPE.HEROIC
@@ -98,7 +98,15 @@ sealed class Game(
                 null
             }
         } ?: sortedGames.first().heroUrl,
-        dxvkCaches = games.flatMap { it.dxvkCaches }
+        dxvkCaches = games.associate {
+            val type = if (it is Steam) {
+                TYPE.STEAM
+            } else {
+                TYPE.HEROIC
+            }
+
+            it.dxvkCaches.keys.flatten() to type
+        }
     ) {
 
         constructor(gameList: List<Game>) : this(games = gameList)
