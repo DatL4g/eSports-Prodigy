@@ -1,6 +1,5 @@
 package dev.datlag.esports.prodigy.game.common
 
-import dev.datlag.esports.prodigy.game.dxvk.DXVK
 import java.nio.ByteOrder
 
 fun Byte.unsignedInt(order: ByteOrder?): UInt {

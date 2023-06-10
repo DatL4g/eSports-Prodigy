@@ -113,3 +113,15 @@ fun File.listFilesSafely(): List<File> {
         }
     }.getOrNull() ?: emptyList()
 }
+
+fun File.mkdirsSafely(): Boolean = scopeCatching {
+    this.mkdirs()
+}.getOrNull() ?: false
+
+fun File.deleteSafely(): Boolean {
+    return scopeCatching {
+        Files.delete(this.toPath())
+    }.isSuccess || scopeCatching {
+        this.delete()
+    }.getOrNull() ?: false
+}

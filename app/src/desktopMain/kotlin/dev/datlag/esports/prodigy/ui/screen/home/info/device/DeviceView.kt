@@ -114,7 +114,7 @@ fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
                 FilledIconButton(
                     modifier = Modifier.size(48.dp),
                     onClick = {
-
+                        component.navigateToUser()
                     },
                     shape = RoundedCornerShape(16.dp)
                 ) {

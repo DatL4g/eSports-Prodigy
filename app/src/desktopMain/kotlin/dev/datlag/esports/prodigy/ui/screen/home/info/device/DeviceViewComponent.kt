@@ -8,8 +8,6 @@ import com.arkivanov.decompose.router.overlay.activate
 import com.arkivanov.decompose.router.overlay.childOverlay
 import com.arkivanov.decompose.value.Value
 import dev.datlag.esports.prodigy.color.createTheme
-import dev.datlag.esports.prodigy.color.utils.StringUtils
-import dev.datlag.esports.prodigy.common.coroutineScope
 import dev.datlag.esports.prodigy.common.ioScope
 import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.game.HeroicLauncher
@@ -27,7 +25,8 @@ import java.awt.Image
 
 actual class DeviceViewComponent actual constructor(
     componentContext: ComponentContext,
-    override val di: DI
+    override val di: DI,
+    private val goToUser: () -> Unit
 ) : DeviceComponent, ComponentContext by componentContext {
 
     private val scope = ioScope()
@@ -89,6 +88,10 @@ actual class DeviceViewComponent actual constructor(
                 SchemeTheme.themes[gameTitle] = image.createTheme()
             }
         }
+    }
+
+    override fun navigateToUser() {
+        goToUser()
     }
 
     @Composable

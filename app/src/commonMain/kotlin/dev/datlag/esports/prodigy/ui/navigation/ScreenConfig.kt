@@ -8,4 +8,7 @@ sealed class ScreenConfig : Parcelable {
 
     @Parcelize
     object Home : ScreenConfig(), Parcelable
+
+    @Parcelize
+    object User : ScreenConfig(), Parcelable
 }

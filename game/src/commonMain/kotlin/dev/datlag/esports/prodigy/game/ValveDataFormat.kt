@@ -2,7 +2,6 @@ package dev.datlag.esports.prodigy.game
 
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
 
 /**
  * Convert Valve Data Format (vdf) to JSON.

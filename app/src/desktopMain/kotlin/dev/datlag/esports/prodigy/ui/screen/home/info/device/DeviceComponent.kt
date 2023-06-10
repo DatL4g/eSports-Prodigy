@@ -15,4 +15,6 @@ actual interface DeviceComponent : Component {
 
     fun gameClicked(game: Game)
     fun loadSchemeFor(gameTitle: String, image: Image)
+
+    fun navigateToUser()
 }

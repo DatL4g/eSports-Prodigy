@@ -5,5 +5,6 @@ import org.kodein.di.DI
 
 expect class DeviceViewComponent(
     componentContext: ComponentContext,
-    di: DI
+    di: DI,
+    goToUser: () -> Unit
 ) : DeviceComponent

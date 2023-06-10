@@ -51,24 +51,8 @@ fun GameView(component: GameComponent) {
                     modifier = modifier
                 ) {
                     GameHero(game)
-                    Row(
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        IconButton(
-                            onClick = {
-                                component.goBack()
-                            },
-                            modifier = Modifier.background(
-                                color = Color.Black.copy(alpha = 0.5F),
-                                shape = CircleShape
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Back",
-                                tint = Color.White
-                            )
-                        }
+                    HeroBackButton {
+                        component.goBack()
                     }
                 }
             }

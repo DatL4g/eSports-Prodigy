@@ -2,21 +2,13 @@ package dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import dev.datlag.esports.prodigy.SharedRes
 import dev.datlag.esports.prodigy.common.ifTrue
@@ -40,14 +32,23 @@ fun CacheCard(
     val heightDp = with(LocalDensity.current) {
         height.toDp()
     }
-    var showMenu by remember { mutableStateOf(false) }
+
+    fun Modifier.sameSize() = when {
+        width > 0 && height > 0 -> then(Modifier.size(
+            width = widthDp,
+            height = heightDp
+        ))
+        width > 0 -> then(Modifier.width(
+            width = widthDp
+        ))
+        height > 0 -> then(Modifier.height(
+            height = heightDp
+        ))
+        else -> then(Modifier)
+    }
 
     OutlinedCard(
-        modifier = Modifier.padding(vertical = 2.dp).ifTrue(width > 0) {
-            width(widthDp)
-        }.ifTrue(height > 0) {
-            height(heightDp)
-        }.onSizeChanged {
+        modifier = Modifier.padding(vertical = 2.dp).sameSize().onSizeChanged {
             if (width < it.width || height > it.height) {
                 onSizeChange(
                     max(width, it.width) to max(height, it.height)
@@ -108,7 +109,7 @@ fun CacheCard(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(text = cache.header.version.toString())
-                    Text(text = cache.entries.size.toString())
+                    Text(text = cache.totalEntries.toString())
                     Text(text = cache.invalidEntries.toString())
                 }
             }

@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option java_package = "dev.datlag.esports.prodigy.datastore.preferences";
+option java_multiple_files = true;
+
+message UserSettings {
+  bool test = 1;
+}

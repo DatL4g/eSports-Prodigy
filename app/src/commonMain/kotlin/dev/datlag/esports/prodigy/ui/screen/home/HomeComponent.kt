@@ -14,6 +14,8 @@ interface HomeComponent : Component {
 
     fun navigate(key: Int)
 
+    fun navigateToUser()
+
     data class PagerItem(
         internal val key: Int,
         val label: StringResource,

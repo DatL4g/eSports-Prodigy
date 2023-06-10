@@ -13,3 +13,25 @@ val RightRoundedShape = CircleShape.copy(
     topStart = CornerSize(2.dp),
     bottomStart = CornerSize(2.dp)
 )
+
+val TopLeftBottomRightRoundedShape = CircleShape.copy(
+    topEnd = CornerSize(2.dp),
+    bottomStart = CornerSize(2.dp)
+)
+
+val TopRightBottomLeftRoundedShape = CircleShape.copy(
+    topStart = CornerSize(2.dp),
+    bottomEnd = CornerSize(2.dp)
+)
+
+val BottomLeftRoundedShape = CircleShape.copy(
+    topStart = CornerSize(2.dp),
+    topEnd = CornerSize(2.dp),
+    bottomEnd = CornerSize(2.dp)
+)
+
+val BottomRightRoundedShape = CircleShape.copy(
+    topStart = CornerSize(2.dp),
+    topEnd = CornerSize(2.dp),
+    bottomStart = CornerSize(2.dp)
+)

@@ -7,7 +7,10 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.push
 import dev.datlag.esports.prodigy.ui.screen.home.HomeScreenComponent
+import dev.datlag.esports.prodigy.ui.screen.user.UserScreenComponent
 import org.kodein.di.DI
 
 class NavHostComponent private constructor(
@@ -29,7 +32,13 @@ class NavHostComponent private constructor(
         return when (screenConfig) {
             is ScreenConfig.Home -> HomeScreenComponent(
                 componentContext,
-                di
+                di,
+                ::goToUser
+            )
+            is ScreenConfig.User -> UserScreenComponent(
+                componentContext,
+                di,
+                ::goBack
             )
         }
     }
@@ -42,6 +51,14 @@ class NavHostComponent private constructor(
         ) {
             it.instance.render()
         }
+    }
+
+    private fun goBack() {
+        navigation.pop()
+    }
+
+    private fun goToUser() {
+        navigation.push(ScreenConfig.User)
     }
 
     companion object {

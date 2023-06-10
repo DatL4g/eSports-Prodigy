@@ -66,6 +66,8 @@ kotlin {
                 api("io.github.aakira:napier:$napier")
                 api(project(":color"))
                 api(project(":game"))
+                api(project(":datastore"))
+                api(project(":nanoid"))
             }
         }
 

@@ -4,12 +4,16 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.singleWindowApplication
+import androidx.datastore.core.DataStore
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import dev.datlag.esports.prodigy.common.basedOnSize
 import dev.datlag.esports.prodigy.common.basedOnWidth
+import dev.datlag.esports.prodigy.datastore.preferences.UserSettings
+import dev.datlag.esports.prodigy.model.common.homeDirectory
+import dev.datlag.esports.prodigy.module.DataStoreModule
 import dev.datlag.esports.prodigy.ui.*
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
 import dev.icerock.moko.resources.desc.Resource
@@ -21,8 +25,21 @@ import io.kamel.core.config.takeFrom
 import io.kamel.image.config.*
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import org.kodein.di.DI
+import org.kodein.di.instance
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.util.concurrent.TimeUnit
+import javax.crypto.Cipher
+import javax.crypto.CipherInputStream
+import javax.crypto.CipherOutputStream
+import javax.crypto.KeyGenerator
+import javax.crypto.spec.IvParameterSpec
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @OptIn(ExperimentalDecomposeApi::class)
 fun main() {
@@ -32,7 +49,7 @@ fun main() {
     val windowState = WindowState()
     val lifecycle = LifecycleRegistry()
     val di = DI {
-
+        import(DataStoreModule.di)
     }
 
     val root = NavHostComponent.create(DefaultComponentContext(lifecycle), di)

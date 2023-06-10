@@ -19,6 +19,9 @@ data class DxvkStateCache(
     val invalidEntries: Int,
     val file: File
 ) {
+
+    val totalEntries = entries.size + invalidEntries
+
     suspend fun writeTo(writer: FileChannel) = suspendCatching {
         header.writeTo(writer).getOrThrow()
         entries.forEach {
