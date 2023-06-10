@@ -10,7 +10,7 @@ class SchemeTonalSpot(sourceColorHct: Hct, isDark: Boolean, contrastLevel: Doubl
     Variant.TONAL_SPOT,
     isDark,
     contrastLevel,
-    TonalPalette.fromHueAndChroma(sourceColorHct.hue, 40.0),
+    TonalPalette.fromHueAndChroma(sourceColorHct.hue, 36.0),
     TonalPalette.fromHueAndChroma(sourceColorHct.hue, 16.0),
     TonalPalette.fromHueAndChroma(
         sanitizeDegreesDouble(sourceColorHct.hue + 60.0), 24.0

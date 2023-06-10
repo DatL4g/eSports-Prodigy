@@ -17,6 +17,47 @@ object MaterialDynamicColors {
         return if (s.isDark) surfaceBright() else surfaceDim()
     }
 
+    // Compatibility Keys Colors for Android
+    fun primaryPaletteKeyColor(): DynamicColor {
+        return DynamicColor.fromPalette({
+            it.primaryPalette
+        }, {
+            it.primaryPalette.keyColor.tone
+        })
+    }
+
+    fun secondaryPaletteKeyColor(): DynamicColor {
+        return DynamicColor.fromPalette({
+            it.secondaryPalette
+        }, {
+            it.secondaryPalette.keyColor.tone
+        })
+    }
+
+    fun tertiaryPaletteKeyColor(): DynamicColor {
+        return DynamicColor.fromPalette({
+            it.tertiaryPalette
+        }, {
+            it.tertiaryPalette.keyColor.tone
+        })
+    }
+
+    fun neutralPaletteKeyColor(): DynamicColor {
+        return DynamicColor.fromPalette({
+            it.neutralPalette
+        }, {
+            it.neutralPalette.keyColor.tone
+        })
+    }
+
+    fun neutralVariantPaletteKeyColor(): DynamicColor {
+        return DynamicColor.fromPalette({
+            it.neutralVariantPalette
+        }, {
+            it.neutralVariantPalette.keyColor.tone
+        })
+    }
+
     fun background(): DynamicColor {
         return DynamicColor.fromPalette({
             it.neutralPalette

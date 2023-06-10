@@ -20,6 +20,17 @@ open class DynamicScheme(
     val errorPalette: TonalPalette = TonalPalette.fromHueAndChroma(25.0, 84.0)
 
     companion object {
+
+        /**
+         * Given a set of hues and set of hue rotations, locate which hues the source color's hue is
+         * between, apply the rotation at the same index as the first hue in the range, and return the
+         * rotated hue.
+         *
+         * @param sourceColorHct The color whose hue should be rotated.
+         * @param hues A set of hues.
+         * @param rotations A set of hue rotations.
+         * @return Color's hue with a rotation applied.
+         */
         fun getRotatedHue(sourceColorHct: Hct, hues: DoubleArray, rotations: DoubleArray): Double {
             val sourceHue = sourceColorHct.hue
             if (rotations.size == 1) {

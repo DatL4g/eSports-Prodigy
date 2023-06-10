@@ -17,7 +17,7 @@ class SchemeVibrant(sourceColorHct: Hct, isDark: Boolean, contrastLevel: Double)
         TonalPalette.fromHueAndChroma(
             getRotatedHue(sourceColorHct, HUES, TERTIARY_ROTATIONS), 32.0
         ),
-        TonalPalette.fromHueAndChroma(sourceColorHct.hue, 8.0),
+        TonalPalette.fromHueAndChroma(sourceColorHct.hue, 10.0),
         TonalPalette.fromHueAndChroma(sourceColorHct.hue, 12.0)
     ) {
     companion object {
