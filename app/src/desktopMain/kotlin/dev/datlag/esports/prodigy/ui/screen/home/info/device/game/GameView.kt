@@ -38,10 +38,10 @@ fun GameView(component: GameComponent) {
     }
 
     SchemeTheme {
-        LazyColumn(modifier = when (LocalWindowSize.current) {
-            is WindowSize.COMPACT -> Modifier
-            is WindowSize.MEDIUM -> Modifier.padding(16.dp)
-            is WindowSize.EXPANDED -> Modifier.padding(16.dp)
+        LazyColumn(contentPadding = when (LocalWindowSize.current) {
+            is WindowSize.COMPACT -> PaddingValues(0.dp)
+            is WindowSize.MEDIUM -> PaddingValues(16.dp)
+            is WindowSize.EXPANDED -> PaddingValues(16.dp)
         }) {
             item {
                 val game = component.game

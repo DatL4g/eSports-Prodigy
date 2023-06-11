@@ -11,6 +11,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import dev.datlag.esports.prodigy.ui.screen.home.HomeScreenComponent
 import dev.datlag.esports.prodigy.ui.screen.user.UserScreenComponent
+import dev.datlag.esports.prodigy.ui.screen.settings.SettingsScreenComponent
 import org.kodein.di.DI
 
 class NavHostComponent private constructor(
@@ -33,9 +34,15 @@ class NavHostComponent private constructor(
             is ScreenConfig.Home -> HomeScreenComponent(
                 componentContext,
                 di,
-                ::goToUser
+                ::goToUser,
+                ::goToSettings
             )
             is ScreenConfig.User -> UserScreenComponent(
+                componentContext,
+                di,
+                ::goBack
+            )
+            is ScreenConfig.Settings -> SettingsScreenComponent(
                 componentContext,
                 di,
                 ::goBack
@@ -59,6 +66,10 @@ class NavHostComponent private constructor(
 
     private fun goToUser() {
         navigation.push(ScreenConfig.User)
+    }
+
+    private fun goToSettings() {
+        navigation.push(ScreenConfig.Settings)
     }
 
     companion object {

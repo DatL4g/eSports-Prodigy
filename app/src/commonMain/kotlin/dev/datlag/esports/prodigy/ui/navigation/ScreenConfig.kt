@@ -11,4 +11,7 @@ sealed class ScreenConfig : Parcelable {
 
     @Parcelize
     object User : ScreenConfig(), Parcelable
+
+    @Parcelize
+    object Settings : ScreenConfig(), Parcelable
 }

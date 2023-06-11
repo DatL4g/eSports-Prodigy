@@ -23,6 +23,9 @@ actual object PlatformModule {
         bindSingleton("UserSettingsFile") {
             AppIO.getFileInUserDataDir("UserSettings.pb")
         }
+        bindSingleton("AppSettingsFile") {
+            AppIO.getFileInUserDataDir("AppSettings.pb")
+        }
 
         bindSingleton {
             val uuidFile = AppIO.getFileInUserDataDir(".uuid")

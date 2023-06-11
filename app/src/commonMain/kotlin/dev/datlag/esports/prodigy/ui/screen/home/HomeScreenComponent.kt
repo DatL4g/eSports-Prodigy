@@ -21,7 +21,8 @@ import dev.datlag.esports.prodigy.SharedRes
 class HomeScreenComponent(
     componentContext: ComponentContext,
     override val di: DI,
-    private val goToUser: () -> Unit
+    private val goToUser: () -> Unit,
+    private val goToSettings: () -> Unit
 ) : HomeComponent, ComponentContext by componentContext {
 
     private val navigation = StackNavigation<View>()
@@ -75,7 +76,8 @@ class HomeScreenComponent(
             is View.Info -> InfoViewComponent(
                 componentContext,
                 di,
-                goToUser
+                goToUser,
+                goToSettings
             )
             is View.CounterStrike -> CounterStrikeViewComponent(
                 componentContext,

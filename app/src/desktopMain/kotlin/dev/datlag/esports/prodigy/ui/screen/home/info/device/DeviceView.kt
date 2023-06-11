@@ -102,7 +102,7 @@ fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
                 FilledTonalIconButton(
                     modifier = Modifier.size(48.dp),
                     onClick = {
-
+                        component.navigateToSettings()
                     },
                     shape = RoundedCornerShape(16.dp)
                 ) {

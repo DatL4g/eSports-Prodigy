@@ -27,7 +27,8 @@ import java.awt.Image
 actual class DeviceViewComponent actual constructor(
     componentContext: ComponentContext,
     override val di: DI,
-    private val goToUser: () -> Unit
+    private val goToUser: () -> Unit,
+    private val goToSettings: () -> Unit
 ) : DeviceComponent, ComponentContext by componentContext {
 
     private val scope = ioScope()
@@ -93,6 +94,10 @@ actual class DeviceViewComponent actual constructor(
 
     override fun navigateToUser() {
         goToUser()
+    }
+
+    override fun navigateToSettings() {
+        goToSettings()
     }
 
     @Composable

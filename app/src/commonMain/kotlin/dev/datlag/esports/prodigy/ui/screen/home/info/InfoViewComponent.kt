@@ -8,11 +8,12 @@ import dev.datlag.esports.prodigy.ui.screen.home.info.device.DeviceViewComponent
 class InfoViewComponent(
     componentContext: ComponentContext,
     override val di: DI,
-    private val goToUser: () -> Unit
+    private val goToUser: () -> Unit,
+    private val goToSettings: () -> Unit
 ) : InfoComponent, ComponentContext by componentContext {
 
     override val deviceView = DeviceViewComponent(
-        componentContext, di, goToUser
+        componentContext, di, goToUser, goToSettings
     )
 
     @Composable
