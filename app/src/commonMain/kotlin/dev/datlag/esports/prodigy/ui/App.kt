@@ -17,7 +17,6 @@ fun App(
     systemDarkTheme: Boolean = isSystemInDarkTheme() || getSystemDarkMode(),
     content: @Composable () -> Unit
 ) {
-
     CompositionLocalProvider(LocalDarkMode provides systemDarkTheme) {
         MaterialTheme(
             colorScheme = if (systemDarkTheme) Colors.getDarkScheme() else Colors.getLightScheme(),

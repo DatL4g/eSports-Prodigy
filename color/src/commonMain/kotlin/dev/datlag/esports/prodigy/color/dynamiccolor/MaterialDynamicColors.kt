@@ -200,7 +200,7 @@ object MaterialDynamicColors {
                 }
                 if (s.isDark) 90.0 else 10.0
             },
-            { s -> primaryContainer() },
+            { _ -> primaryContainer() },
             null
         )
     }
@@ -274,7 +274,7 @@ object MaterialDynamicColors {
                 }
                 DynamicColor.contrastingTone(secondaryContainer().tone.apply(s), 4.5)
             }
-        ) { s -> secondaryContainer() }
+        ) { _ -> secondaryContainer() }
     }
 
     fun secondary(): DynamicColor {
@@ -461,14 +461,14 @@ object MaterialDynamicColors {
 
     fun onSecondaryFixed(): DynamicColor {
         return DynamicColor.fromPalette(
-            { s -> s.secondaryPalette }, { s -> 10.0 }) { s -> secondaryFixedDim() }
+            { s -> s.secondaryPalette }, { _ -> 10.0 }) { _ -> secondaryFixedDim() }
     }
 
     fun onSecondaryFixedVariant(): DynamicColor {
         return DynamicColor.fromPalette(
             { s -> s.secondaryPalette },
             { s -> if (isMonochrome(s)) 25.0 else 30.0 }
-        ) { s -> secondaryFixedDim() }
+        ) { _ -> secondaryFixedDim() }
     }
 
     fun tertiaryFixed(): DynamicColor {
@@ -527,8 +527,8 @@ object MaterialDynamicColors {
     // Returning black in dark mode, white in light mode.
     fun controlHighlight(): DynamicColor {
         return DynamicColor(
-            { s: DynamicScheme? -> 0.0 },
-            { s: DynamicScheme? -> 0.0 },
+            { _: DynamicScheme? -> 0.0 },
+            { _: DynamicScheme? -> 0.0 },
             { s: DynamicScheme -> if (s.isDark) 100.0 else 0.0 },
             { s: DynamicScheme -> if (s.isDark) 0.20 else 0.12 },
             null,

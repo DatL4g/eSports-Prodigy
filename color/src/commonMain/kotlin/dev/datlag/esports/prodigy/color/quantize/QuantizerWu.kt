@@ -13,11 +13,11 @@ class QuantizerWu : Quantizer {
     lateinit var moments: DoubleArray
     lateinit var cubes: Array<Box?>
 
-    override fun quantize(pixels: IntArray?, colorCount: Int): QuantizerResult {
-        val mapResult = QuantizerMap().quantize(pixels, colorCount)
+    override fun quantize(pixels: IntArray?, maxColors: Int): QuantizerResult {
+        val mapResult = QuantizerMap().quantize(pixels, maxColors)
         constructHistogram(mapResult.colorToCount)
         createMoments()
-        val createBoxesResult = createBoxes(colorCount)
+        val createBoxesResult = createBoxes(maxColors)
         val colors = createResult(createBoxesResult.resultCount)
         val resultMap: MutableMap<Int, Int> = LinkedHashMap()
         for (color in colors) {

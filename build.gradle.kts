@@ -10,10 +10,10 @@ plugins {
     id("com.google.devtools.ksp") version "1.8.20-1.0.11" apply false
     id("com.google.protobuf") version "0.9.3" apply false
     id("com.squareup.sqldelight") version "1.5.5" apply false
-    id("com.mikepenz.aboutlibraries.plugin") version "10.6.3" apply false
+    id("com.mikepenz.aboutlibraries.plugin") version "10.7.0" apply false
     id("de.jensklingenberg.ktorfit") version "1.0.0" apply false
     id("com.google.osdetector") version "1.7.3" apply false
-    id("com.github.ben-manes.versions") version "0.46.0"
+    id("com.github.ben-manes.versions") version "0.47.0"
     id("org.gradle.android.cache-fix") version "2.7.1" apply false
 }
 
@@ -28,7 +28,7 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:7.4.2")
-        classpath("dev.icerock.moko:resources-generator:0.22.0")
+        classpath("dev.icerock.moko:resources-generator:0.23.0")
     }
 }
 

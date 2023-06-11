@@ -33,6 +33,7 @@ import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameView
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import io.kamel.core.Resource
+import io.kamel.image.asyncPainterResource
 import io.kamel.image.lazyPainterResource
 
 @Composable
@@ -198,7 +199,7 @@ fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
 
 @Composable
 fun ColumnScope.GameHeader(component: DeviceComponent, game: LocalGame) {
-    when (val resource = lazyPainterResource(game.headerUrl)) {
+    when (val resource = asyncPainterResource(game.headerUrl)) {
         is Resource.Loading -> {
             LoadingImage(game.name, resource.progress)
         }
@@ -215,7 +216,7 @@ fun ColumnScope.GameHeader(component: DeviceComponent, game: LocalGame) {
         is Resource.Failure -> {
             val fallbackFile = game.headerFile
             if (fallbackFile != null) {
-                when (val fallbackResource = lazyPainterResource(fallbackFile)) {
+                when (val fallbackResource = asyncPainterResource(fallbackFile)) {
                     is Resource.Loading -> LoadingImage(game.name, fallbackResource.progress)
                     is Resource.Success -> {
                         val painter = fallbackResource.value

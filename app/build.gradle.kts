@@ -18,9 +18,9 @@ plugins {
 val coroutines = "1.7.1"
 val decompose = "1.0.0"
 val kodein = "7.20.1"
-val ktor = "2.3.0"
-val moko = "0.22.0"
-val kamel = "0.5.0"
+val ktor = "2.3.1"
+val moko = "0.23.0"
+val kamel = "0.5.1"
 val napier = "2.6.1"
 
 val artifact = "dev.datlag.esports.prodigy"
@@ -58,8 +58,8 @@ kotlin {
                 api("io.ktor:ktor-client-content-negotiation:$ktor")
                 api("io.ktor:ktor-serialization-kotlinx-json:$ktor")
 
-                implementation("com.mikepenz:aboutlibraries-compose:10.6.3")
-                implementation("com.mikepenz:aboutlibraries-core:10.6.3")
+                implementation("com.mikepenz:aboutlibraries-compose:10.7.0")
+                implementation("com.mikepenz:aboutlibraries-core:10.7.0")
 
                 api("dev.icerock.moko:resources-compose:$moko")
                 api("media.kamel:kamel-image:$kamel")
@@ -174,10 +174,7 @@ compose {
 }
 
 configure<de.jensklingenberg.ktorfit.gradle.KtorfitGradleConfiguration>() {
-    version = "1.3.0"
-}
-dependencies {
-    implementation("io.ktor:ktor-client-okhttp-jvm:2.3.1")
+    version = "1.4.1"
 }
 
 multiplatformResources {

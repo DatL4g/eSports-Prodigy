@@ -49,13 +49,13 @@ class ViewingConditions
         fun make(
             whitePoint: DoubleArray,
             adaptingLuminance: Double,
-            backgroundLstar: Double,
+            backgroundL: Double,
             surround: Double,
             discountingIlluminant: Boolean
         ): ViewingConditions {
             // A background of pure black is non-physical and leads to infinities that represent the idea
             // that any color viewed in pure black can't be seen.
-            var backgroundLstar = backgroundLstar
+            var backgroundLstar = backgroundL
             backgroundLstar = max(0.1, backgroundLstar)
             // Transform white point XYZ to 'cone'/'rgb' responses
             val matrix = Cam16.XYZ_TO_CAM16RGB
