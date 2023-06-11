@@ -13,46 +13,45 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.datlag.esports.prodigy.SharedRes
 import dev.datlag.esports.prodigy.common.openInBrowser
-import dev.datlag.esports.prodigy.game.model.Game
+import dev.datlag.esports.prodigy.game.model.LocalGame
+import dev.datlag.esports.prodigy.game.model.LocalGameInfo
 import dev.datlag.esports.prodigy.ui.theme.LeftRoundedShape
 import dev.datlag.esports.prodigy.ui.theme.RightRoundedShape
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
-fun RowScope.LaunchButton(game: Game) {
+fun RowScope.LaunchButton(game: LocalGame) {
     val startError = stringResource(SharedRes.strings.could_not_start_game)
 
-    when (game) {
-        is Game.Steam -> {
-            SingleGameLaunchButton {
-                launchSteam(startError, game)
-            }
-        }
-
-        is Game.Heroic -> {
-            SingleGameLaunchButton {
-                launchHeroic(startError, game)
-            }
-        }
-
-        is Game.Multi -> {
+    when {
+        game.steam != null && game.heroic != null -> {
             MultiGameLaunchButton(game) { launchGame ->
                 when (launchGame) {
-                    is Game.Steam -> {
+                    is LocalGameInfo.Steam -> {
                         launchSteam(startError, launchGame)
                     }
-                    is Game.Heroic -> {
+                    is LocalGameInfo.Heroic -> {
                         launchHeroic(startError, launchGame)
                     }
                     else -> true
                 }
             }
         }
+        game.steam != null -> {
+            SingleGameLaunchButton {
+                launchSteam(startError, game.steam!!)
+            }
+        }
+        game.heroic != null -> {
+            SingleGameLaunchButton {
+                launchHeroic(startError, game.heroic!!)
+            }
+        }
     }
 }
 
-private fun launchSteam(startError: String, game: Game.Steam): Boolean {
+private fun launchSteam(startError: String, game: LocalGameInfo.Steam): Boolean {
     val appId = game.manifest.appId
     var result = "steam://rungameid/$appId".openInBrowser(startError)
     if (result.isFailure) {
@@ -61,7 +60,7 @@ private fun launchSteam(startError: String, game: Game.Steam): Boolean {
     return result.isFailure
 }
 
-private fun launchHeroic(startError: String, game: Game.Heroic): Boolean {
+private fun launchHeroic(startError: String, game: LocalGameInfo.Heroic): Boolean {
     val launchId = game.app.appName ?: game.app.title
     val result = "heroic://launch/$launchId".openInBrowser(startError)
     return result.isFailure
@@ -94,7 +93,7 @@ private fun SingleGameLaunchButton(launching: () -> Boolean) {
 }
 
 @Composable
-private fun MultiGameLaunchButton(game: Game.Multi, launching: (Game) -> Boolean) {
+private fun MultiGameLaunchButton(game: LocalGame, launching: (LocalGameInfo) -> Boolean) {
     var launchClickable by remember { mutableStateOf(true) }
     val preferredGame = game.steam ?: game.heroic
     var showMenu by remember { mutableStateOf(false) }
@@ -113,8 +112,8 @@ private fun MultiGameLaunchButton(game: Game.Multi, launching: (Game) -> Boolean
             shape = LeftRoundedShape
         ) {
             val painter = when (preferredGame) {
-                is Game.Steam -> painterResource(SharedRes.images.steam)
-                is Game.Heroic -> painterResource(SharedRes.images.heroic)
+                is LocalGameInfo.Steam -> painterResource(SharedRes.images.steam)
+                is LocalGameInfo.Heroic -> painterResource(SharedRes.images.heroic)
                 else -> null
             }
             if (painter != null) {
@@ -161,9 +160,9 @@ private fun MultiGameLaunchButton(game: Game.Multi, launching: (Game) -> Boolean
 @Composable
 private fun LaunchDropDown(
     expanded: Boolean,
-    game: Game.Multi,
-    ignoreType: Game.TYPE?,
-    launching: (Game) -> Boolean,
+    game: LocalGame,
+    ignoreType: LocalGameInfo.TYPE?,
+    launching: (LocalGameInfo) -> Boolean,
     onDismiss: () -> Unit
 ) {
     DropdownMenu(
@@ -173,10 +172,10 @@ private fun LaunchDropDown(
         }
     ) {
         game.games.forEach {
-            if (it.type != ignoreType && it.type != null) {
-                val (painter, launcher) = when (it.type!!) {
-                    is Game.TYPE.STEAM -> painterResource(SharedRes.images.steam) to "Steam"
-                    is Game.TYPE.HEROIC -> painterResource(SharedRes.images.heroic) to "Heroic"
+            if (it.type != ignoreType) {
+                val (painter, launcher) = when (it.type) {
+                    is LocalGameInfo.TYPE.STEAM -> painterResource(SharedRes.images.steam) to "Steam"
+                    is LocalGameInfo.TYPE.HEROIC -> painterResource(SharedRes.images.heroic) to "Heroic"
                 }
 
                 DropdownMenuItem(
@@ -196,8 +195,7 @@ private fun LaunchDropDown(
                     onClick = {
                         launching(it)
                         onDismiss()
-                    },
-                    enabled = it.type != null
+                    }
                 )
             }
         }

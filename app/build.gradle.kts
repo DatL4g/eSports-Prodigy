@@ -94,6 +94,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutines")
                 implementation("com.sealwu:kscript-tools:1.0.22")
                 implementation("net.harawata:appdirs:1.2.1")
+                implementation("com.darkrockstudios:mpfilepicker:1.1.0")
             }
         }
     }

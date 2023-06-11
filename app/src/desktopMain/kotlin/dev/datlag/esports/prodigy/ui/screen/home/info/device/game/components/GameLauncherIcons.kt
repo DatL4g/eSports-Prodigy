@@ -14,32 +14,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import dev.datlag.esports.prodigy.SharedRes
-import dev.datlag.esports.prodigy.game.model.Game
+import dev.datlag.esports.prodigy.game.model.LocalGame
 import dev.icerock.moko.resources.compose.painterResource
 
 @Composable
-fun RowScope.GameLauncherIcons(game: Game) {
-    when (game) {
-        is Game.Steam -> {
-            SteamIcon()
-        }
-        is Game.Heroic -> {
-            HeroicIcon()
-        }
-        is Game.Multi -> {
+fun RowScope.GameLauncherIcons(game: LocalGame) {
+    when {
+        game.steam != null && game.heroic != null -> {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                game.games.forEach {
-                    if (it is Game.Steam) {
-                        SteamIcon()
-                    }
-                    if (it is Game.Heroic) {
-                        HeroicIcon()
-                    }
-                }
+                SteamIcon()
+                HeroicIcon()
             }
+        }
+        game.steam != null -> {
+            SteamIcon()
+        }
+        game.heroic != null -> {
+            HeroicIcon()
         }
     }
 }

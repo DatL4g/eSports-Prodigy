@@ -13,7 +13,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.datlag.esports.prodigy.SharedRes
-import dev.datlag.esports.prodigy.game.model.Game
+import dev.datlag.esports.prodigy.game.model.LocalGame
+import dev.datlag.esports.prodigy.game.model.LocalGameInfo
 import dev.datlag.esports.prodigy.model.common.scopeCatching
 import dev.datlag.esports.prodigy.ui.theme.LeftRoundedShape
 import dev.datlag.esports.prodigy.ui.theme.RightRoundedShape
@@ -23,20 +24,20 @@ import java.io.File
 
 
 @Composable
-fun RowScope.DirectoryButton(game: Game) {
+fun RowScope.DirectoryButton(game: LocalGame) {
     val openSupported = scopeCatching {
         Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)
     }.getOrNull() ?: false
 
-    when (game) {
-        is Game.Steam -> {
-            SingleDirectoryButton(openSupported, game.directories.firstNotNullOfOrNull { it.value })
-        }
-        is Game.Heroic -> {
-            SingleDirectoryButton(openSupported, game.directories.firstNotNullOfOrNull { it.value })
-        }
-        is Game.Multi -> {
+    when {
+        game.steam != null && game.heroic != null -> {
             MultiDirectoryButton(openSupported, game)
+        }
+        game.steam != null -> {
+            SingleDirectoryButton(openSupported, game.steamDirectory)
+        }
+        game.heroic != null -> {
+            SingleDirectoryButton(openSupported, game.heroicDirectory)
         }
     }
 }
@@ -69,9 +70,12 @@ private fun RowScope.SingleDirectoryButton(openSupported: Boolean, directory: Fi
 }
 
 @Composable
-private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: Game.Multi) {
-    val preferredGame = game.steam ?: game.heroic
-    val preferredDirectory = preferredGame?.directories?.firstNotNullOfOrNull { it }
+private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: LocalGame) {
+    val (type, preferredDirectory) = game.steamDirectory?.let {
+        LocalGameInfo.TYPE.STEAM to it
+    } ?: game.heroicDirectory?.let {
+        LocalGameInfo.TYPE.HEROIC to it
+    } ?: (null to null)
     val borderStroke = BorderStroke(
         width = ButtonDefaults.outlinedButtonBorder.width,
         color = if (openSupported) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F)
@@ -85,10 +89,10 @@ private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: Game.Mul
         OutlinedButton(
             onClick = {
                 scopeCatching {
-                    Desktop.getDesktop().open(preferredDirectory?.value)
-                }
+                    Desktop.getDesktop().open(preferredDirectory)
+                }.getOrNull()
             },
-            enabled = openSupported && preferredDirectory?.value != null,
+            enabled = openSupported && preferredDirectory != null,
             shape = LeftRoundedShape,
             border = borderStroke
         ) {
@@ -118,7 +122,7 @@ private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: Game.Mul
         DirectoryDropDown(
             showMenu,
             game,
-            preferredDirectory?.key,
+            type,
             openSupported
         ) {
             showMenu = false
@@ -129,8 +133,8 @@ private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: Game.Mul
 @Composable
 private fun DirectoryDropDown(
     expanded: Boolean,
-    game: Game.Multi,
-    ignoreType: Game.TYPE?,
+    game: LocalGame,
+    ignoreType: LocalGameInfo.TYPE?,
     openSupported: Boolean,
     onDismiss: () -> Unit
 ) {
@@ -143,8 +147,8 @@ private fun DirectoryDropDown(
         game.directories.forEach { (t, u) ->
             if (t != ignoreType) {
                 val (painter, prefix) = when (t) {
-                    is Game.TYPE.STEAM -> painterResource(SharedRes.images.steam) to "Steam"
-                    is Game.TYPE.HEROIC -> painterResource(SharedRes.images.heroic) to "Heroic"
+                    is LocalGameInfo.TYPE.STEAM -> painterResource(SharedRes.images.steam) to "Steam"
+                    is LocalGameInfo.TYPE.HEROIC -> painterResource(SharedRes.images.heroic) to "Heroic"
                 }
 
                 DropdownMenuItem(

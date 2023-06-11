@@ -12,7 +12,8 @@ import dev.datlag.esports.prodigy.common.ioScope
 import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.game.HeroicLauncher
 import dev.datlag.esports.prodigy.game.SteamLauncher
-import dev.datlag.esports.prodigy.game.model.Game
+import dev.datlag.esports.prodigy.game.model.LocalGame
+import dev.datlag.esports.prodigy.game.model.LocalGameInfo
 import dev.datlag.esports.prodigy.model.common.listFrom
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameConfig
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameViewComponent
@@ -58,11 +59,11 @@ actual class DeviceViewComponent actual constructor(
     }
     override val child: Value<ChildOverlay<GameConfig, Any>> = _child
 
-    private val steamGames: Flow<List<Game>> = SteamLauncher.appManifests.transform {
+    private val steamGames: Flow<List<LocalGameInfo>> = SteamLauncher.appManifests.transform {
         return@transform emit(it.filter { app ->
             wantedSteamGameIds.contains(app.appId)
         }.sortedBy { app -> wantedSteamGameIds.indexOf(app.appId) }.map { app ->
-            SteamLauncher.asGame(app)
+            SteamLauncher.asLocalGameInfo(app)
         })
     }
 
@@ -70,15 +71,15 @@ actual class DeviceViewComponent actual constructor(
         return@transform emit(it.filter { app ->
             wantedHeroicGames.contains(app.title) && app.isInstalled && !app.install.isDLC
         }.map { app ->
-            HeroicLauncher.asGame(app)
+            HeroicLauncher.asLocalGameInfo(app)
         })
     }
 
-    override val games: Flow<List<Game>> = combine(steamGames, heroicGames) { steam, heroic ->
-        Game.flatten(listFrom(steam, heroic))
+    override val games: Flow<List<LocalGame>> = combine(steamGames, heroicGames) { steam, heroic ->
+        LocalGame.combineGames(listFrom(steam, heroic))
     }
 
-    override fun gameClicked(game: Game) {
+    override fun gameClicked(game: LocalGame) {
         navigation.activate(GameConfig.Overview(game))
     }
 

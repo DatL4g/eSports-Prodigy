@@ -24,7 +24,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.datlag.esports.prodigy.SharedRes
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.game.common.containsInvalidEntries
-import dev.datlag.esports.prodigy.game.model.Game
+import dev.datlag.esports.prodigy.game.model.LocalGame
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
 import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameComponent
@@ -141,7 +141,7 @@ fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
             )
         }
 
-        items(games, key = { it.name }) { game ->
+        items(games) { game ->
             Column(
                 modifier = Modifier.onClick {
                     component.gameClicked(game)
@@ -155,13 +155,16 @@ fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    val caches by game.dxvkCaches.collectAsStateSafe { emptyMap() }
+
                     Text(
                         modifier = Modifier.weight(1F),
                         text = game.name,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    if (game.dxvkCaches.keys.flatten().containsInvalidEntries()) {
+
+                    if (caches.values.flatten().containsInvalidEntries()) {
                         TooltipArea(
                             tooltip = {
                                 Text(
@@ -194,14 +197,8 @@ fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ColumnScope.GameHeader(component: DeviceComponent, game: Game) {
-    when (val resource = lazyPainterResource(game.headerUrl ?: run {
-        when (game) {
-            is Game.Steam -> game.headerFile
-            is Game.Multi -> game.headerFile
-            else -> null
-        }
-    } ?: String())) {
+fun ColumnScope.GameHeader(component: DeviceComponent, game: LocalGame) {
+    when (val resource = lazyPainterResource(game.headerUrl)) {
         is Resource.Loading -> {
             LoadingImage(game.name, resource.progress)
         }
@@ -216,11 +213,7 @@ fun ColumnScope.GameHeader(component: DeviceComponent, game: Game) {
             )
         }
         is Resource.Failure -> {
-            val fallbackFile = when (game) {
-                is Game.Steam -> game.headerFile
-                is Game.Multi -> game.headerFile
-                else -> null
-            }
+            val fallbackFile = game.headerFile
             if (fallbackFile != null) {
                 when (val fallbackResource = lazyPainterResource(fallbackFile)) {
                     is Resource.Loading -> LoadingImage(game.name, fallbackResource.progress)

@@ -6,21 +6,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import dev.datlag.esports.prodigy.game.model.Game
+import dev.datlag.esports.prodigy.game.model.LocalGame
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.FallbackImage
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.LoadingImage
 import io.kamel.core.Resource
 import io.kamel.image.lazyPainterResource
 
 @Composable
-fun BoxScope.GameHero(game: Game) {
-    when (val resource = lazyPainterResource(game.heroUrl ?: run {
-        when (game) {
-            is Game.Steam -> game.heroFile
-            is Game.Multi -> game.heroFile
-            else -> null
-        }
-    } ?: String())) {
+fun BoxScope.GameHero(game: LocalGame) {
+    when (val resource = lazyPainterResource(game.heroUrl)) {
         is Resource.Loading -> {
             LoadingImage(game.name, resource.progress)
         }
@@ -33,11 +27,7 @@ fun BoxScope.GameHero(game: Game) {
             )
         }
         is Resource.Failure -> {
-            val fallbackFile = when (game) {
-                is Game.Steam -> game.heroFile
-                is Game.Multi -> game.heroFile
-                else -> null
-            }
+            val fallbackFile = game.heroFile
 
             if (fallbackFile != null) {
                 when (val fallbackResource = lazyPainterResource(fallbackFile)) {

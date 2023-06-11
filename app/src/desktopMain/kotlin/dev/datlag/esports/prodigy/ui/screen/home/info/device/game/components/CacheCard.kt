@@ -10,17 +10,24 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.darkrockstudios.libraries.mpfilepicker.DirectoryPicker
 import dev.datlag.esports.prodigy.SharedRes
-import dev.datlag.esports.prodigy.common.ifTrue
+import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.game.dxvk.DxvkStateCache
-import dev.datlag.esports.prodigy.game.model.Game
+import dev.datlag.esports.prodigy.game.model.LocalGame
+import dev.datlag.esports.prodigy.game.model.LocalGameInfo
+import dev.datlag.esports.prodigy.model.common.homeDirectory
+import dev.datlag.esports.prodigy.model.common.move
 import dev.icerock.moko.resources.compose.painterResource
+import java.io.File
 import kotlin.math.max
 
 
 @Composable
 fun CacheCard(
-    type: Game.TYPE,
+    game: LocalGame,
+    gameInfo: LocalGameInfo?,
+    type: LocalGameInfo.TYPE,
     cache: DxvkStateCache,
     width: Int,
     height: Int,
@@ -32,20 +39,23 @@ fun CacheCard(
     val heightDp = with(LocalDensity.current) {
         height.toDp()
     }
+    val scope = rememberCoroutineScope()
 
     fun Modifier.sameSize() = when {
-        width > 0 && height > 0 -> then(Modifier.size(
-            width = widthDp,
-            height = heightDp
+        width > 0 && height > 0 -> then(Modifier.defaultMinSize(
+            minWidth = widthDp,
+            minHeight = heightDp
         ))
-        width > 0 -> then(Modifier.width(
-            width = widthDp
+        width > 0 -> then(Modifier.defaultMinSize(
+            minWidth = widthDp
         ))
-        height > 0 -> then(Modifier.height(
-            height = heightDp
+        height > 0 -> then(Modifier.defaultMinSize(
+            minHeight = heightDp
         ))
         else -> then(Modifier)
     }
+
+    var showExportPicker by remember { mutableStateOf(false) }
 
     OutlinedCard(
         modifier = Modifier.padding(vertical = 2.dp).sameSize().onSizeChanged {
@@ -61,8 +71,8 @@ fun CacheCard(
             verticalArrangement = Arrangement.Center
         ) {
             val (painter, name) = when (type) {
-                is Game.TYPE.STEAM -> painterResource(SharedRes.images.steam) to "Steam"
-                is Game.TYPE.HEROIC -> painterResource(SharedRes.images.heroic) to "Heroic"
+                is LocalGameInfo.TYPE.STEAM -> painterResource(SharedRes.images.steam) to "Steam"
+                is LocalGameInfo.TYPE.HEROIC -> painterResource(SharedRes.images.heroic) to "Heroic"
             }
 
             Row(
@@ -117,7 +127,7 @@ fun CacheCard(
                 Button(
                     modifier = Modifier.align(Alignment.End),
                     onClick = {
-
+                        scope.launchIO { repairCache(game, gameInfo, cache) }
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer,
@@ -133,12 +143,37 @@ fun CacheCard(
                 Button(
                     modifier = Modifier.align(Alignment.End),
                     onClick = {
-
+                        showExportPicker = true
                     }
                 ) {
                     Text(text = "Export")
                 }
             }
         }
+        DirectoryPicker(showExportPicker, homeDirectory()?.absolutePath) { path ->
+            showExportPicker = false
+
+            if (path?.ifEmpty { null } != null) {
+                scope.launchIO {
+                    exportCache(path, cache)
+                }
+            }
+        }
     }
+}
+
+private suspend fun repairCache(game: LocalGame, gameInfo: LocalGameInfo?, cache: DxvkStateCache) {
+    val originalName = cache.file.name
+    val backupFile = cache.file.move("$originalName.bak")
+
+    val loadBackupFile = cache.writeToFile(cache.file).isFailure
+    if (loadBackupFile) {
+        backupFile.move(originalName)
+    }
+
+    gameInfo?.reloadDxvkCaches() ?: game.reloadDxvkCaches()
+}
+
+private suspend fun exportCache(path: String, cache: DxvkStateCache) {
+    cache.writeToFile(File(path, cache.file.name))
 }

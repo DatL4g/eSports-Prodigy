@@ -3,7 +3,7 @@
 package dev.datlag.esports.prodigy.game
 
 import dev.datlag.esports.prodigy.game.dxvk.DxvkStateCache
-import dev.datlag.esports.prodigy.game.model.Game
+import dev.datlag.esports.prodigy.game.model.LocalGameInfo
 import dev.datlag.esports.prodigy.game.model.legendary.App
 import dev.datlag.esports.prodigy.game.model.legendary.AppLibrary
 import dev.datlag.esports.prodigy.model.common.*
@@ -75,8 +75,8 @@ object HeroicLauncher {
         }
     }
 
-    suspend fun asGame(app: App): Game.Heroic {
-        return Game.Heroic(
+    suspend fun asLocalGameInfo(app: App): LocalGameInfo.Heroic {
+        return LocalGameInfo.Heroic(
             app,
             app.install.installPath?.let { File(it) },
             suspendCatching {

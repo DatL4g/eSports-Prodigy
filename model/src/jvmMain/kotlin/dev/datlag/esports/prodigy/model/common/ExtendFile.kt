@@ -125,3 +125,16 @@ fun File.deleteSafely(): Boolean {
         this.delete()
     }.getOrNull() ?: false
 }
+
+fun File.move(name: String): File {
+    return scopeCatching {
+        Files.move(this.toPath(), File(this.parent, name).toPath())
+    }.getOrNull()?.toFile() ?: scopeCatching {
+        val targetFile = File(this.parent, name)
+        if (this.renameTo(targetFile)) {
+            targetFile
+        } else {
+            null
+        }
+    }.getOrNull() ?: this
+}

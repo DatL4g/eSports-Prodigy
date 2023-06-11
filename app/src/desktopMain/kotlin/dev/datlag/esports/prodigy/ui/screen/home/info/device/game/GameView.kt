@@ -20,6 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import dev.datlag.esports.prodigy.game.model.LocalGameInfo
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
 import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.*
@@ -29,6 +31,8 @@ import kotlinx.serialization.json.JsonNull.content
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GameView(component: GameComponent) {
+    val caches by component.game.dxvkCaches.collectAsStateSafe { emptyMap() }
+
     SchemeTheme.themes[component.game.name]?.let {
         SchemeTheme.specificColorScheme(it)
     }
@@ -81,7 +85,7 @@ fun GameView(component: GameComponent) {
                 }
             }
 
-            if (component.game.dxvkCaches.isNotEmpty()) {
+            if (caches.isNotEmpty()) {
                 item {
                     Text(
                         modifier = Modifier.padding(top = 32.dp, bottom = 16.dp, start = 8.dp, end = 8.dp),
@@ -95,12 +99,16 @@ fun GameView(component: GameComponent) {
                         modifier = Modifier.padding(horizontal = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        var width by remember { mutableStateOf(0) }
-                        var height by remember { mutableStateOf(0) }
+                        var width by remember(component.game.name) { mutableStateOf(0) }
+                        var height by remember(component.game.name) { mutableStateOf(0) }
 
-                        component.game.dxvkCaches.forEach { (caches, type) ->
-                            caches.forEach { cache ->
-                                CacheCard(type, cache, width, height) {
+                        caches.forEach { (type, cacheList) ->
+                            cacheList.forEach { cache ->
+                                val gameInfo = when (type) {
+                                    is LocalGameInfo.TYPE.STEAM -> component.game.steam
+                                    is LocalGameInfo.TYPE.HEROIC -> component.game.heroic
+                                }
+                                CacheCard(component.game, gameInfo, type, cache, width, height) {
                                     width = it.first
                                     height = it.second
                                 }

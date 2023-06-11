@@ -4,7 +4,7 @@ package dev.datlag.esports.prodigy.game
 
 import dev.datlag.esports.prodigy.game.common.decodeFromFile
 import dev.datlag.esports.prodigy.game.dxvk.DxvkStateCache
-import dev.datlag.esports.prodigy.game.model.Game
+import dev.datlag.esports.prodigy.game.model.LocalGameInfo
 import dev.datlag.esports.prodigy.game.model.steam.AppManifest
 import dev.datlag.esports.prodigy.game.model.steam.LibraryConfig
 import dev.datlag.esports.prodigy.model.common.*
@@ -131,10 +131,10 @@ object SteamLauncher {
         }
     }
 
-    suspend fun asGame(appManifest: AppManifest): Game.Steam {
+    suspend fun asLocalGameInfo(appManifest: AppManifest): LocalGameInfo.Steam {
         val steamAppsFolders = getSteamAppFolders(steamDirectories)
 
-        return Game.Steam(
+        return LocalGameInfo.Steam(
             appManifest,
             suspendCatching {
                 steamAppsFolders.map {
@@ -157,7 +157,7 @@ object SteamLauncher {
             }.normalize().firstOrNull(),
             suspendCatching {
                 steamAppsFolders.map {
-                        File(it, "shadercache/${appManifest.appId}/DXVK_state_cache")
+                    File(it, "shadercache/${appManifest.appId}/DXVK_state_cache")
                 }.flatMap { it.listFilesSafely() }.filter {
                     it.extension.equals("dxvk-cache", true)
                 }.normalize().mapNotNull {
