@@ -10,9 +10,13 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleC
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import dev.datlag.esports.prodigy.common.basedOnSize
 import dev.datlag.esports.prodigy.common.basedOnWidth
+import dev.datlag.esports.prodigy.model.common.existsRSafely
+import dev.datlag.esports.prodigy.model.common.existsSafely
+import dev.datlag.esports.prodigy.model.common.systemProperty
 import dev.datlag.esports.prodigy.module.DataStoreModule
 import dev.datlag.esports.prodigy.ui.*
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
+import dev.datlag.sekret.Sekret
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import io.github.aakira.napier.DebugAntilog
@@ -21,6 +25,7 @@ import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.takeFrom
 import io.kamel.image.config.*
 import org.kodein.di.DI
+import java.io.File
 
 @OptIn(ExperimentalDecomposeApi::class)
 fun main() {
@@ -41,6 +46,8 @@ fun main() {
         imageVectorDecoder()
     }
     Napier.base(DebugAntilog())
+
+    println(Sekret().test(419))
 
     singleWindowApplication(
         state = windowState,

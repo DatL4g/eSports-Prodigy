@@ -125,12 +125,27 @@ android {
     }
 }
 
+val createNativeLib = tasks.create<Copy>("createNativeLib") {
+    dependsOn("sekret:assemble")
+
+    val binPath = if (File("sekret/build/bin/native/releaseShared/").exists()) {
+        "sekret/build/bin/native/releaseShared/"
+    } else {
+        "sekret/build/bin/native/debugShared/"
+    }
+
+    from(binPath)
+    exclude("*.h")
+    into("resources/common/")
+}
+
 compose {
     kotlinCompilerPlugin.set("androidx.compose.compiler:compiler:1.4.6")
 
     desktop {
         application {
             mainClass = "$artifact.MainKt"
+            dependsOn(createNativeLib)
 
             nativeDistributions {
                 packageName = "eSports Prodigy"
@@ -140,6 +155,7 @@ compose {
                 licenseFile.set(rootProject.file("LICENSE"))
 
                 outputBaseDir.set(rootProject.buildDir.resolve("release"))
+                appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
 
                 when (getHost()) {
                     Host.Linux -> targetFormats(

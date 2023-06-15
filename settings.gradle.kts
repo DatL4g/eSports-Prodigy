@@ -1,6 +1,6 @@
 rootProject.name = "eSports Prodigy"
 
-include("app")
+include("app", "app:sekret")
 include("color")
 include("model")
 include("game")
