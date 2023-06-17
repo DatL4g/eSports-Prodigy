@@ -15,6 +15,7 @@ plugins {
     id("com.google.osdetector") version "1.7.3" apply false
     id("com.github.ben-manes.versions") version "0.47.0"
     id("org.gradle.android.cache-fix") version "2.7.1" apply false
+    id("net.afanasev.sekret") version "0.1.0" apply false
 }
 
 buildscript {

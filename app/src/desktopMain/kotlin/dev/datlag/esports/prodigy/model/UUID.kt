@@ -3,13 +3,14 @@ package dev.datlag.esports.prodigy.model
 import dev.datlag.esports.prodigy.nanoid.NanoIdUtils
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.afanasev.sekret.Secret
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Serializable
 data class UUID(
-    @SerialName("common") val common: String,
-    @SerialName("user") val user: String
+    @Secret @SerialName("common") val common: String,
+    @Secret @SerialName("user") val user: String
 ) {
 
     @OptIn(ExperimentalEncodingApi::class)

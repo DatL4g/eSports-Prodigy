@@ -16,6 +16,8 @@ object NanoIdUtils {
 
     const val DEFAULT_SIZE: Int = 21
 
+    const val MAX_SIZE: Int = 255
+
     @JvmStatic
     @JvmOverloads
     fun randomNanoId(

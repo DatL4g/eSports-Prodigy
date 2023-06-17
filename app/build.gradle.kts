@@ -77,6 +77,7 @@ kotlin {
         val androidMain by getting {
             apply(plugin = "kotlin-parcelize")
             apply(plugin = "org.gradle.android.cache-fix")
+            apply(plugin = "net.afanasev.sekret")
             dependencies {
                 implementation("androidx.appcompat:appcompat:1.6.1")
                 implementation("androidx.core:core-ktx:1.10.1")
@@ -88,16 +89,19 @@ kotlin {
                 implementation("androidx.core:core-splashscreen:1.0.1")
                 implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
                 implementation("androidx.compose.material3:material3-window-size-class:1.1.0")
+                implementation("net.afanasev:sekret-annotation:0.1.0")
             }
         }
 
         val desktopMain by getting {
+            apply(plugin = "net.afanasev.sekret")
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutines")
                 implementation("com.sealwu:kscript-tools:1.0.22")
                 implementation("net.harawata:appdirs:1.2.1")
                 implementation("com.darkrockstudios:mpfilepicker:1.1.0")
+                implementation("net.afanasev:sekret-annotation:0.1.0")
             }
         }
     }
