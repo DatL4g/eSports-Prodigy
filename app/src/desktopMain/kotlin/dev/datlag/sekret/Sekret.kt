@@ -8,5 +8,5 @@ class Sekret {
         }
     }
 
-    external fun test(it: Int): Int
+    external fun testKey(it: String): String
 }

@@ -47,8 +47,6 @@ fun main() {
     }
     Napier.base(DebugAntilog())
 
-    println(Sekret().test(419))
-
     singleWindowApplication(
         state = windowState,
         title = appTitle

@@ -1,6 +1,9 @@
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule
+import java.util.Properties
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import java.security.MessageDigest
+import kotlin.experimental.xor
 
 plugins {
     kotlin("multiplatform")
@@ -137,6 +140,87 @@ val createNativeLib = tasks.create<Copy>("createNativeLib") {
     from(binPath)
     exclude("*.h")
     into("resources/common/")
+}
+
+fun propertiesFile(): File {
+    return if (project.hasProperty("propertiesFileName")) {
+        val propsPath = project.property("propertiesFileName") as? String
+        if (propsPath != null) {
+            File(project.rootDir, propsPath)
+        } else {
+            File(project.rootDir, "sekret.properties")
+        }
+    } else {
+        File(project.rootDir, "sekret.properties")
+    }
+}
+
+fun propertiesFromFile(propsFile: File = propertiesFile()): Properties {
+    return Properties().apply {
+        propsFile.inputStream().use {
+            load(it)
+        }
+    }
+}
+
+fun sha256(value: String): String {
+    val bytes = value.toByteArray()
+    val md = MessageDigest.getInstance("SHA-256")
+    val digest = md.digest(bytes)
+    return digest.fold("") { str, it -> str + "%02x".format(it) }
+}
+
+fun encode(value: String, packageName: String = artifact): String {
+    val obfuscator = sha256(packageName)
+    val obfuscatorBytes = obfuscator.encodeToByteArray()
+    val obfuscatedSecretBytes = arrayListOf<Byte>()
+    var i = 0
+
+    value.toByteArray().forEach { secretByte ->
+        val obfuscatorByte = obfuscatorBytes[i % obfuscatorBytes.size]
+        val obfuscatedByte = secretByte.xor(obfuscatorByte)
+        obfuscatedSecretBytes.add(obfuscatedByte)
+        i++
+    }
+
+    var encoded = ""
+    val iterator: Iterator<Byte> = obfuscatedSecretBytes.iterator()
+    while (iterator.hasNext()) {
+        val item = iterator.next()
+        encoded += "0x" + Integer.toHexString(item.toInt() and 0xff)
+
+        if (iterator.hasNext()) {
+            encoded += ", "
+        }
+    }
+    return encoded
+}
+
+tasks.create("createSekret") {
+    doLast {
+        val packageName = artifact
+        val props = propertiesFromFile()
+        val sekretKotlinFile = File(project.projectDir, "sekret/src/nativeMain/kotlin/sekret.kt")
+        var newContent = "\n\n"
+
+        props.entries.forEach { entry ->
+            val keyName = entry.key as String
+            val obfuscated = encode(entry.value as String, packageName)
+
+            var method = "@CName(\"Java_dev_datlag_sekret_Sekret_${keyName}\")\n"
+            method += "fun ${keyName}(env: CPointer<JNIEnvVar>, clazz: jclass, it: jstring): jstring {\n"
+            method += "    initRuntimeIfNeeded()\n\n"
+            method += "    val obfuscatedSecret = intArrayOf(\n"
+            method += "        $obfuscated\n"
+            method += "    )\n"
+            method += "    return getOriginalKey(obfuscatedSecret, it, env) ?: it\n"
+            method += "}"
+
+            newContent += method
+        }
+
+        sekretKotlinFile.appendText(newContent)
+    }
 }
 
 compose {

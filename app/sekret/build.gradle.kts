@@ -34,7 +34,11 @@ kotlin {
         }
     }
     sourceSets {
-        val nativeMain by getting
+        val nativeMain by getting {
+            dependencies {
+                implementation("com.github.komputing.khash:sha256:1.1.3")
+            }
+        }
     }
 }
 
