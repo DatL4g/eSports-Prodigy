@@ -2,6 +2,9 @@ app/release/*
 !app/release/.gitkeep
 app/resources/common/*
 
+# Ignore changes to generated file
+sekret/src/nativeMain/kotlin/sekret.kt
+
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,intellij,intellij+iml,intellij+all,android,androidstudio,maven,gradle,java,kotlin,netbeans,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,intellij,intellij+iml,intellij+all,android,androidstudio,maven,gradle,java,kotlin,netbeans,visualstudiocode
 
