@@ -154,7 +154,7 @@ fun propertiesFromFile(propsFile: File = propertiesFile()): Properties {
 }
 
 fun sha256(value: String): String {
-    val bytes = value.toByteArray()
+    val bytes = value.encodeToByteArray()
     val md = MessageDigest.getInstance("SHA-256")
     val digest = md.digest(bytes)
     return digest.fold("") { str, it -> str + "%02x".format(it) }
@@ -166,7 +166,7 @@ fun encode(value: String, packageName: String = artifact): String {
     val obfuscatedSecretBytes = arrayListOf<Byte>()
     var i = 0
 
-    value.toByteArray().forEach { secretByte ->
+    value.encodeToByteArray().forEach { secretByte ->
         val obfuscatorByte = obfuscatorBytes[i % obfuscatorBytes.size]
         val obfuscatedByte = secretByte.xor(obfuscatorByte)
         obfuscatedSecretBytes.add(obfuscatedByte)

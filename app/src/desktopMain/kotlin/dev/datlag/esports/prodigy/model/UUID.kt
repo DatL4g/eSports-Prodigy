@@ -1,6 +1,8 @@
 package dev.datlag.esports.prodigy.model
 
+import dev.datlag.esports.prodigy.getPackageName
 import dev.datlag.esports.prodigy.nanoid.NanoIdUtils
+import dev.datlag.sekret.Sekret
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.afanasev.sekret.Secret
@@ -9,34 +11,41 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Serializable
 data class UUID(
-    @Secret @SerialName("common") val common: String,
-    @Secret @SerialName("user") val user: String
+    @Secret @SerialName("common") val common: List<Int>,
+    @Secret @SerialName("user") val user: List<Int>
 ) {
 
-    @OptIn(ExperimentalEncodingApi::class)
-    val commonDecoded: String
-        get() = String(Base64.decode(common))
+    @Secret
+    val commonDecoded: String = decode(common)
 
-    @OptIn(ExperimentalEncodingApi::class)
-    val userDecoded: String
-        get() = String(Base64.decode(user))
+    @Secret
+    val userDecoded: String = decode(user)
+
+    private fun decode(value: List<Int>): String {
+        val key = Sekret().userCipher(
+            getPackageName()
+        ) ?: throw IllegalStateException("Could not load native encryption")
+        return Sekret.decode(value, key)
+    }
 
     companion object {
         fun generate(): UUID {
             return UUID(
-                common = generateBase64(),
-                user = generateBase64()
+                common = generateUniqueId(),
+                user = generateUniqueId()
             )
         }
 
-        @OptIn(ExperimentalEncodingApi::class)
-        private fun generateBase64(): String {
+        private fun generateUniqueId(): List<Int> {
             val alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ~`!@#\$%^&*()_-+={[}]|\\:;\"'<,>.?/".toCharArray()
             val id = NanoIdUtils.randomNanoId(
                 alphabet = alphabet
             )
+            val key = Sekret().userCipher(
+                getPackageName()
+            ) ?: throw IllegalStateException("Could not load native encryption")
 
-            return Base64.encode(id.toByteArray())
+            return Sekret.encode(id, key)
         }
     }
 }
