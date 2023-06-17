@@ -128,20 +128,6 @@ android {
     }
 }
 
-val createNativeLib = tasks.create<Copy>("createNativeLib") {
-    dependsOn("sekret:assemble")
-
-    val binPath = if (File("sekret/build/bin/native/releaseShared/").exists()) {
-        "sekret/build/bin/native/releaseShared/"
-    } else {
-        "sekret/build/bin/native/debugShared/"
-    }
-
-    from(binPath)
-    exclude("*.h")
-    into("resources/common/")
-}
-
 fun propertiesFile(): File {
     return if (project.hasProperty("propertiesFileName")) {
         val propsPath = project.property("propertiesFileName") as? String
@@ -196,7 +182,25 @@ fun encode(value: String, packageName: String = artifact): String {
     return encoded
 }
 
-tasks.create("createSekret") {
+val createSekretFile = tasks.create("createSekretFile") {
+    doLast {
+        val sekretKotlinFile = File(project.projectDir, "sekret/src/nativeMain/kotlin/sekret.kt")
+
+        sekretKotlinFile.writeText(buildString {
+            appendLine("package dev.datlag.sekret")
+            appendLine()
+            appendLine("import dev.datlag.sekret.JNIEnvVar")
+            appendLine("import dev.datlag.sekret.jclass")
+            appendLine("import dev.datlag.sekret.jstring")
+            appendLine("import kotlinx.cinterop.*")
+            appendLine()
+            appendLine()
+        })
+    }
+}
+
+val createSekret = tasks.create("createSekret") {
+    dependsOn(createSekretFile)
     doLast {
         val packageName = artifact
         val props = propertiesFromFile()
@@ -221,6 +225,20 @@ tasks.create("createSekret") {
 
         sekretKotlinFile.appendText(newContent)
     }
+}
+
+val createNativeLib = tasks.create<Copy>("createNativeLib") {
+    dependsOn(createSekret, "sekret:assemble")
+
+    val binPath = if (File("sekret/build/bin/native/releaseShared/").exists()) {
+        "sekret/build/bin/native/releaseShared/"
+    } else {
+        "sekret/build/bin/native/debugShared/"
+    }
+
+    from(binPath)
+    exclude("*.h")
+    into("resources/common/")
 }
 
 compose {

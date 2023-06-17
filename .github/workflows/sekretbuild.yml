@@ -21,4 +21,4 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Build Sekret
-        run: ./gradlew app:createSekret && ./gradlew app:createNativeLib
+        run: ./gradlew app:createNativeLib
