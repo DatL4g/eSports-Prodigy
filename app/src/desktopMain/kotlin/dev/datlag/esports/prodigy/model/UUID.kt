@@ -11,8 +11,8 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Serializable
 data class UUID(
-    @Secret @SerialName("common") val common: List<Int>,
-    @Secret @SerialName("user") val user: List<Int>
+    @Secret @SerialName("common") val common: String,
+    @Secret @SerialName("user") val user: String
 ) {
 
     @Secret
@@ -21,11 +21,12 @@ data class UUID(
     @Secret
     val userDecoded: String = decode(user)
 
-    private fun decode(value: List<Int>): String {
+    @OptIn(ExperimentalEncodingApi::class)
+    private fun decode(value: String): String {
         val key = Sekret().userCipher(
             getPackageName()
         ) ?: throw IllegalStateException("Could not load native encryption")
-        return Sekret.decode(value, key)
+        return Sekret.decode(Base64.decode(value.toByteArray()), key)
     }
 
     companion object {
@@ -36,7 +37,8 @@ data class UUID(
             )
         }
 
-        private fun generateUniqueId(): List<Int> {
+        @OptIn(ExperimentalEncodingApi::class)
+        private fun generateUniqueId(): String {
             val alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ~`!@#\$%^&*()_-+={[}]|\\:;\"'<,>.?/".toCharArray()
             val id = NanoIdUtils.randomNanoId(
                 alphabet = alphabet
@@ -45,7 +47,7 @@ data class UUID(
                 getPackageName()
             ) ?: throw IllegalStateException("Could not load native encryption")
 
-            return Sekret.encode(id, key)
+            return Base64.encode(Sekret.encode(id, key))
         }
     }
 }
