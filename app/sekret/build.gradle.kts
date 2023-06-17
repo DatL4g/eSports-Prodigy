@@ -36,6 +36,7 @@ kotlin {
     sourceSets {
         val nativeMain by getting {
             dependencies {
+                // currently fetching from jitpack.io
                 implementation("com.github.komputing.khash:sha256:1.1.3")
             }
         }

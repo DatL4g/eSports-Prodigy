@@ -10,9 +10,6 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleC
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import dev.datlag.esports.prodigy.common.basedOnSize
 import dev.datlag.esports.prodigy.common.basedOnWidth
-import dev.datlag.esports.prodigy.model.common.existsRSafely
-import dev.datlag.esports.prodigy.model.common.existsSafely
-import dev.datlag.esports.prodigy.model.common.systemProperty
 import dev.datlag.esports.prodigy.module.DataStoreModule
 import dev.datlag.esports.prodigy.ui.*
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent

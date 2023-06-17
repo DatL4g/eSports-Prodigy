@@ -8,5 +8,5 @@ class Sekret {
         }
     }
 
-    external fun testKey(it: String): String
+    external fun userCipher(it: String): String?
 }

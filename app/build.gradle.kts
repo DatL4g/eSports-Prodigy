@@ -208,12 +208,12 @@ tasks.create("createSekret") {
             val obfuscated = encode(entry.value as String, packageName)
 
             var method = "@CName(\"Java_dev_datlag_sekret_Sekret_${keyName}\")\n"
-            method += "fun ${keyName}(env: CPointer<JNIEnvVar>, clazz: jclass, it: jstring): jstring {\n"
+            method += "fun ${keyName}(env: CPointer<JNIEnvVar>, clazz: jclass, it: jstring): jstring? {\n"
             method += "    initRuntimeIfNeeded()\n\n"
             method += "    val obfuscatedSecret = intArrayOf(\n"
             method += "        $obfuscated\n"
             method += "    )\n"
-            method += "    return getOriginalKey(obfuscatedSecret, it, env) ?: it\n"
+            method += "    return getOriginalKey(obfuscatedSecret, it, env)\n"
             method += "}"
 
             newContent += method
