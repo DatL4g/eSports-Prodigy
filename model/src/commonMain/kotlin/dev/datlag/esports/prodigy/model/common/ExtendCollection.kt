@@ -7,3 +7,7 @@ fun <T> listFrom(vararg list: Collection<T>): List<T> {
         }
     }
 }
+
+fun <T> T.asList(): List<T> {
+    return listOf(this)
+}

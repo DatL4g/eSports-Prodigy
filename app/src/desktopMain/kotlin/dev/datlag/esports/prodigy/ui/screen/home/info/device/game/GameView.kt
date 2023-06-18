@@ -20,8 +20,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.netguru.multiplatform.charts.ChartAnimation
+import com.netguru.multiplatform.charts.line.LineChart
+import com.netguru.multiplatform.charts.line.LineChartData
+import com.netguru.multiplatform.charts.line.LineChartPoint
+import com.netguru.multiplatform.charts.line.LineChartSeries
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import dev.datlag.esports.prodigy.common.openInBrowser
 import dev.datlag.esports.prodigy.game.model.LocalGameInfo
+import dev.datlag.esports.prodigy.model.common.asList
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
 import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.*
@@ -32,6 +39,11 @@ import kotlinx.serialization.json.JsonNull.content
 @Composable
 fun GameView(component: GameComponent) {
     val caches by component.game.dxvkCaches.collectAsStateSafe { emptyMap() }
+    val unsupportedUserChartGame = component.unsupportedUserChartGames.firstOrNull {
+        it.steamId != null && it.steamId.equals(component.game.steam?.manifest?.appId, true)
+                || component.game.name.contains(it.name, true)
+                || it.name.contains(component.game.name, true)
+    }
 
     SchemeTheme.themes[component.game.name]?.let {
         SchemeTheme.specificColorScheme(it)
@@ -62,7 +74,7 @@ fun GameView(component: GameComponent) {
             }
             item {
                 Row(
-                    modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp),
+                    modifier = Modifier.padding(vertical = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -77,7 +89,6 @@ fun GameView(component: GameComponent) {
             }
             item {
                 FlowRow(
-                    modifier = Modifier.padding(horizontal = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     LaunchButton(component.game)
@@ -88,7 +99,7 @@ fun GameView(component: GameComponent) {
             if (caches.isNotEmpty()) {
                 item {
                     Text(
-                        modifier = Modifier.padding(top = 32.dp, bottom = 16.dp, start = 8.dp, end = 8.dp),
+                        modifier = Modifier.padding(top = 32.dp, bottom = 16.dp),
                         text = "DXVK State Cache",
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.headlineSmall
@@ -96,7 +107,6 @@ fun GameView(component: GameComponent) {
                 }
                 item {
                     FlowRow(
-                        modifier = Modifier.padding(horizontal = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         var width by remember(component.game.name) { mutableStateOf(0) }
@@ -118,6 +128,22 @@ fun GameView(component: GameComponent) {
                 }
             }
 
+            if (unsupportedUserChartGame != null) {
+                item {
+                    UnsupportedGameChart {
+                        unsupportedUserChartGame.learnMoreUrl.openInBrowser("Cannot open URL")
+                    }
+                }
+            } else {
+                item {
+                    Text(
+                        modifier = Modifier.padding(top = 32.dp, bottom = 16.dp),
+                        text = "User statistics",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
+            }
         }
     }
 }

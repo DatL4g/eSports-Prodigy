@@ -9,3 +9,4 @@ include(
     "datastore:proto"
 )
 include("nanoid")
+include("charts")
