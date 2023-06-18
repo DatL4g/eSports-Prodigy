@@ -20,9 +20,9 @@ import dev.datlag.esports.prodigy.model.common.asList
 import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
 
 @Composable
-fun UnsupportedGameChart(onClick: () -> Unit) {
+fun UnsupportedGameChart(modifier: Modifier, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth().height(300.dp)
+        modifier = modifier.fillMaxWidth().height(300.dp)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),

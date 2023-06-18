@@ -50,11 +50,7 @@ private fun RowScope.SingleDirectoryButton(openSupported: Boolean, directory: Fi
                 Desktop.getDesktop().open(directory)
             }
         },
-        enabled = openSupported && directory != null,
-        border = BorderStroke(
-            width = ButtonDefaults.outlinedButtonBorder.width,
-            color = if (openSupported) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F)
-        )
+        enabled = openSupported && directory != null
     ) {
         Icon(
             imageVector = Icons.Default.Folder,
@@ -76,10 +72,6 @@ private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: LocalGam
     } ?: game.heroicDirectory?.let {
         LocalGameInfo.TYPE.HEROIC to it
     } ?: (null to null)
-    val borderStroke = BorderStroke(
-        width = ButtonDefaults.outlinedButtonBorder.width,
-        color = if (openSupported) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12F)
-    )
     var showMenu by remember { mutableStateOf(false) }
 
     Row(
@@ -93,8 +85,7 @@ private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: LocalGam
                 }.getOrNull()
             },
             enabled = openSupported && preferredDirectory != null,
-            shape = LeftRoundedShape,
-            border = borderStroke
+            shape = LeftRoundedShape
         ) {
             Icon(
                 imageVector = Icons.Default.Folder,
@@ -111,7 +102,6 @@ private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: LocalGam
             onClick = {
                 showMenu = true
             },
-            border = borderStroke,
             shape = RightRoundedShape
         ) {
             Icon(

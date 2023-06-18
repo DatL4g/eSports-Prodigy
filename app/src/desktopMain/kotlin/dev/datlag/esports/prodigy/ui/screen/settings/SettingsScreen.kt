@@ -3,8 +3,7 @@ package dev.datlag.esports.prodigy.ui.screen.settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.getValueBlocking
 import dev.datlag.esports.prodigy.model.ThemeMode
+import org.apache.commons.lang3.SystemUtils
 
 @Composable
 actual fun SettingsScreen(component: SettingsComponent) {
@@ -73,65 +73,62 @@ actual fun SettingsScreen(component: SettingsComponent) {
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false }
                     ) {
-                        val composer = currentComposer
-
-                        if (themeMode !is ThemeMode.LIGHT) {
-                            DropdownMenuItem(
-                                onClick = {
-                                    component.changeThemeMode(ThemeMode.LIGHT)
-                                },
-                                enabled = true,
-                                text = {
-                                    Text(
-                                        text = "Light Theme"
-                                    )
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.LightMode,
-                                        contentDescription = null
-                                    )
+                        DropdownMenuItem(
+                            onClick = {
+                                component.changeThemeMode(ThemeMode.LIGHT)
+                            },
+                            enabled = themeMode != ThemeMode.LIGHT,
+                            text = {
+                                Text(
+                                    text = "Light Theme"
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.LightMode,
+                                    contentDescription = null
+                                )
+                            }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                component.changeThemeMode(ThemeMode.DARK)
+                            },
+                            enabled = themeMode != ThemeMode.DARK,
+                            text = {
+                                Text(
+                                    text = "Dark Theme"
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.DarkMode,
+                                    contentDescription = null
+                                )
+                            }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                component.changeThemeMode(ThemeMode.SYSTEM)
+                            },
+                            enabled = themeMode != ThemeMode.SYSTEM,
+                            text = {
+                                Text(
+                                    text = "System Theme"
+                                )
+                            },
+                            leadingIcon = {
+                                val icon = when {
+                                    SystemUtils.IS_OS_WINDOWS -> Icons.Default.DesktopWindows
+                                    SystemUtils.IS_OS_MAC -> Icons.Default.DesktopMac
+                                    else -> Icons.Default.Computer
                                 }
-                            )
-                        }
-                        if (themeMode !is ThemeMode.DARK) {
-                            DropdownMenuItem(
-                                onClick = {
-                                    component.changeThemeMode(ThemeMode.DARK)
-                                },
-                                enabled = true,
-                                text = {
-                                    Text(
-                                        text = "Dark Theme"
-                                    )
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.LightMode,
-                                        contentDescription = null
-                                    )
-                                }
-                            )
-                        }
-                        if (themeMode !is ThemeMode.SYSTEM) {
-                            DropdownMenuItem(
-                                onClick = {
-                                    component.changeThemeMode(ThemeMode.SYSTEM)
-                                },
-                                enabled = true,
-                                text = {
-                                    Text(
-                                        text = "System Theme"
-                                    )
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.LightMode,
-                                        contentDescription = null
-                                    )
-                                }
-                            )
-                        }
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = null
+                                )
+                            }
+                        )
                     }
                 }
             }

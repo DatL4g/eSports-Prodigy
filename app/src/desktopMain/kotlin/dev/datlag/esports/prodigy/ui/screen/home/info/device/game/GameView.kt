@@ -49,12 +49,13 @@ fun GameView(component: GameComponent) {
         SchemeTheme.specificColorScheme(it)
     }
 
+    val (columnPadding, extraPadding) = when (LocalWindowSize.current) {
+        is WindowSize.COMPACT -> PaddingValues(0.dp) to PaddingValues(horizontal = 16.dp)
+        is WindowSize.MEDIUM -> PaddingValues(16.dp) to PaddingValues(0.dp)
+        is WindowSize.EXPANDED -> PaddingValues(16.dp) to PaddingValues(0.dp)
+    }
     SchemeTheme {
-        LazyColumn(contentPadding = when (LocalWindowSize.current) {
-            is WindowSize.COMPACT -> PaddingValues(0.dp)
-            is WindowSize.MEDIUM -> PaddingValues(16.dp)
-            is WindowSize.EXPANDED -> PaddingValues(16.dp)
-        }) {
+        LazyColumn(contentPadding = columnPadding) {
             item {
                 val game = component.game
 
@@ -74,7 +75,7 @@ fun GameView(component: GameComponent) {
             }
             item {
                 Row(
-                    modifier = Modifier.padding(vertical = 16.dp),
+                    modifier = Modifier.padding(extraPadding).padding(vertical = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -89,7 +90,8 @@ fun GameView(component: GameComponent) {
             }
             item {
                 FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.padding(extraPadding)
                 ) {
                     LaunchButton(component.game)
                     DirectoryButton(component.game)
@@ -99,7 +101,7 @@ fun GameView(component: GameComponent) {
             if (caches.isNotEmpty()) {
                 item {
                     Text(
-                        modifier = Modifier.padding(top = 32.dp, bottom = 16.dp),
+                        modifier = Modifier.padding(extraPadding).padding(top = 32.dp, bottom = 16.dp),
                         text = "DXVK State Cache",
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.headlineSmall
@@ -107,6 +109,7 @@ fun GameView(component: GameComponent) {
                 }
                 item {
                     FlowRow(
+                        modifier = Modifier.padding(extraPadding),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         var width by remember(component.game.name) { mutableStateOf(0) }
@@ -128,20 +131,21 @@ fun GameView(component: GameComponent) {
                 }
             }
 
+            item {
+                Text(
+                    modifier = Modifier.padding(extraPadding).padding(top = 32.dp, bottom = 16.dp),
+                    text = "User statistics",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
             if (unsupportedUserChartGame != null) {
                 item {
-                    UnsupportedGameChart {
+                    UnsupportedGameChart(
+                        modifier = Modifier.padding(extraPadding)
+                    ) {
                         unsupportedUserChartGame.learnMoreUrl.openInBrowser("Cannot open URL")
                     }
-                }
-            } else {
-                item {
-                    Text(
-                        modifier = Modifier.padding(top = 32.dp, bottom = 16.dp),
-                        text = "User statistics",
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.headlineSmall
-                    )
                 }
             }
         }
