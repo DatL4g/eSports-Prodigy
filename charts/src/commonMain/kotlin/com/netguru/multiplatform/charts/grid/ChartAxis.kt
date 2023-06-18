@@ -20,7 +20,6 @@ internal fun YAxisLabels(
         modifier = Modifier
             .width(IntrinsicSize.Max)
             .fillMaxHeight()
-            .padding(end = 8.dp)
     ) {
         horizontalGridLines.forEach { horizontalLine ->
             Box(

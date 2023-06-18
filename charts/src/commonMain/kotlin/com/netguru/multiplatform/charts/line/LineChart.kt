@@ -78,6 +78,7 @@ fun LineChart(
     maxVerticalLines: Int = GridDefaults.NUMBER_OF_GRID_LINES,
     maxHorizontalLines: Int = GridDefaults.NUMBER_OF_GRID_LINES,
     roundMinMaxClosestTo: Int = GridDefaults.ROUND_MIN_MAX_CLOSEST_TO,
+    overlayEnabled: Boolean = true
 ) {
     var touchPositionX by remember { mutableStateOf(-1f) }
     var verticalGridLines by remember { mutableStateOf(emptyList<LineParameters>()) }
@@ -108,7 +109,7 @@ fun LineChart(
             yAxisMarkerLayout = yAxisLabel,
         )
 
-        Spacer(modifier = Modifier.size(4.dp, 0.dp))
+        // Spacer(modifier = Modifier.size(4.dp, 0.dp))
 
         // main chart
         Column(Modifier.fillMaxSize()) {
@@ -169,19 +170,21 @@ fun LineChart(
                     }
             ) {
                 // Overlay
-                LineChartOverlayInformation(
-                    lineChartData = lineChartData,
-                    positionX = touchPositionX,
-                    containerSize = with(LocalDensity.current) {
-                        Size(
-                            maxWidth.toPx(),
-                            maxHeight.toPx()
-                        )
-                    },
-                    colors = colors,
-                    overlayHeaderLayout = overlayHeaderLabel,
-                    overlayDataEntryLayout = overlayDataEntryLabel,
-                )
+                if (overlayEnabled) {
+                    LineChartOverlayInformation(
+                        lineChartData = lineChartData,
+                        positionX = touchPositionX,
+                        containerSize = with(LocalDensity.current) {
+                            Size(
+                                maxWidth.toPx(),
+                                maxHeight.toPx()
+                            )
+                        },
+                        colors = colors,
+                        overlayHeaderLayout = overlayHeaderLabel,
+                        overlayDataEntryLayout = overlayDataEntryLabel,
+                    )
+                }
             }
 
             Box(Modifier.fillMaxWidth()) {

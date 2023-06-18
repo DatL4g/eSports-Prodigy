@@ -1,6 +1,7 @@
 package dev.datlag.esports.prodigy.model.common
 
 import kotlin.math.max
+import kotlin.math.min
 
 fun <T> listFrom(vararg list: Collection<T>): List<T> {
     return mutableListOf<T>().apply {
@@ -19,19 +20,9 @@ fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> {
         return this
     }
 
-    val safeFrom = if (from < 0) {
-        0
-    } else if (from > lastIndex) {
-        lastIndex
-    } else {
-        from
-    }
-    val safeTo = if (to < from) {
-        from
-    } else if (to > lastIndex) {
-        lastIndex
-    } else {
-        to
-    }
-    return this.subList(max(safeFrom, 0), max(safeTo, 0))
+    val safeFrom = max(min(from, lastIndex), 0)
+    return this.subList(
+        safeFrom,
+        max(safeFrom, min(to, lastIndex))
+    )
 }

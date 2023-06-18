@@ -45,7 +45,8 @@ fun UnsupportedGameChart(modifier: Modifier, onClick: () -> Unit) {
                 animation = ChartAnimation.Disabled,
                 xAxisLabel = { },
                 yAxisLabel = { },
-                overlayHeaderLabel = { }
+                overlayHeaderLabel = { },
+                overlayEnabled = false
             )
             Box(
                 modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5F)),

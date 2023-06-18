@@ -30,6 +30,7 @@ fun LineChartWithLegend(
     overlayHeaderLabel: @Composable (value: Any) -> Unit = GridDefaults.OverlayHeaderLabel,
     overlayDataEntryLabel: @Composable (dataName: String, value: Any) -> Unit = GridDefaults.OverlayDataEntryLabel,
     legendItemLabel: @Composable (String) -> Unit = GridDefaults.LegendItemLabel,
+    overlayEnabled: Boolean = true
 ) {
     Column(modifier = modifier) {
         LineChart(
@@ -43,6 +44,7 @@ fun LineChartWithLegend(
             yAxisLabel = yAxisLabel,
             overlayHeaderLabel = overlayHeaderLabel,
             overlayDataEntryLabel = overlayDataEntryLabel,
+            overlayEnabled = overlayEnabled
         )
         ChartLegend(
             legendData = lineChartData.legendData,
