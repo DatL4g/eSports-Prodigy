@@ -10,3 +10,4 @@ include(
 )
 include("nanoid")
 include("charts")
+include("network")

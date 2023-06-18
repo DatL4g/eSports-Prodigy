@@ -147,6 +147,13 @@ fun GameView(component: GameComponent) {
                         unsupportedUserChartGame.learnMoreUrl.openInBrowser("Cannot open URL")
                     }
                 }
+            } else {
+                item {
+                    Text(
+                        modifier = Modifier.padding(extraPadding),
+                        text = "Coming soon..."
+                    )
+                }
             }
         }
     }

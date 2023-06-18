@@ -21,7 +21,6 @@ plugins {
 val coroutines = "1.7.1"
 val decompose = "1.0.0"
 val kodein = "7.20.1"
-val ktor = "2.3.1"
 val moko = "0.23.0"
 val kamel = "0.5.1"
 val napier = "2.6.1"
@@ -57,9 +56,7 @@ kotlin {
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines")
                 api("org.kodein.di:kodein-di:$kodein")
                 implementation("org.kodein.di:kodein-di-framework-compose:$kodein")
-                api("io.ktor:ktor-client-okhttp:$ktor")
-                api("io.ktor:ktor-client-content-negotiation:$ktor")
-                api("io.ktor:ktor-serialization-kotlinx-json:$ktor")
+
 
                 implementation("com.mikepenz:aboutlibraries-compose:10.7.0")
                 implementation("com.mikepenz:aboutlibraries-core:10.7.0")
@@ -75,6 +72,7 @@ kotlin {
                 api(project(":datastore"))
                 api(project(":nanoid"))
                 api(project(":charts"))
+                api(project(":network"))
             }
         }
 
@@ -248,6 +246,9 @@ val createNativeLib = tasks.create<Copy>("createNativeLib") {
     exclude("*.h")
     into("resources/common/")
 }
+dependencies {
+    implementation("io.ktor:ktor-client-okhttp-jvm:2.3.1")
+}
 
 compose {
     kotlinCompilerPlugin.set("androidx.compose.compiler:compiler:1.4.6")
@@ -299,7 +300,7 @@ compose {
     }
 }
 
-configure<de.jensklingenberg.ktorfit.gradle.KtorfitGradleConfiguration>() {
+configure<de.jensklingenberg.ktorfit.gradle.KtorfitGradleConfiguration> {
     version = "1.4.1"
 }
 

@@ -92,7 +92,9 @@ fun ExpandedView(component: DeviceComponent) {
 fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
     val games by component.games.collectAsStateSafe { emptyList() }
 
-    LazyColumn(modifier = modifier.padding(horizontal = 16.dp)) {
+    LazyColumn(
+        modifier = modifier.padding(horizontal = 16.dp)
+    ) {
         item {
             Row(
                 modifier = Modifier.padding(vertical = 16.dp),
@@ -144,7 +146,7 @@ fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
 
         items(games) { game ->
             Column(
-                modifier = Modifier.onClick {
+                modifier = Modifier.padding(vertical = 16.dp).onClick {
                     component.gameClicked(game)
                 }
             ) {

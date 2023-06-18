@@ -13,7 +13,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.kotlincrypto:secure-random:0.1.0")
+                implementation("com.soywiz.korlibs.krypto:krypto:4.0.6")
             }
         }
         val androidMain by getting {

@@ -1,15 +1,16 @@
 package dev.datlag.esports.prodigy.nanoid
 
-import org.kotlincrypto.SecureRandom
+import korlibs.crypto.SecureRandom
 import kotlin.experimental.and
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.log
+import kotlin.random.Random
 
 object NanoIdUtils {
 
     @JvmStatic
-    val DEFAULT_RANDOM: SecureRandom = SecureRandom()
+    val DEFAULT_RANDOM: SecureRandom = SecureRandom
 
     @JvmStatic
     val DEFAULT_ALPHABET: CharArray = "_-0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
@@ -21,7 +22,7 @@ object NanoIdUtils {
     @JvmStatic
     @JvmOverloads
     fun randomNanoId(
-        random: java.util.Random = DEFAULT_RANDOM, // ToDo("PR? SecureRandom should extend kotlin Random")
+        random: Random = DEFAULT_RANDOM,
         alphabet: CharArray = DEFAULT_ALPHABET,
         size: Int = DEFAULT_SIZE
     ): String {

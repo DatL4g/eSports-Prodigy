@@ -2,6 +2,12 @@ package dev.datlag.esports.prodigy
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.singleWindowApplication
 import com.arkivanov.decompose.DefaultComponentContext
@@ -11,6 +17,7 @@ import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import dev.datlag.esports.prodigy.common.basedOnSize
 import dev.datlag.esports.prodigy.common.basedOnWidth
 import dev.datlag.esports.prodigy.module.DataStoreModule
+import dev.datlag.esports.prodigy.module.NetworkModule
 import dev.datlag.esports.prodigy.ui.*
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
 import dev.datlag.sekret.Sekret
@@ -24,7 +31,7 @@ import io.kamel.image.config.*
 import org.kodein.di.DI
 import java.io.File
 
-@OptIn(ExperimentalDecomposeApi::class)
+@OptIn(ExperimentalDecomposeApi::class, ExperimentalComposeUiApi::class)
 fun main() {
     val appTitle = StringDesc.Resource(SharedRes.strings.app_name).localized()
     AppIO.applyTitle(appTitle)
@@ -32,7 +39,7 @@ fun main() {
     val windowState = WindowState()
     val lifecycle = LifecycleRegistry()
     val di = DI {
-        import(DataStoreModule.di)
+        import(NetworkModule.di)
     }
 
     val root = NavHostComponent.create(DefaultComponentContext(lifecycle), di)
@@ -46,7 +53,21 @@ fun main() {
 
     singleWindowApplication(
         state = windowState,
-        title = appTitle
+        title = appTitle,
+        onKeyEvent = {
+            if (it.type == KeyEventType.KeyUp) {
+                when (it.key) {
+                    Key.F11 -> {
+                        windowState.placement = if (windowState.placement == WindowPlacement.Fullscreen) {
+                            WindowPlacement.Floating
+                        } else {
+                            WindowPlacement.Fullscreen
+                        }
+                    }
+                }
+            }
+            true
+        }
     ) {
         LifecycleController(lifecycle, windowState)
 
