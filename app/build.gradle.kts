@@ -65,14 +65,13 @@ kotlin {
                 api("media.kamel:kamel-image:$kamel")
                 api("io.github.aakira:napier:$napier")
 
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
-
                 api(project(":color"))
                 api(project(":game"))
                 api(project(":datastore"))
                 api(project(":nanoid"))
                 api(project(":charts"))
                 api(project(":network"))
+                api(project(":database"))
             }
         }
 

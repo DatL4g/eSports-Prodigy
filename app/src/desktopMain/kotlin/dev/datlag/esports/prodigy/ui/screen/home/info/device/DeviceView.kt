@@ -45,7 +45,7 @@ actual fun DeviceView(component: DeviceComponent) {
 }
 
 @Composable
-fun DefaultView(component: DeviceComponent) {
+private fun DefaultView(component: DeviceComponent) {
     val childState by component.child.subscribeAsState()
     childState.overlay?.also { (config, instance) ->
         when (config) {
@@ -60,7 +60,7 @@ fun DefaultView(component: DeviceComponent) {
 }
 
 @Composable
-fun ExpandedView(component: DeviceComponent) {
+private fun ExpandedView(component: DeviceComponent) {
     val childState by component.child.subscribeAsState()
 
     Row(
@@ -89,7 +89,7 @@ fun ExpandedView(component: DeviceComponent) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
+private fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
     val games by component.games.collectAsStateSafe { emptyList() }
 
     LazyColumn(
@@ -200,7 +200,7 @@ fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ColumnScope.GameHeader(component: DeviceComponent, game: LocalGame) {
+private fun ColumnScope.GameHeader(component: DeviceComponent, game: LocalGame) {
     when (val resource = asyncPainterResource(game.headerUrl)) {
         is Resource.Loading -> {
             LoadingImage(game.name, resource.progress)
@@ -242,7 +242,7 @@ fun ColumnScope.GameHeader(component: DeviceComponent, game: LocalGame) {
 }
 
 @Composable
-fun loadGameScheme(component: DeviceComponent, title: String, painter: Painter) {
+private fun loadGameScheme(component: DeviceComponent, title: String, painter: Painter) {
     val awtImage = painter.toAwtImage(
         LocalDensity.current,
         LayoutDirection.Ltr
@@ -252,7 +252,7 @@ fun loadGameScheme(component: DeviceComponent, title: String, painter: Painter) 
 }
 
 @Composable
-fun FallbackImage(gameTitle: String) {
+internal fun FallbackImage(gameTitle: String) {
     Image(
         modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 200.dp),
         imageVector = Icons.Default.NoPhotography,
@@ -264,7 +264,7 @@ fun FallbackImage(gameTitle: String) {
 }
 
 @Composable
-fun LoadingImage(gameTitle: String, percentage: Float) {
+internal fun LoadingImage(gameTitle: String, percentage: Float) {
     val painter = when {
         percentage >= 0.9F -> painterResource(SharedRes.images.clock_loader_90)
         percentage >= 0.8F -> painterResource(SharedRes.images.clock_loader_80)

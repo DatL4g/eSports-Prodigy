@@ -12,7 +12,7 @@ object NetworkModule {
     const val NAME = "NetworkModule"
 
     val di = DI.Module(NAME) {
-        import(DataStoreModule.di)
+        import(DatabaseModule.di)
 
         bindSingleton {
             HttpClient(OkHttp) {
@@ -25,7 +25,8 @@ object NetworkModule {
         }
 
         bindSingleton {
-            HLTVRepository(instance())
+
+            HLTVRepository(instance(), instance("HLTVNewsList"))
         }
     }
 }

@@ -1,6 +1,7 @@
 package dev.datlag.esports.prodigy.module
 
 import dev.datlag.esports.prodigy.AppIO
+import dev.datlag.esports.prodigy.database.DriverFactory
 import dev.datlag.esports.prodigy.datastore.CryptoManager
 import dev.datlag.esports.prodigy.model.UUID
 import dev.datlag.esports.prodigy.model.common.deleteSafely
@@ -25,6 +26,9 @@ actual object PlatformModule {
         }
         bindSingleton("AppSettingsFile") {
             AppIO.getFileInUserDataDir("AppSettings.pb")
+        }
+        bindSingleton("HLTVDBFile") {
+            AppIO.getFileInConfigDir("hltv.db")
         }
 
         bindSingleton {
@@ -56,6 +60,13 @@ actual object PlatformModule {
                 uuid.commonDecoded,
                 uuid.userDecoded
             )
+        }
+
+        bindSingleton {
+            DriverFactory(instance("HLTVDBFile"))
+        }
+        bindSingleton("HLTVDriver") {
+            instance<DriverFactory>().createHLTVDriver()
         }
     }
 }

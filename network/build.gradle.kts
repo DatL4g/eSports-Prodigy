@@ -26,6 +26,7 @@ kotlin {
                 api("io.ktor:ktor-client-okhttp:$ktor")
                 api("io.ktor:ktor-client-content-negotiation:$ktor")
                 api("io.ktor:ktor-serialization-kotlinx-json:$ktor")
+                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
         }
 

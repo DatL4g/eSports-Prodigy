@@ -1,6 +1,7 @@
 package dev.datlag.sekret
 
 import dev.datlag.esports.prodigy.model.common.systemProperty
+import org.apache.commons.lang3.SystemUtils
 import java.io.File
 import java.nio.file.Files
 
@@ -9,13 +10,13 @@ object NativeLoader {
     @Suppress("UnsafeDynamicallyLoadedCode")
     fun loadLibrary(classLoader: ClassLoader, libName: String) {
         try {
-            System.loadLibrary(libName)
+            val resDir = systemProperty("compose.application.resources.dir")?.let { File(it) }
+            val libFile = File(resDir, libFilename(libName))
+
+            System.load(libFile.canonicalPath)
         } catch (ignored: Throwable) {
             try {
-                val resDir = File(systemProperty("compose.application.resources.dir"))
-                val libFile = File(resDir, libFilename(libName))
-
-                System.load(libFile.canonicalPath)
+                System.loadLibrary(libName)
             } catch (ignored: Throwable) {
                 val url = classLoader.getResource(libFilename(libName))
 
@@ -36,10 +37,9 @@ object NativeLoader {
     }
 
     private fun libFilename(libName: String): String {
-        val osName = System.getProperty("os.name").lowercase()
-        if (osName.indexOf("win") >= 0) {
+        if (SystemUtils.IS_OS_WINDOWS) {
             return "$libName.dll"
-        } else if (osName.indexOf("mac") >= 0) {
+        } else if (SystemUtils.IS_OS_MAC) {
             return decorateLibraryName(libName, ".dylib")
         }
         return decorateLibraryName(libName, ".so")
