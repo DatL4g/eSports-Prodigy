@@ -22,7 +22,7 @@ kotlin {
                 api(project(":model"))
                 implementation("io.github.hadiyarajesh.flower-core:flower:$flower")
                 api("de.jensklingenberg.ktorfit:ktorfit-lib:$ktorfit")
-                implementation("it.skrape:skrapeit:1.1.5")
+                implementation("it.skrape:skrapeit:1.2.2")
                 api("io.ktor:ktor-client-okhttp:$ktor")
                 api("io.ktor:ktor-client-content-negotiation:$ktor")
                 api("io.ktor:ktor-serialization-kotlinx-json:$ktor")
@@ -47,6 +47,11 @@ android {
     defaultConfig {
         minSdk = Configuration.minSdk
         targetSdk = Configuration.targetSdk
+    }
+
+    compileOptions {
+        sourceCompatibility = CompileOptions.sourceCompatibility
+        targetCompatibility = CompileOptions.targetCompatibility
     }
 }
 

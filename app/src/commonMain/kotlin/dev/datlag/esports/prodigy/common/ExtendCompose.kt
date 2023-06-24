@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,4 +22,17 @@ fun LazyGridScope.fullRow(
     content: @Composable LazyGridItemScope.() -> Unit
 ) {
     item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
+}
+
+fun <T> LazyGridScope.fullRowItems(
+    list: List<T>,
+    content: @Composable LazyGridItemScope.(T) -> Unit
+) {
+    items(
+        items = list,
+        span = {
+            GridItemSpan(this.maxLineSpan)
+        },
+        itemContent = content
+    )
 }

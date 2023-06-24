@@ -30,6 +30,9 @@ actual object PlatformModule {
         bindSingleton("HLTVDBFile") {
             AppIO.getFileInConfigDir("hltv.db")
         }
+        bindSingleton("CounterStrikeDBFile") {
+            AppIO.getFileInConfigDir("cs.db")
+        }
 
         bindSingleton {
             val uuidFile = AppIO.getFileInUserDataDir(".uuid")
@@ -63,10 +66,13 @@ actual object PlatformModule {
         }
 
         bindSingleton {
-            DriverFactory(instance("HLTVDBFile"))
+            DriverFactory(instance("HLTVDBFile"), instance("CounterStrikeDBFile"))
         }
         bindSingleton("HLTVDriver") {
             instance<DriverFactory>().createHLTVDriver()
+        }
+        bindSingleton("CounterStrikeDriver") {
+            instance<DriverFactory>().createCounterStrikeDriver()
         }
     }
 }

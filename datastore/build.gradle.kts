@@ -35,4 +35,9 @@ android {
         minSdk = Configuration.minSdk
         targetSdk = Configuration.targetSdk
     }
+
+    compileOptions {
+        sourceCompatibility = CompileOptions.sourceCompatibility
+        targetCompatibility = CompileOptions.targetCompatibility
+    }
 }

@@ -9,6 +9,7 @@ import dev.datlag.esports.prodigy.common.ioScope
 import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.common.safeEmit
 import dev.datlag.esports.prodigy.database.HLTVDB
+import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.model.hltv.News
 import dev.datlag.esports.prodigy.model.hltv.Team
 import dev.datlag.esports.prodigy.network.Status
@@ -26,41 +27,8 @@ class CounterStrikeViewComponent(
     private val hltvRepo: HLTVRepository by di.instance()
     private val db: HLTVDB by di.instance()
 
-    private val initialNewsList: List<News> by di.instance("HLTVNewsList")
-    override val news: Flow<List<News>> = hltvRepo.news.flowOn(ioDispatcher())
-    override val newsStatus: Flow<Status> = hltvRepo.newsStatus.flowOn(ioDispatcher())
-
-    init {
-        scope.launchIO {
-            hltvRepo.newsState.mapNotNull {
-                if (it == null) {
-                    null
-                } else {
-                    if (initialNewsList.containsAll(it)) {
-                        null
-                    } else {
-                        it
-                    }
-                }
-            }.collect { news ->
-                db.hLTVQueries.transaction {
-                    db.hLTVQueries.deleteAllNews()
-                    news.forEach { newsEntry ->
-                        db.hLTVQueries.insertNewsCountry(
-                            name = newsEntry.country.name,
-                            code = newsEntry.country.code
-                        )
-                        db.hLTVQueries.insertNews(
-                            link = newsEntry.link,
-                            title = newsEntry.title,
-                            date = newsEntry.date,
-                            countryCode = newsEntry.country.code
-                        )
-                    }
-                }
-            }
-        }
-    }
+    override val home: Flow<Home?> = hltvRepo.home.flowOn(ioDispatcher())
+    override val homeStatus: Flow<Status> = hltvRepo.homeStatus.flowOn(ioDispatcher())
 
     @Composable
     override fun render() {

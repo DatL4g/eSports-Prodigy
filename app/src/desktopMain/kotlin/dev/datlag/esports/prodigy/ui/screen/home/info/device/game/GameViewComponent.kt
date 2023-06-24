@@ -6,11 +6,15 @@ import com.arkivanov.decompose.ComponentContext
 import com.netguru.multiplatform.charts.line.LineChartData
 import com.netguru.multiplatform.charts.line.LineChartPoint
 import com.netguru.multiplatform.charts.line.LineChartSeries
+import dev.datlag.esports.prodigy.common.ioScope
+import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.game.model.LocalGame
 import dev.datlag.esports.prodigy.model.UnsupportedUserChartGame
 import dev.datlag.esports.prodigy.model.common.asList
+import dev.datlag.esports.prodigy.network.repository.CSStatsRepository
 import kotlinx.datetime.Clock
 import org.kodein.di.DI
+import org.kodein.di.instance
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -20,6 +24,8 @@ class GameViewComponent(
     override val di: DI,
     private val back: () -> Unit
 ) : GameComponent, ComponentContext by componentContext {
+
+    private val csStats: CSStatsRepository by di.instance()
 
     override val unsupportedUserChartGames: Collection<UnsupportedUserChartGame> = listOf(
         UnsupportedUserChartGame(

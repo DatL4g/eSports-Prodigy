@@ -22,7 +22,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.datlag.esports.prodigy.SharedRes
+import dev.datlag.esports.prodigy.color.createTheme
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.game.common.containsInvalidEntries
 import dev.datlag.esports.prodigy.game.model.LocalGame
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
@@ -30,6 +32,7 @@ import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameComponent
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameConfig
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameView
+import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import io.kamel.core.Resource

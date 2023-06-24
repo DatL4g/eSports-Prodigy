@@ -1,5 +1,6 @@
 package dev.datlag.esports.prodigy.ui.screen.home.counterstrike
 
+import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.model.hltv.News
 import dev.datlag.esports.prodigy.model.hltv.Team
 import dev.datlag.esports.prodigy.network.Status
@@ -8,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CounterStrikeComponent : Component {
 
-    val news: Flow<List<News>>
-    val newsStatus: Flow<Status>
+    val home: Flow<Home?>
+    val homeStatus: Flow<Status>
 
 }

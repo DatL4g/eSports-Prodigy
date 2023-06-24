@@ -33,12 +33,16 @@ kotlin {
 
 android {
     sourceSets["main"].setRoot("src/androidMain/")
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     compileSdk = Configuration.compileSdk
     buildToolsVersion = Configuration.buildTools
 
+    namespace = "dev.datlag.esports.prodigy.database"
+
     defaultConfig {
         minSdk = Configuration.minSdk
+        targetSdk = Configuration.targetSdk
     }
 
     compileOptions {
@@ -50,5 +54,10 @@ android {
 sqldelight {
     database("HLTVDB") {
         packageName = "dev.datlag.esports.prodigy.database"
+        sourceFolders = listOf("hltv")
+    }
+    database("CounterStrikeDB") {
+        packageName = "dev.datlag.esports.prodigy.database"
+        sourceFolders = listOf("user")
     }
 }

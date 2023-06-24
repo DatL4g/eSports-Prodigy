@@ -6,8 +6,8 @@ plugins {
 group = "dev.datlag.esports.prodigy.datastore.proto"
 
 dependencies {
-    api("com.google.protobuf:protobuf-java:3.23.2")
-    api("io.grpc:grpc-protobuf:1.55.1")
+    api("com.google.protobuf:protobuf-java:3.23.3")
+    api("io.grpc:grpc-protobuf:1.56.0")
 }
 
 protobuf {

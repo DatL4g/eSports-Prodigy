@@ -2,6 +2,7 @@ import com.mikepenz.aboutlibraries.plugin.DuplicateMode
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule
 import java.util.Properties
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.security.MessageDigest
 import kotlin.experimental.xor
 
@@ -58,8 +59,8 @@ kotlin {
                 implementation("org.kodein.di:kodein-di-framework-compose:$kodein")
 
 
-                implementation("com.mikepenz:aboutlibraries-compose:10.7.0")
-                implementation("com.mikepenz:aboutlibraries-core:10.7.0")
+                implementation("com.mikepenz:aboutlibraries-compose:10.8.0")
+                implementation("com.mikepenz:aboutlibraries-core:10.8.0")
 
                 api("dev.icerock.moko:resources-compose:$moko")
                 api("media.kamel:kamel-image:$kamel")
@@ -89,8 +90,8 @@ kotlin {
                 implementation("com.google.android.material:material:1.9.0")
                 implementation("androidx.core:core-splashscreen:1.0.1")
                 implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-                implementation("androidx.compose.material3:material3-window-size-class:1.1.0")
-                implementation("net.afanasev:sekret-annotation:0.1.0")
+                implementation("androidx.compose.material3:material3-window-size-class:1.1.1")
+                implementation("net.afanasev:sekret-annotation:0.1.4")
             }
         }
 
@@ -101,8 +102,8 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutines")
                 implementation("com.sealwu:kscript-tools:1.0.22")
                 implementation("net.harawata:appdirs:1.2.1")
-                implementation("com.darkrockstudios:mpfilepicker:1.1.0")
-                implementation("net.afanasev:sekret-annotation:0.1.0")
+                implementation("com.darkrockstudios:mpfilepicker:1.2.0")
+                implementation("net.afanasev:sekret-annotation:0.1.4")
             }
         }
     }
@@ -130,6 +131,13 @@ android {
     compileOptions {
         sourceCompatibility = CompileOptions.sourceCompatibility
         targetCompatibility = CompileOptions.targetCompatibility
+    }
+
+    packagingOptions {
+        resources.merges.add("META-INF/LICENSE")
+        resources.merges.add("META-INF/DEPENDENCIES")
+        resources.pickFirsts.add("**")
+        resources.pickFirsts.add("*")
     }
 }
 

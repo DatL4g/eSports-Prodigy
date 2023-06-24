@@ -10,4 +10,8 @@ actual class DriverFactory(
     actual fun createHLTVDriver(): SqlDriver {
         return AndroidSqliteDriver(HLTVDB.Schema, context, "hltv.db")
     }
+
+    actual fun createCounterStrikeDriver(): SqlDriver {
+        return AndroidSqliteDriver(CounterStrikeDB.Schema, context, "cs.db")
+    }
 }

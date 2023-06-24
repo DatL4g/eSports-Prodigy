@@ -54,7 +54,7 @@ object CountryImage {
             code.equals("DE", true) -> SharedRes.images.DE
             code.equals("DJ", true) -> SharedRes.images.DJ
             code.equals("DK", true) -> SharedRes.images.DK
-            code.equals("DO", true) -> SharedRes.images.DO
+            code.equals("DO", true) -> SharedRes.images.COUNTRY_DO
             code.equals("DZ", true) -> SharedRes.images.DZ
 
             code.equals("EE", true) -> SharedRes.images.EE
@@ -86,7 +86,7 @@ object CountryImage {
             code.equals("ID", true) -> SharedRes.images.ID
             code.equals("IE", true) -> SharedRes.images.IE
             code.equals("IL", true) -> SharedRes.images.IL
-            code.equals("IN", true) -> SharedRes.images.IN
+            code.equals("IN", true) -> SharedRes.images.COUNTRY_IN
             code.equals("IT", true) -> SharedRes.images.IT
 
             code.equals("JM", true) -> SharedRes.images.JM
@@ -97,7 +97,7 @@ object CountryImage {
             code.equals("KN", true) -> SharedRes.images.KN
             code.equals("KP", true) -> SharedRes.images.KP
             code.equals("KR", true) -> SharedRes.images.KR
-            code.equals("KR-EXTRA", true) -> SharedRes.images.`KR-EXTRA`
+            code.equals("KR-EXTRA", true) -> SharedRes.images.KR_EXTRA
             code.equals("KRD", true) -> SharedRes.images.KRD
             code.equals("KW", true) -> SharedRes.images.KW
 

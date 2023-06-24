@@ -20,13 +20,22 @@ kotlin {
 }
 
 android {
-    compileSdk = 33
+    compileSdk = Configuration.compileSdk
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     namespace = "dev.datlag.esports.prodigy.color"
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 33
+        minSdk = Configuration.minSdk
+        targetSdk = Configuration.targetSdk
+    }
+
+    compileOptions {
+        sourceCompatibility = CompileOptions.sourceCompatibility
+        targetCompatibility = CompileOptions.targetCompatibility
+    }
+
+    packagingOptions {
+        resources.excludes.add("META-INF/*")
     }
 }

@@ -26,8 +26,10 @@ import dev.icerock.moko.resources.desc.StringDesc
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.kamel.core.config.KamelConfig
+import io.kamel.core.config.httpFetcher
 import io.kamel.core.config.takeFrom
 import io.kamel.image.config.*
+import io.ktor.client.plugins.*
 import org.kodein.di.DI
 import java.io.File
 
@@ -46,8 +48,8 @@ fun main() {
     val imageConfig = KamelConfig {
         takeFrom(KamelConfig.Default)
         resourcesFetcher()
-        svgDecoder()
         imageVectorDecoder()
+        svgDecoder()
     }
     Napier.base(DebugAntilog())
 

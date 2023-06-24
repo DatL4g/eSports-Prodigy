@@ -2,6 +2,7 @@ package dev.datlag.esports.prodigy.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -19,3 +20,10 @@ expect fun FontResource.toComposeFont(
     weight: FontWeight = FontWeight.Normal,
     style: FontStyle = FontStyle.Normal
 ): Font
+
+expect fun Modifier.onClick(
+    enabled: Boolean = true,
+    onDoubleClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
+    onClick: () -> Unit
+) : Modifier

@@ -3,8 +3,10 @@ package dev.datlag.esports.prodigy.network.scraper
 import dev.datlag.esports.prodigy.model.common.scopeCatching
 import dev.datlag.esports.prodigy.model.common.suspendCatching
 import dev.datlag.esports.prodigy.model.hltv.Country
+import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.model.hltv.News
 import dev.datlag.esports.prodigy.model.hltv.Team
+import dev.datlag.esports.prodigy.network.common.findFirstOrNull
 import dev.datlag.esports.prodigy.network.common.parseToEpochSeconds
 import dev.datlag.esports.prodigy.network.fetcher.KtorFetcher
 import io.ktor.client.*
@@ -14,6 +16,57 @@ import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
 
 object HLTVScraper {
+
+    suspend fun scrapeHome(client: HttpClient): Result<Home> {
+        return skrape(KtorFetcher(client)) {
+            request {
+                url("https://www.hltv.org")
+            }
+            response {
+                if (responseStatus.code != 200) {
+                    Result.failure(Exception(responseStatus.message))
+                } else {
+                    val contentCol = document.findFirstOrNull(".colCon .contentCol")
+                    val leftCol = document.findFirstOrNull(".colCon .leftCol")
+                    val teamEntries = leftCol?.findAll(".rank") ?: emptyList()
+
+                    val hero = scopeCatching {
+                        val heroCon = contentCol?.findFirst(".hero-con") ?: return@scopeCatching null
+                        val link = heroCon.findFirst("a")
+                        val (img, href) = (link.eachImage.values.firstOrNull() ?: String()) to (link.eachHref.firstOrNull() ?: String())
+                        if (img.isBlank() || href.isBlank()) {
+                            return@scopeCatching null
+                        }
+                        Home.Hero(
+                            img = img,
+                            href = href
+                        )
+                    }.getOrNull()
+
+                    val teams = teamEntries.mapIndexedNotNull { index, teamElement ->
+                        scopeCatching {
+                            val rankText = teamElement.findFirstOrNull(".rankNum")?.text
+                                ?: teamElement.findFirstOrNull("a")?.text
+                            val iconLight = teamElement.findFirstOrNull(".day-only")?.eachSrc?.firstOrNull()?.ifBlank { null }
+                            val iconDark = teamElement.findFirstOrNull(".night-only")?.eachSrc?.firstOrNull()?.ifBlank { null }
+                            val fallbackImage = teamElement.findFirstOrNull("img")?.eachSrc?.firstOrNull()?.ifBlank { null }
+                            val teamInfo = teamElement.findLast("a")
+
+                            Home.Team(
+                                ranking = rankText?.toIntOrNull() ?: (index + 1),
+                                imgLight = iconLight ?: fallbackImage ?: iconDark ?: String(),
+                                imgDark = iconDark ?: iconLight ?: fallbackImage ?: String(),
+                                name = teamInfo.text,
+                                href = teamInfo.eachHref.firstOrNull() ?: String()
+                            )
+                        }.getOrNull()
+                    }
+
+                    Result.success(Home(hero, teams))
+                }
+            }
+        }
+    }
 
     suspend fun scrapeNews(client: HttpClient): Result<List<News>> {
         return skrape(KtorFetcher(client)) {

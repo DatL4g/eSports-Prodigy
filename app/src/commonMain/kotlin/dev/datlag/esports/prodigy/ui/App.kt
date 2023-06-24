@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.datastore.core.DataStore
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.getValueBlocking
@@ -60,3 +61,6 @@ fun App(
 
 @Composable
 expect fun getSystemDarkMode(): Boolean
+
+@Composable
+expect fun loadImageScheme(key: Any, painter: Painter)

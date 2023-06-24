@@ -1,8 +1,11 @@
 package dev.datlag.esports.prodigy.common
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.onClick
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -42,4 +45,19 @@ fun Orientation.Companion.basedOnSize(windowState: WindowState): Orientation {
     } else {
         Orientation.PORTRAIT
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+actual fun Modifier.onClick(
+    enabled: Boolean,
+    onDoubleClick: (() -> Unit)?,
+    onLongClick: (() -> Unit)?,
+    onClick: () -> Unit
+): Modifier {
+    return this.onClick(
+        enabled = enabled,
+        onDoubleClick = onDoubleClick,
+        onLongClick = onLongClick,
+        onClick = onClick
+    )
 }

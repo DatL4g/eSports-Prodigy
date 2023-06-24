@@ -1,6 +1,7 @@
 package dev.datlag.esports.prodigy.module
 
 import dev.datlag.esports.prodigy.database.HLTVDB
+import dev.datlag.esports.prodigy.database.CounterStrikeDB
 import dev.datlag.esports.prodigy.model.hltv.Country
 import dev.datlag.esports.prodigy.model.hltv.News
 import org.kodein.di.DI
@@ -16,6 +17,10 @@ object DatabaseModule {
 
         bindSingleton {
             HLTVDB(instance("HLTVDriver"))
+        }
+
+        bindSingleton {
+            CounterStrikeDB(instance("CounterStrikeDriver"))
         }
 
         bindSingleton("HLTVNewsList") {
