@@ -23,7 +23,7 @@ val coroutines = "1.7.1"
 val decompose = "1.0.0"
 val kodein = "7.20.1"
 val moko = "0.23.0"
-val kamel = "0.5.1"
+val kamel = "0.6.0"
 val napier = "2.6.1"
 
 val artifact = "dev.datlag.esports.prodigy"

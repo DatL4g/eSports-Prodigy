@@ -11,3 +11,5 @@ actual fun getSystemDarkMode(): Boolean {
 @Composable
 actual fun loadImageScheme(key: Any, painter: Painter) {
 }
+
+actual val isDesktop: Boolean = false

@@ -20,10 +20,7 @@ import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.common.basedOnWidth
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.takeFrom
-import io.kamel.image.config.Default
-import io.kamel.image.config.LocalKamelConfig
-import io.kamel.image.config.resourcesFetcher
-import io.kamel.image.config.resourcesIdMapper
+import io.kamel.image.config.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,6 +37,8 @@ class MainActivity : AppCompatActivity() {
             takeFrom(KamelConfig.Default)
             resourcesFetcher(this@MainActivity)
             resourcesIdMapper(this@MainActivity)
+            imageVectorDecoder()
+            svgDecoder()
         }
         val root = NavHostComponent.create(
             componentContext = defaultComponentContext(),

@@ -64,3 +64,5 @@ expect fun getSystemDarkMode(): Boolean
 
 @Composable
 expect fun loadImageScheme(key: Any, painter: Painter)
+
+expect val isDesktop: Boolean
