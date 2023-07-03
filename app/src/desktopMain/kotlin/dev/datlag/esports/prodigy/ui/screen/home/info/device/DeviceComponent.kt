@@ -15,7 +15,6 @@ actual interface DeviceComponent : Component {
     val games: Flow<List<LocalGame>>
 
     fun gameClicked(game: LocalGame)
-    fun loadSchemeFor(gameTitle: String, image: Image)
 
     actual fun navigateToUser()
 

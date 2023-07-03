@@ -94,7 +94,11 @@ data class DxvkStateCache(
                     if (entry == null) {
                         invalidEntries++
                     } else {
-                        entries.add(entry)
+                        if (entry.isValid()) {
+                            entries.add(entry)
+                        } else {
+                            invalidEntries++
+                        }
                     }
                 }
             }

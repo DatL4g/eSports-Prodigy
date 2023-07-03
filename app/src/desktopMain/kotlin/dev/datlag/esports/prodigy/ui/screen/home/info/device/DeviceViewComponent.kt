@@ -39,7 +39,6 @@ actual class DeviceViewComponent actual constructor(
     private val _child = childOverlay(
         source = navigation,
         initialConfiguration = {
-            SchemeTheme.resetColorScheme(ioScope())
             GameConfig.EMPTY
         },
         handleBackButton = true
@@ -50,9 +49,7 @@ actual class DeviceViewComponent actual constructor(
                 config.game,
                 di
             ) {
-                navigation.activate(GameConfig.EMPTY) {
-                    SchemeTheme.resetColorScheme(ioScope())
-                }
+                navigation.activate(GameConfig.EMPTY)
             }
 
             else -> config
@@ -82,14 +79,6 @@ actual class DeviceViewComponent actual constructor(
 
     override fun gameClicked(game: LocalGame) {
         navigation.activate(GameConfig.Overview(game))
-    }
-
-    override fun loadSchemeFor(gameTitle: String, image: Image) {
-        if (!SchemeTheme.themes.contains(gameTitle)) {
-            scope.launchIO {
-                SchemeTheme.themes[gameTitle] = image.createTheme()
-            }
-        }
     }
 
     override fun navigateToUser() {

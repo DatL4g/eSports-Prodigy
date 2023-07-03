@@ -3,6 +3,8 @@ package dev.datlag.esports.prodigy.model.common
 import java.io.File
 import java.io.RandomAccessFile
 import java.nio.channels.FileChannel
+import java.nio.file.FileSystem
+import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
@@ -137,4 +139,33 @@ fun File.move(name: String): File {
             null
         }
     }.getOrNull() ?: this
+}
+
+fun findSystemRoots(): List<File> {
+    val windowsRoot = systemEnv("SystemDrive")
+    val roots = (scopeCatching {
+        FileSystems.getDefault()?.rootDirectories?.mapNotNull {
+            it?.toFile()
+        }
+    }.getOrNull() ?: scopeCatching {
+        File.listRoots().filterNotNull()
+    }.getOrNull()?.toList()?.ifEmpty { null } ?: emptyList()).normalize()
+
+    return (if (!windowsRoot.isNullOrBlank()) {
+        roots.sortedByDescending {
+            it.absolutePath.trim().equals(windowsRoot, true) || it.isSame(File(windowsRoot))
+        }
+    } else {
+        roots
+    }).also {
+        println(it.map { f -> f.absolutePath })
+    }
+}
+
+fun File.isDirectorySafely(): Boolean {
+    return scopeCatching {
+        this.isDirectory
+    }.getOrNull() ?: scopeCatching {
+        Files.isDirectory(this.toPath())
+    }.getOrNull() ?: false
 }

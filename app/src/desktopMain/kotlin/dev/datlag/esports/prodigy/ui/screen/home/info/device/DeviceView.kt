@@ -29,6 +29,7 @@ import dev.datlag.esports.prodigy.game.common.containsInvalidEntries
 import dev.datlag.esports.prodigy.game.model.LocalGame
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
 import dev.datlag.esports.prodigy.ui.WindowSize
+import dev.datlag.esports.prodigy.ui.loadImageScheme
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameComponent
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameConfig
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameView
@@ -156,7 +157,7 @@ private fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) 
                 Card(
                     modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth()
                 ) {
-                    GameHeader(component, game)
+                    GameHeader(game)
                 }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -203,14 +204,14 @@ private fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) 
 }
 
 @Composable
-private fun ColumnScope.GameHeader(component: DeviceComponent, game: LocalGame) {
+private fun ColumnScope.GameHeader(game: LocalGame) {
     when (val resource = asyncPainterResource(game.headerUrl)) {
         is Resource.Loading -> {
             LoadingImage(game.name, resource.progress)
         }
         is Resource.Success -> {
             val painter = resource.value
-            loadGameScheme(component, game.name, painter)
+            loadImageScheme(game.name, painter)
             Image(
                 modifier = Modifier.fillMaxWidth(),
                 painter = painter,
@@ -225,7 +226,7 @@ private fun ColumnScope.GameHeader(component: DeviceComponent, game: LocalGame) 
                     is Resource.Loading -> LoadingImage(game.name, fallbackResource.progress)
                     is Resource.Success -> {
                         val painter = fallbackResource.value
-                        loadGameScheme(component, game.name, painter)
+                        loadImageScheme(game.name, painter)
                         Image(
                             modifier = Modifier.fillMaxWidth(),
                             painter = painter,
@@ -242,16 +243,6 @@ private fun ColumnScope.GameHeader(component: DeviceComponent, game: LocalGame) 
             }
         }
     }
-}
-
-@Composable
-private fun loadGameScheme(component: DeviceComponent, title: String, painter: Painter) {
-    val awtImage = painter.toAwtImage(
-        LocalDensity.current,
-        LayoutDirection.Ltr
-    )
-
-    component.loadSchemeFor(title, awtImage)
 }
 
 @Composable

@@ -32,7 +32,7 @@ fun UnsupportedGameChart(modifier: Modifier, onClick: () -> Unit) {
                 lineChartData = LineChartData(
                     series = LineChartSeries(
                         dataName = "Unknown Data",
-                        lineColor = SchemeTheme.colorScheme.primary,
+                        lineColor = MaterialTheme.colorScheme.primary,
                         listOfPoints = (0..10).map { point ->
                             LineChartPoint(
                                 x = point.toLong(),

@@ -5,8 +5,7 @@ package dev.datlag.esports.prodigy.game
 import dev.datlag.esports.prodigy.game.common.decodeFromFile
 import dev.datlag.esports.prodigy.game.dxvk.DxvkStateCache
 import dev.datlag.esports.prodigy.game.model.LocalGameInfo
-import dev.datlag.esports.prodigy.game.model.steam.AppManifest
-import dev.datlag.esports.prodigy.game.model.steam.LibraryConfig
+import dev.datlag.esports.prodigy.game.model.steam.*
 import dev.datlag.esports.prodigy.model.common.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -103,17 +102,38 @@ object SteamLauncher {
         } ?: emptyList()
     }
 
-    private val defaultSteamAppsFolders: MutableStateFlow<List<File>> by lazy {
-        MutableStateFlow(getSteamAppFolders(steamDirectories))
+    private val defaultSteamFolders: MutableStateFlow<List<File>> by lazy {
+        MutableStateFlow(steamDirectories)
     }
-    private val userSteamAPpFolders: MutableStateFlow<List<File>> by lazy {
+
+    private val defaultSteamAppsFolders by lazy {
+        defaultSteamFolders.transform {
+            return@transform emit(getSteamAppFolders(it))
+        }
+    }
+
+    private val userSteamFolders: MutableStateFlow<List<File>> by lazy {
         MutableStateFlow(emptyList())
     }
-    private val steamAppFolders by lazy {
-        combine(defaultSteamAppsFolders, userSteamAPpFolders) { t1, t2 ->
+
+    private val userSteamAppFolders by lazy {
+        userSteamFolders.transform {
+            return@transform emit(getSteamAppFolders(it))
+        }
+    }
+
+    val steamFolders by lazy {
+        combine(defaultSteamFolders, userSteamFolders) { t1, t2 ->
             listFrom(t1, t2).normalize()
         }
     }
+
+    private val steamAppFolders by lazy {
+        combine(defaultSteamAppsFolders, userSteamAppFolders) { t1, t2 ->
+            listFrom(t1, t2).normalize()
+        }
+    }
+
     val appManifests by lazy {
         steamAppFolders.transform { list ->
             val acfList = list.flatMap { file ->
@@ -127,6 +147,27 @@ object SteamLauncher {
                         ValveDataFormat.decodeFromFile<AppManifest>(it)
                     }.getOrNull()
                 } }.awaitAll().filterNotNull()
+            })
+        }
+    }
+
+    val loggedInUsers by lazy {
+        steamFolders.transform { list ->
+            val userConfigs = list.flatMap { file ->
+                listOf(
+                    File(file, "config/loginusers.vdf"),
+                    File(file, "config/loggedinusers.vdf")
+                )
+            }.filter { it.canReadSafely() }
+
+            return@transform emit(coroutineScope {
+                userConfigs.map { async {
+                    suspendCatching {
+                        ValveDataFormat.decodeFromFile<Map<String, UserData>>(it)
+                    }.getOrNull()
+                } }.awaitAll().filterNotNull().flatMap { config ->
+                    User.fromMap(config)
+                }
             })
         }
     }

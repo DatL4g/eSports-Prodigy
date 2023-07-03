@@ -45,16 +45,12 @@ fun GameView(component: GameComponent) {
                 || it.name.contains(component.game.name, true)
     }
 
-    SchemeTheme.themes[component.game.name]?.let {
-        SchemeTheme.specificColorScheme(it)
-    }
-
     val (columnPadding, extraPadding) = when (LocalWindowSize.current) {
         is WindowSize.COMPACT -> PaddingValues(0.dp) to PaddingValues(horizontal = 16.dp)
         is WindowSize.MEDIUM -> PaddingValues(16.dp) to PaddingValues(0.dp)
         is WindowSize.EXPANDED -> PaddingValues(16.dp) to PaddingValues(0.dp)
     }
-    SchemeTheme {
+    SchemeTheme(component.game.name) {
         LazyColumn(contentPadding = columnPadding) {
             item {
                 val game = component.game

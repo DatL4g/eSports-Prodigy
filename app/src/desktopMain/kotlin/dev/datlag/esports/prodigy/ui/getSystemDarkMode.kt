@@ -26,14 +26,14 @@ actual fun getSystemDarkMode(): Boolean {
 
 @Composable
 actual fun loadImageScheme(key: Any, painter: Painter) {
-    if (SchemeTheme.themes.contains(key)) {
+    if (!SchemeTheme.containsScheme(key)) {
         val awtImage = painter.toAwtImage(
             LocalDensity.current,
             LayoutDirection.Ltr
         )
 
-        rememberCoroutineScope().launchIO {
-            SchemeTheme.themes[key] = awtImage.createTheme()
+        SchemeTheme.createColorScheme(key) {
+            awtImage.createTheme()
         }
     }
 }

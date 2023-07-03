@@ -18,7 +18,14 @@ sealed class DxvkStateCacheEntry(
         return hasher.digest()
     }
 
-    fun isValid() = dataSHA1().contentEquals(hash.array())
+    protected open fun dataSHA256(): ByteArray {
+        val hasher = MessageDigest.getInstance("SHA-256")
+        hasher.update(data.array())
+
+        return hasher.digest()
+    }
+
+    fun isValid() = dataSHA1().contentEquals(hash.array()) || dataSHA256().contentEquals(hash.array())
 
     abstract suspend fun writeTo(writer: FileChannel): Result<Int>
 

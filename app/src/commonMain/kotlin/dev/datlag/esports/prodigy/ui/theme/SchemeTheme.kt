@@ -1,68 +1,41 @@
 package dev.datlag.esports.prodigy.ui.theme
 
-import androidx.compose.material.Colors
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import dev.datlag.esports.prodigy.color.theme.Theme
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
-import dev.datlag.esports.prodigy.common.safeEmit
+import dev.datlag.esports.prodigy.common.launchIO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 
 val LocalDarkMode = compositionLocalOf<Boolean> { error("No dark mode state provided") }
 
 object SchemeTheme {
 
-    val themes: MutableMap<Any, Theme?> = mutableMapOf()
+    internal val itemScheme: MutableStateFlow<Map<Any, ColorScheme?>> = MutableStateFlow(emptyMap())
 
-    internal var itemColorScheme: MutableStateFlow<ColorScheme?> = MutableStateFlow(null)
-
-    val colorScheme: ColorScheme
-        @Composable
-        @ReadOnlyComposable
-        get() = itemColorScheme.value ?: MaterialTheme.colorScheme
-
-    val colors: Colors
-        @Composable
-        @ReadOnlyComposable
-        get() = colorScheme.toLegacyColors(LocalDarkMode.current)
-
-    val typography: Typography
-        @Composable
-        @ReadOnlyComposable
-        get() = MaterialTheme.typography
-
-    val legacyTypography: androidx.compose.material.Typography
-        @Composable
-        @ReadOnlyComposable
-        get() = androidx.compose.material.MaterialTheme.typography
-
-    val shapes: Shapes
-        @Composable
-        @ReadOnlyComposable
-        get() = MaterialTheme.shapes
-
-    val legacyShapes: androidx.compose.material.Shapes
-        @Composable
-        @ReadOnlyComposable
-        get() = androidx.compose.material.MaterialTheme.shapes
-
-    @Composable
-    fun resetColorScheme() {
-        resetColorScheme(rememberCoroutineScope())
-    }
-
-    fun resetColorScheme(scope: CoroutineScope) {
-        itemColorScheme.safeEmit(null, scope)
+    fun containsScheme(key: Any): Boolean {
+        return itemScheme.value.getOrDefault(key, null) != null
     }
 
     @Composable
-    fun specificColorScheme(theme: Theme) {
-        specificColorScheme(theme, LocalDarkMode.current, rememberCoroutineScope())
+    fun createColorScheme(key: Any, block: suspend CoroutineScope.() -> Theme) {
+        val darkMode = LocalDarkMode.current
+
+        rememberCoroutineScope().launchIO {
+            createColorScheme(key, block(), darkMode, this)
+        }
     }
 
-    fun specificColorScheme(theme: Theme, darkMode: Boolean, scope: CoroutineScope) {
+    @Composable
+    fun createColorScheme(key: Any, theme: Theme) {
+        createColorScheme(key, theme, LocalDarkMode.current, rememberCoroutineScope())
+    }
+
+    fun createColorScheme(key: Any, theme: Theme, darkMode: Boolean, scope: CoroutineScope) {
         val newScheme = if (darkMode) {
             darkColorScheme(
                 primary = Color(theme.schemes.dark.primary),
@@ -135,23 +108,31 @@ object SchemeTheme {
             )
         }
 
-        itemColorScheme.safeEmit(newScheme, scope)
+        scope.launchIO {
+            val currentMap = (itemScheme.firstOrNull() ?: itemScheme.value).toMutableMap()
+            currentMap[key] = newScheme
+            itemScheme.emit(currentMap)
+        }
     }
 }
 
 @Composable
-fun SchemeTheme(content: @Composable () -> Unit) {
-    val colorScheme by SchemeTheme.itemColorScheme.collectAsStateSafe { null }
+fun SchemeTheme(key: Any, content: @Composable () -> Unit) {
+    val colorScheme by SchemeTheme.itemScheme.map {
+        it.firstNotNullOfOrNull { entry ->
+            if (entry.key == key) {
+                entry.value
+            } else {
+                null
+            }
+        }
+    }.collectAsStateSafe { null }
 
     MaterialTheme(
-        colorScheme = colorScheme ?: SchemeTheme.colorScheme,
-        shapes = SchemeTheme.shapes,
-        typography = SchemeTheme.typography
+        colorScheme = colorScheme ?: MaterialTheme.colorScheme
     ) {
         androidx.compose.material.MaterialTheme(
-            colors = colorScheme?.toLegacyColors(LocalDarkMode.current) ?: SchemeTheme.colors,
-            shapes = SchemeTheme.legacyShapes,
-            typography = SchemeTheme.legacyTypography
+            colors = colorScheme?.toLegacyColors(LocalDarkMode.current) ?: androidx.compose.material.MaterialTheme.colors
         ) {
             content()
         }
