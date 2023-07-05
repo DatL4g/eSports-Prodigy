@@ -5,11 +5,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import dev.datlag.esports.prodigy.color.theme.Theme
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import dev.datlag.esports.prodigy.common.getValueBlocking
 import dev.datlag.esports.prodigy.common.launchIO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 val LocalDarkMode = compositionLocalOf<Boolean> { error("No dark mode state provided") }
 
@@ -25,7 +27,7 @@ object SchemeTheme {
     fun createColorScheme(key: Any, block: suspend CoroutineScope.() -> Theme) {
         val darkMode = LocalDarkMode.current
 
-        rememberCoroutineScope().launchIO {
+        LaunchedEffect(key) {
             createColorScheme(key, block(), darkMode, this)
         }
     }
@@ -113,6 +115,10 @@ object SchemeTheme {
             currentMap[key] = newScheme
             itemScheme.emit(currentMap)
         }
+    }
+
+    fun getPrimaryColorOf(key: Any, fallback: Color): Color {
+        return itemScheme.mapNotNull { it.getOrDefault(key, null)?.primary }.getValueBlocking(fallback)
     }
 }
 

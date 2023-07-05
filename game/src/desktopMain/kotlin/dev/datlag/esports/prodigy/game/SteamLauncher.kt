@@ -166,9 +166,23 @@ object SteamLauncher {
                         ValveDataFormat.decodeFromFile<Map<String, UserData>>(it)
                     }.getOrNull()
                 } }.awaitAll().filterNotNull().flatMap { config ->
-                    User.fromMap(config)
-                }
+                    User.fromMap(config) { id ->
+                        findUserAvatarFile(id, list)
+                    }
+                }.sortedWith(compareByDescending<User> { u -> u.data.mostRecent }.thenByDescending { u -> u.data.timestamp })
             })
+        }
+    }
+
+    private fun findUserAvatarFile(id: String, folders: List<File>): File? {
+        val cacheFolders = folders.map { File(it, "config/avatarcache") }
+        val allFiles = cacheFolders.flatMap {
+            it.listFilesSafely()
+        }
+        return allFiles.firstOrNull {
+            it.nameWithoutExtension == id
+        } ?: allFiles.firstOrNull {
+            it.nameWithoutExtension.equals(id, true)
         }
     }
 

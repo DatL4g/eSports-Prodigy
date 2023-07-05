@@ -27,6 +27,7 @@ import com.netguru.multiplatform.charts.line.LineChartPoint
 import com.netguru.multiplatform.charts.line.LineChartSeries
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.openInBrowser
+import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.game.model.LocalGameInfo
 import dev.datlag.esports.prodigy.model.common.asList
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
@@ -145,10 +146,21 @@ fun GameView(component: GameComponent) {
                 }
             } else {
                 item {
-                    Text(
+                    val users by SteamLauncher.loggedInUsers.collectAsStateSafe { emptyList() }
+                    var width by remember(component.game.name) { mutableStateOf(0) }
+                    var height by remember(component.game.name) { mutableStateOf(0) }
+
+                    FlowRow(
                         modifier = Modifier.padding(extraPadding),
-                        text = "Coming soon..."
-                    )
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        users.forEach { user ->
+                            UserChartCard(user, width, height) {
+                                width = it.first
+                                height = it.second
+                            }
+                        }
+                    }
                 }
             }
         }
