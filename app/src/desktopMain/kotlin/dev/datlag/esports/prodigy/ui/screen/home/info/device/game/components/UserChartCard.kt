@@ -20,6 +20,9 @@ import dev.datlag.esports.prodigy.ui.loadImageScheme
 import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
 import io.kamel.core.Resource
 import io.kamel.image.asyncPainterResource
+import kotlinx.datetime.*
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import kotlin.math.max
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -131,7 +134,11 @@ fun UserChartCard(
                     ) {
                         Text(text = user.id)
                         Text(text = user.data.accountName)
-                        Text(text = user.data.timestamp.toString())
+                        val instant = Instant.fromEpochSeconds(user.data.timestamp)
+                        val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
+                        val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+
+                        Text(text = date.toJavaLocalDate().format(formatter))
                     }
                 }
                 Button(
