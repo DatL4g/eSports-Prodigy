@@ -19,12 +19,6 @@ plugins {
     alias(libs.plugins.serialization)
 }
 
-val coroutines = "1.7.1"
-val kodein = "7.20.1"
-val moko = "0.23.0"
-val kamel = "0.6.1"
-val napier = "2.6.1"
-
 val artifact = "dev.datlag.esports.prodigy"
 val appVersion = "1.0.0"
 val appCode = 100
@@ -307,7 +301,7 @@ compose {
 }
 
 configure<de.jensklingenberg.ktorfit.gradle.KtorfitGradleConfiguration> {
-    version = "1.4.2"
+    version = libs.versions.ktorfit.asProvider().get()
 }
 
 multiplatformResources {

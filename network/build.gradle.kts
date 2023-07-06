@@ -8,10 +8,6 @@ plugins {
 
 group = "dev.datlag.esports.prodigy.network"
 
-val flower = "3.0.0"
-val ktorfit = "1.4.1"
-val ktor = "2.3.1"
-
 kotlin {
     jvm()
     android()
@@ -57,6 +53,8 @@ android {
 }
 
 dependencies {
+    val ktorfit = libs.versions.ktorfit.asProvider().get()
+
     add("kspCommonMainMetadata", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfit")
     add("kspJvm", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfit")
     add("kspAndroid", "de.jensklingenberg.ktorfit:ktorfit-ksp:$ktorfit")
