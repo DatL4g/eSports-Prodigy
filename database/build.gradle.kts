@@ -1,7 +1,7 @@
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
-    id("com.squareup.sqldelight")
+    alias(libs.plugins.multiplatform)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.sqldelight)
 }
 
 group = "dev.datlag.esports.prodigy.database"
@@ -13,19 +13,19 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("com.squareup.sqldelight:coroutines-extensions:1.5.5")
+                api(libs.sqldelight.coroutines)
             }
         }
 
         val androidMain by getting {
             dependencies {
-                implementation("com.squareup.sqldelight:android-driver:1.5.5")
+                implementation(libs.sqldelight.android)
             }
         }
 
         val desktopMain by getting {
             dependencies {
-                implementation("com.squareup.sqldelight:sqlite-driver:1.5.5")
+                implementation(libs.sqldelight.sqlite)
             }
         }
     }

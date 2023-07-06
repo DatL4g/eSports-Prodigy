@@ -3,19 +3,21 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("multiplatform") version "1.8.20" apply false
-    kotlin("plugin.serialization") version "1.8.20" apply false
-    kotlin("android") version "1.8.20" apply false
-    id("org.jetbrains.compose") version "1.4.1" apply false
-    id("com.google.devtools.ksp") version "1.8.20-1.0.11" apply false
-    id("com.google.protobuf") version "0.9.3" apply false
-    id("com.squareup.sqldelight") version "1.5.5" apply false
-    id("com.mikepenz.aboutlibraries.plugin") version "10.8.0" apply false
-    id("de.jensklingenberg.ktorfit") version "1.0.0" apply false
-    id("com.google.osdetector") version "1.7.3" apply false
-    id("com.github.ben-manes.versions") version "0.47.0"
-    id("org.gradle.android.cache-fix") version "2.7.1" apply false
-    id("net.afanasev.sekret") version "0.1.4" apply false
+    alias(libs.plugins.aboutlibraries) apply false
+    alias(libs.plugins.android) apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.compose) apply false
+    alias(libs.plugins.cache.fix) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.ktorfit) apply false
+    alias(libs.plugins.multiplatform) apply false
+    alias(libs.plugins.osdetector) apply false
+    alias(libs.plugins.protobuf) apply false
+    alias(libs.plugins.sekret) apply false
+    alias(libs.plugins.serialization) apply false
+    alias(libs.plugins.sqldelight) apply false
+    alias(libs.plugins.versions)
 }
 
 buildscript {
@@ -27,8 +29,7 @@ buildscript {
         maven { url = uri("https://plugins.gradle.org/m2/") }
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.4.2")
-        classpath("dev.icerock.moko:resources-generator:0.23.0")
+        // classpath(libs.moko.resources.generator)
     }
 }
 
@@ -57,7 +58,7 @@ tasks.withType<KotlinCompile> {
 }
 
 fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
+    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
     val isStable = stableKeyword || regex.matches(version)
     return isStable.not()

@@ -1,9 +1,9 @@
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization")
-    id("com.google.devtools.ksp")
-    id("com.android.library")
-    id("org.gradle.android.cache-fix") apply false
+    alias(libs.plugins.multiplatform)
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.cache.fix) apply false
 }
 
 group = "dev.datlag.esports.prodigy.network"
@@ -20,13 +20,14 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":model"))
-                implementation("io.github.hadiyarajesh.flower-core:flower:$flower")
-                api("de.jensklingenberg.ktorfit:ktorfit-lib:$ktorfit")
-                implementation("it.skrape:skrapeit:1.2.2")
-                api("io.ktor:ktor-client-okhttp:$ktor")
-                api("io.ktor:ktor-client-content-negotiation:$ktor")
-                api("io.ktor:ktor-serialization-kotlinx-json:$ktor")
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+
+                implementation(libs.flower)
+                api(libs.ktorfit)
+                implementation(libs.skrapeit)
+                api(libs.ktor.okhttp)
+                api(libs.ktor.content.negotiation)
+                api(libs.ktor.serialization.json)
+                api(libs.datetime)
             }
         }
 

@@ -1,7 +1,7 @@
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
-    id("org.gradle.android.cache-fix") apply false
+    alias(libs.plugins.multiplatform)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.cache.fix) apply false
 }
 
 group = "dev.datlag.esports.prodigy.datastore"
@@ -13,7 +13,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("androidx.datastore:datastore-core:1.0.0")
+                api(libs.datastore)
                 api(project("proto"))
                 implementation(project(":model"))
             }

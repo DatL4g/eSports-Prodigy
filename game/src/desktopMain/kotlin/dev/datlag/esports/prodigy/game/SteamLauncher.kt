@@ -167,14 +167,14 @@ object SteamLauncher {
                     }.getOrNull()
                 } }.awaitAll().filterNotNull().flatMap { config ->
                     User.fromMap(config) { id ->
-                        findUserAvatarFile(id, list)
+                        findUserAvatar(id, list)
                     }
                 }.sortedWith(compareByDescending<User> { u -> u.data.mostRecent }.thenByDescending { u -> u.data.timestamp })
             })
         }
     }
 
-    private fun findUserAvatarFile(id: String, folders: List<File>): File? {
+    private suspend fun findUserAvatar(id: String, folders: List<File>): File? {
         val cacheFolders = folders.map { File(it, "config/avatarcache") }
         val allFiles = cacheFolders.flatMap {
             it.listFilesSafely()

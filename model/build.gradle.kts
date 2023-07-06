@@ -1,9 +1,9 @@
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization")
-    id("com.android.library")
+    alias(libs.plugins.multiplatform)
+    alias(libs.plugins.serialization)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.cache.fix) apply false
     id ("kotlin-parcelize") apply false
-    id("org.gradle.android.cache-fix") apply false
 }
 
 group = "dev.datlag.esports.prodigy.model"
@@ -15,9 +15,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("com.arkivanov.essenty:parcelable:1.1.0")
-                api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
+                api(libs.parcelable)
+                api(libs.serialization.json)
+                api(libs.coroutines)
             }
         }
 

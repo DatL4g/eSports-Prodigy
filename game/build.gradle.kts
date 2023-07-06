@@ -1,8 +1,8 @@
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
-    id("org.gradle.android.cache-fix") apply false
-    kotlin("plugin.serialization")
+    alias(libs.plugins.multiplatform)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.cache.fix) apply false
+    alias(libs.plugins.serialization)
     id ("kotlin-parcelize") apply false
 }
 
@@ -24,7 +24,7 @@ kotlin {
         }
         val desktopMain by getting {
             dependencies {
-                api("org.apache.commons:commons-lang3:3.12.0")
+                api(libs.lang)
             }
         }
     }

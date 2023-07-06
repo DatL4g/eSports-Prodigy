@@ -56,7 +56,7 @@ fun UserChartCard(
 
     SchemeTheme(user.id) {
         OutlinedCard(
-            modifier = Modifier.padding(vertical = 2.dp).sameSize().onSizeChanged {
+            modifier = Modifier.padding(vertical = 8.dp).sameSize().onSizeChanged {
                 if (width < it.width || height < it.height) {
                     onSizeChange(
                         max(width, it.width) to max(height, it.height)

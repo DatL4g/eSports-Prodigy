@@ -1,0 +1,108 @@
+[versions]
+aboutlibraries = "10.8.0"
+activity = "1.7.2"
+android = "7.4.2"
+android-core = "1.10.1"
+appcompat = "1.6.1"
+appdirs = "1.2.1"
+cache-fix = "2.7.1"
+compose = "1.4.1"
+coroutines = "1.7.1"
+datastore = "1.0.0"
+datetime = "0.4.0"
+decompose = "1.0.0"
+grpc = "1.56.1"
+filepicker = "1.2.0"
+flower = "3.0.0"
+kamel = "0.6.1"
+kodein = "7.20.1"
+kotlin = "1.8.20"
+krypto = "4.0.7"
+kscript = "1.0.22"
+ksp = "1.8.20-1.0.11"
+ktor = "2.3.2"
+ktorfit = "1.4.2"
+ktorfit-plugin = "1.0.0"
+lang = "3.12.0"
+lifecycle = "2.6.1"
+material = "1.9.0"
+moko-resources = "0.23.0"
+multidex = "2.0.1"
+napier = "2.6.1"
+osdetector = "1.7.3"
+parcelable = "1.1.0"
+protobuf = "0.9.3"
+protobuf-java = "3.23.3"
+sekret = "0.1.4"
+serialization-json = "1.5.1"
+skrapeit = "1.3.0-alpha.1"
+splashscreen = "1.0.1"
+sqldelight = "1.5.5"
+versions = "0.47.0"
+windowsize = "1.1.1"
+
+[libraries]
+aboutlibraries =  { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutlibraries" }
+aboutlibraries-compose =  { group = "com.mikepenz", name = "aboutlibraries-compose", version.ref = "aboutlibraries" }
+activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+android = { group = "androidx.core", name = "core-ktx", version.ref = "android-core" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+appdirs = { group = "net.harawata", name = "appdirs", version.ref = "appdirs" }
+coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "coroutines" }
+datastore = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastore" }
+datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "datetime" }
+decompose = { group = "com.arkivanov.decompose", name = "decompose", version.ref = "decompose" }
+decompose-compose = { group = "com.arkivanov.decompose", name = "extensions-compose-jetbrains", version.ref = "decompose" }
+filepicker = { group = "com.darkrockstudios", name = "mpfilepicker", version.ref = "filepicker" }
+flower = { group = "io.github.hadiyarajesh.flower-core", name = "flower", version.ref = "flower" }
+grpc = { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
+kamel = { group = "media.kamel", name = "kamel-image", version.ref = "kamel" }
+kodein = { group = "org.kodein.di", name = "kodein-di", version.ref = "kodein" }
+kodein-compose = { group = "org.kodein.di", name = "kodein-di-framework-compose", version.ref = "kodein" }
+krypto = { group = "com.soywiz.korlibs.krypto", name = "krypto", version.ref = "krypto" }
+kscript = { group = "com.sealwu", name = "kscript-tools", version.ref = "kscript" }
+ktor = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktorfit = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-lib", version.ref = "ktorfit" }
+lang = { group = "org.apache.commons", name = "commons-lang3", version.ref = "lang" }
+lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+moko-resources-compose = { group = "dev.icerock.moko", name = "resources-compose", version.ref = "moko-resources" }
+moko-resources-generator = { group = "dev.icerock.moko", name = "resources-generator", version.ref = "moko-resources" }
+multidex = { group = "androidx.multidex", name = "multidex", version.ref = "multidex" }
+napier = { group = "io.github.aakira", name = "napier", version.ref = "napier" }
+parcelable = { group = "com.arkivanov.essenty", name = "parcelable", version.ref = "parcelable" }
+protobuf = { group = "com.google.protobuf", name = "protobuf-java", version.ref = "protobuf-java" }
+sekret = { group = "net.afanasev", name = "sekret-annotation", version.ref = "sekret" }
+serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization-json" }
+skrapeit = { group = "it.skrape", name = "skrapeit", version.ref = "skrapeit" }
+splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
+sqldelight-android = { group = "com.squareup.sqldelight", name = "android-driver", version.ref = "sqldelight" }
+sqldelight-coroutines = { group = "com.squareup.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
+sqldelight-sqlite = { group = "com.squareup.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
+stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+windowsize = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "windowsize" }
+
+[plugins]
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
+android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-application = { id = "com.android.application", version.ref = "android" }
+android-library = { id = "com.android.library", version.ref = "android" }
+cache-fix = { id = "org.gradle.android.cache-fix", version.ref = "cache-fix" }
+compose = { id = "org.jetbrains.compose", version.ref = "compose" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfit-plugin" }
+moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }
+multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+osdetector = { id = "com.google.osdetector", version.ref = "osdetector" }
+parcelize = { id = "kotlin-parcelize", version.ref = "kotlin" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
+sekret = { id = "net.afanasev.sekret", version.ref = "sekret" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqldelight" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }

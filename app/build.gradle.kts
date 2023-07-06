@@ -7,20 +7,19 @@ import java.security.MessageDigest
 import kotlin.experimental.xor
 
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization")
-    id("org.jetbrains.compose")
-    id("com.android.application")
+    alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.cache.fix) apply false
+    alias(libs.plugins.compose)
+    alias(libs.plugins.ktorfit)
+    alias(libs.plugins.moko.resources)
+    alias(libs.plugins.multiplatform)
+    alias(libs.plugins.osdetector)
     id("kotlin-parcelize") apply false
-    id("com.mikepenz.aboutlibraries.plugin")
-    id("de.jensklingenberg.ktorfit")
-    id("com.google.osdetector")
-    id("dev.icerock.mobile.multiplatform-resources")
-    id("org.gradle.android.cache-fix") apply false
+    alias(libs.plugins.serialization)
 }
 
 val coroutines = "1.7.1"
-val decompose = "1.0.0"
 val kodein = "7.20.1"
 val moko = "0.23.0"
 val kamel = "0.6.1"
@@ -50,21 +49,20 @@ kotlin {
                 api(compose.material3)
                 api(compose.materialIconsExtended)
 
-                api(kotlin("stdlib"))
+                api(libs.stdlib)
 
-                api("com.arkivanov.decompose:decompose:$decompose")
-                api("com.arkivanov.decompose:extensions-compose-jetbrains:$decompose")
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines")
-                api("org.kodein.di:kodein-di:$kodein")
-                implementation("org.kodein.di:kodein-di-framework-compose:$kodein")
+                api(libs.decompose)
+                api(libs.decompose.compose)
+                api(libs.coroutines)
+                api(libs.kodein)
+                api(libs.kodein.compose)
 
+                implementation(libs.aboutlibraries)
+                implementation(libs.aboutlibraries.compose)
 
-                implementation("com.mikepenz:aboutlibraries-compose:10.8.0")
-                implementation("com.mikepenz:aboutlibraries-core:10.8.0")
-
-                api("dev.icerock.moko:resources-compose:$moko")
-                api("media.kamel:kamel-image:$kamel")
-                api("io.github.aakira:napier:$napier")
+                api(libs.moko.resources.compose)
+                api(libs.kamel)
+                api(libs.napier)
 
                 api(project(":color"))
                 api(project(":game"))
@@ -81,17 +79,18 @@ kotlin {
             apply(plugin = "org.gradle.android.cache-fix")
             apply(plugin = "net.afanasev.sekret")
             dependencies {
-                implementation("androidx.appcompat:appcompat:1.6.1")
-                implementation("androidx.core:core-ktx:1.10.1")
-                implementation("androidx.activity:activity-ktx:1.7.2")
-                implementation("androidx.activity:activity-compose:1.7.2")
-                implementation("androidx.multidex:multidex:2.0.1")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines")
-                implementation("com.google.android.material:material:1.9.0")
-                implementation("androidx.core:core-splashscreen:1.0.1")
-                implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-                implementation("androidx.compose.material3:material3-window-size-class:1.1.1")
-                implementation("net.afanasev:sekret-annotation:0.1.4")
+                implementation(libs.activity)
+                implementation(libs.activity.compose)
+                implementation(libs.android)
+                implementation(libs.appcompat)
+                implementation(libs.coroutines.android)
+                implementation(libs.ktor.okhttp)
+                implementation(libs.lifecycle)
+                implementation(libs.material)
+                implementation(libs.multidex)
+                implementation(libs.sekret)
+                implementation(libs.splashscreen)
+                implementation(libs.windowsize)
             }
         }
 
@@ -99,11 +98,13 @@ kotlin {
             apply(plugin = "net.afanasev.sekret")
             dependencies {
                 implementation(compose.desktop.currentOs)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:$coroutines")
-                implementation("com.sealwu:kscript-tools:1.0.22")
-                implementation("net.harawata:appdirs:1.2.1")
-                implementation("com.darkrockstudios:mpfilepicker:1.2.0")
-                implementation("net.afanasev:sekret-annotation:0.1.4")
+
+                implementation(libs.appdirs)
+                implementation(libs.coroutines.swing)
+                implementation(libs.filepicker)
+                implementation(libs.kscript)
+                implementation(libs.ktor.okhttp)
+                implementation(libs.sekret)
             }
         }
     }
@@ -253,9 +254,6 @@ val createNativeLib = tasks.create<Copy>("createNativeLib") {
     exclude("*.h")
     into("resources/common/")
 }
-dependencies {
-    implementation("io.ktor:ktor-client-okhttp-jvm:2.3.1")
-}
 
 compose {
     kotlinCompilerPlugin.set("androidx.compose.compiler:compiler:1.4.6")
@@ -302,13 +300,14 @@ compose {
                 }
 
                 includeAllModules = true
+                jvmArgs += "-splash:app/src/commonMain/resources/MR/assets/svg/launcher_128.svg"
             }
         }
     }
 }
 
 configure<de.jensklingenberg.ktorfit.gradle.KtorfitGradleConfiguration> {
-    version = "1.4.1"
+    version = "1.4.2"
 }
 
 multiplatformResources {
