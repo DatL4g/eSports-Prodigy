@@ -1,16 +1,21 @@
 package dev.datlag.esports.prodigy.ui.screen.home
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.extensions.compose.jetbrains.pages.Pages
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
@@ -30,12 +35,12 @@ fun HomeScreen(component: HomeComponent) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CompactScreen(
     component: HomeComponent
 ) {
-    val selectedPage by component.selectedPage.subscribeAsState()
+    var selectedPage by remember { mutableStateOf(0) }
 
     Scaffold(
         bottomBar = {
@@ -47,7 +52,7 @@ fun CompactScreen(
                             NavIcon(item)
                         },
                         onClick = {
-                            component.navigate(item.key)
+                            component.selectPage(item.key)
                         },
                         label = {
                             Text(text = stringResource(item.label))
@@ -59,22 +64,25 @@ fun CompactScreen(
         }
     ) {
         Box(modifier = Modifier.padding(it)) {
-            Children(
-                stack = component.childStack,
-                animation = stackAnimation(fade())
-            ) { child ->
-                child.instance.render()
+            Pages(
+                pages = component.pages,
+                onPageSelected = { index ->
+                    component.selectPage(index)
+                }
+            ) { index, page ->
+                selectedPage = index
+                page.render()
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun MediumScreen(
     component: HomeComponent
 ) {
-    val selectedPage by component.selectedPage.subscribeAsState()
+    var selectedPage by remember { mutableStateOf(0) }
 
     Scaffold {
         Row(modifier = Modifier.padding(it)) {
@@ -89,7 +97,7 @@ fun MediumScreen(
                             NavIcon(item)
                         },
                         onClick = {
-                            component.navigate(item.key)
+                            component.selectPage(item.key)
                         },
                         label = {
                             Text(text = stringResource(item.label))
@@ -100,22 +108,25 @@ fun MediumScreen(
                 Spacer(modifier = Modifier.weight(1F))
             }
 
-            Children(
-                stack = component.childStack,
-                animation = stackAnimation(fade())
-            ) { child ->
-                child.instance.render()
+            Pages(
+                pages = component.pages,
+                onPageSelected = { index ->
+                    component.selectPage(index)
+                }
+            ) { index, page ->
+                selectedPage = index
+                page.render()
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ExpandedScreen(
     component: HomeComponent
 ) {
-    val selectedPage by component.selectedPage.subscribeAsState()
+    var selectedPage by remember { mutableStateOf(0) }
 
     Scaffold {
         PermanentNavigationDrawer(
@@ -140,7 +151,7 @@ fun ExpandedScreen(
                                 Text(text = stringResource(item.label))
                             },
                             onClick = {
-                                component.navigate(item.key)
+                                component.selectPage(item.key)
                             },
                             selected = selectedPage == item.key
                         )
@@ -149,12 +160,17 @@ fun ExpandedScreen(
                 }
             }
         ) {
-            Box {
-                Children(
-                    stack = component.childStack,
-                    animation = stackAnimation(fade())
-                ) { child ->
-                    child.instance.render()
+            Box(
+                contentAlignment = Alignment.TopStart
+            ) {
+                Pages(
+                    pages = component.pages,
+                    onPageSelected = { index ->
+                        component.selectPage(index)
+                    }
+                ) { index, page ->
+                    selectedPage = index
+                    page.render()
                 }
             }
         }

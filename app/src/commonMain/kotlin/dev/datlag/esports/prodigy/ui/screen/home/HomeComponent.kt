@@ -1,5 +1,6 @@
 package dev.datlag.esports.prodigy.ui.screen.home
 
+import com.arkivanov.decompose.router.pages.ChildPages
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
@@ -8,13 +9,12 @@ import dev.icerock.moko.resources.StringResource
 
 interface HomeComponent : Component {
 
-    val childStack: Value<ChildStack<*, Component>>
     val pagerItems: List<PagerItem>
-    val selectedPage: Value<Int>
-
-    fun navigate(key: Int)
 
     fun navigateToUser()
+
+    val pages: Value<ChildPages<*, Component>>
+    fun selectPage(index: Int)
 
     data class PagerItem(
         internal val key: Int,

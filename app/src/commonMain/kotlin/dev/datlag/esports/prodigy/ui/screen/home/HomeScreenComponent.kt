@@ -5,6 +5,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Pending
 import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.ExperimentalDecomposeApi
+import com.arkivanov.decompose.router.pages.*
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
@@ -24,17 +26,6 @@ class HomeScreenComponent(
     private val goToUser: () -> Unit,
     private val goToSettings: () -> Unit
 ) : HomeComponent, ComponentContext by componentContext {
-
-    private val navigation = StackNavigation<View>()
-    private val _childStack = childStack(
-        source = navigation,
-        initialConfiguration = View.Info,
-        handleBackButton = true,
-        childFactory = ::createChild
-    )
-    override val childStack: Value<ChildStack<*, Component>> = _childStack
-    private val _selectedPage: MutableValue<Int> = MutableValue(0)
-    override val selectedPage: Value<Int> = _selectedPage
 
     override val pagerItems = listOf(
         HomeComponent.PagerItem(
@@ -59,13 +50,28 @@ class HomeScreenComponent(
         )
     )
 
-    init {
-        selectedPage.observe(lifecycle) {
-            when (it) {
-                0 -> navigation.replaceCurrent(View.Info)
-                1 -> navigation.replaceCurrent(View.CounterStrike)
-            }
+    @OptIn(ExperimentalDecomposeApi::class)
+    private val pagesNavigation = PagesNavigation<View>()
+
+    @OptIn(ExperimentalDecomposeApi::class)
+    override val pages: Value<ChildPages<*, Component>> = childPages(
+        source = pagesNavigation,
+        initialPages = {
+            Pages(
+                items = listOf(
+                    View.Info,
+                    View.CounterStrike
+                ),
+                selectedIndex = 0
+            )
         }
+    ) { config, componentContext ->
+        createChild(config, componentContext)
+    }
+
+    @OptIn(ExperimentalDecomposeApi::class)
+    override fun selectPage(index: Int) {
+        pagesNavigation.select(index = index)
     }
 
     private fun createChild(
@@ -89,10 +95,6 @@ class HomeScreenComponent(
     @Composable
     override fun render() {
         HomeScreen(this)
-    }
-
-    override fun navigate(key: Int) {
-        _selectedPage.value = key
     }
 
     override fun navigateToUser() {
