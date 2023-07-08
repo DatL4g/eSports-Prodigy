@@ -14,6 +14,8 @@ decompose = "2.0.0"
 grpc = "1.56.1"
 filepicker = "1.2.0"
 flower = "3.0.0"
+jfa = "1.2.0"
+jna = "5.13.0"
 kamel = "0.6.1"
 kodein = "7.20.2"
 kotlin = "1.8.20"
@@ -59,6 +61,9 @@ decompose-compose = { group = "com.arkivanov.decompose", name = "extensions-comp
 filepicker = { group = "com.darkrockstudios", name = "mpfilepicker", version.ref = "filepicker" }
 flower = { group = "io.github.hadiyarajesh.flower-core", name = "flower", version.ref = "flower" }
 grpc = { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
+jfa = { group = "de.jangassen", name = "jfa", version.ref = "jfa" }
+jna = { group = "net.java.dev.jna", name = "jna", version.ref = "jna" }
+jna-platform = { group = "net.java.dev.jna", name = "jna-platform", version.ref = "jna" }
 kamel = { group = "media.kamel", name = "kamel-image", version.ref = "kamel" }
 kodein = { group = "org.kodein.di", name = "kodein-di", version.ref = "kodein" }
 kodein-compose = { group = "org.kodein.di", name = "kodein-di-framework-compose", version.ref = "kodein" }

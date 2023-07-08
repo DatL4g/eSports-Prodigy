@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -23,7 +24,7 @@ import org.kodein.di.instance
 @Composable
 fun App(
     di: DI,
-    systemDarkTheme: Boolean = isSystemInDarkTheme() || getSystemDarkMode(),
+    systemDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val settings: DataStore<AppSettings> by di.instance()
@@ -31,10 +32,11 @@ fun App(
     val themeMode by settings.data.map { ThemeMode.ofValue(it.appearance.themeMode) }.collectAsStateSafe {
         ThemeMode.SYSTEM
     }
+    val detectedTheme by getSystemDarkMode(systemDarkTheme)
     val useDarkTheme = when (themeMode) {
         is ThemeMode.LIGHT -> false
         is ThemeMode.DARK -> true
-        else -> systemDarkTheme
+        else -> detectedTheme
     }
 
     CompositionLocalProvider(LocalDarkMode provides useDarkTheme) {
@@ -60,7 +62,7 @@ fun App(
 }
 
 @Composable
-expect fun getSystemDarkMode(): Boolean
+expect fun getSystemDarkMode(initValue: Boolean): MutableState<Boolean>
 
 @Composable
 expect fun loadImageScheme(key: Any, painter: Painter)

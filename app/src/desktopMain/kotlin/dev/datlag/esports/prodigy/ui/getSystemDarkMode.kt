@@ -1,7 +1,6 @@
 package dev.datlag.esports.prodigy.ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.platform.LocalDensity
@@ -10,18 +9,20 @@ import dev.datlag.esports.prodigy.color.createTheme
 import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.other.Constants
 import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
+import dev.datlag.esports.prodigy.ui.theme.ThemeDetector
 import evalBash
 import org.apache.commons.lang3.SystemUtils
 
 @Composable
-actual fun getSystemDarkMode(): Boolean {
-    return if (SystemUtils.IS_OS_LINUX) {
-        (Constants.LINUX_DARK_MODE_CMD.evalBash(env = null).getOrDefault(String())).ifEmpty {
-            Constants.LINUX_DARK_MODE_LEGACY_CMD.evalBash(env = null).getOrDefault(String())
-        }.contains("dark", true)
-    } else {
-        false
+actual fun getSystemDarkMode(initValue: Boolean): MutableState<Boolean> {
+    val detector = remember { ThemeDetector.create() }
+    val isDark = remember { mutableStateOf(initValue || detector.isDark) }
+
+    detector.listen { newDark ->
+        isDark.value = newDark
     }
+
+    return isDark
 }
 
 @Composable

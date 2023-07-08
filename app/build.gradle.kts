@@ -1,5 +1,6 @@
 import com.mikepenz.aboutlibraries.plugin.DuplicateMode
 import com.mikepenz.aboutlibraries.plugin.DuplicateRule
+import org.gradle.jvm.tasks.Jar
 import java.util.Properties
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -99,6 +100,12 @@ kotlin {
                 implementation(libs.kscript)
                 implementation(libs.ktor.okhttp)
                 implementation(libs.sekret)
+
+                implementation(libs.jna)
+                implementation(libs.jna.platform)
+                implementation(libs.jfa.get().toString()) {
+                    exclude(group = "net.java.dev.jna", module = "jna")
+                }
             }
         }
     }
@@ -294,7 +301,6 @@ compose {
                 }
 
                 includeAllModules = true
-                jvmArgs += "-splash:app/src/commonMain/resources/MR/assets/svg/launcher_128.svg"
             }
         }
     }
