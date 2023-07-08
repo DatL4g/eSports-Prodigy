@@ -12,11 +12,13 @@ import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
 import dev.datlag.esports.prodigy.ui.theme.ThemeDetector
 import evalBash
 import org.apache.commons.lang3.SystemUtils
+import org.jetbrains.skiko.SystemTheme
+import org.jetbrains.skiko.currentSystemTheme
 
 @Composable
 actual fun getSystemDarkMode(initValue: Boolean): MutableState<Boolean> {
     val detector = remember { ThemeDetector.create() }
-    val isDark = remember { mutableStateOf(initValue || detector.isDark) }
+    val isDark = remember { mutableStateOf(initValue || (currentSystemTheme == SystemTheme.DARK) || detector.isDark) }
 
     detector.listen { newDark ->
         isDark.value = newDark
