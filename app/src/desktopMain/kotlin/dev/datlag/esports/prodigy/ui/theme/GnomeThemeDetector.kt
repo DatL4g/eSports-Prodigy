@@ -22,7 +22,6 @@ object GnomeThemeDetector : ThemeDetector {
     private var listener: (isDark: Boolean) -> Unit = { }
 
     init {
-        println("Init Gnome")
         val runtime = Runtime.getRuntime()
 
         GlobalScope.launchIO {

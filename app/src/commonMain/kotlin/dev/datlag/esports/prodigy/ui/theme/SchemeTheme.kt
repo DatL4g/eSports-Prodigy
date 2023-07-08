@@ -17,7 +17,7 @@ val LocalDarkMode = compositionLocalOf<Boolean> { error("No dark mode state prov
 
 object SchemeTheme {
 
-    internal val itemScheme: MutableStateFlow<Map<Any, ColorScheme?>> = MutableStateFlow(emptyMap())
+    internal val itemScheme: MutableStateFlow<Map<Any, ThemeHolder?>> = MutableStateFlow(emptyMap())
 
     fun containsScheme(key: Any): Boolean {
         return itemScheme.value.getOrDefault(key, null) != null
@@ -25,21 +25,19 @@ object SchemeTheme {
 
     @Composable
     fun createColorScheme(key: Any, block: suspend CoroutineScope.() -> Theme) {
-        val darkMode = LocalDarkMode.current
-
         LaunchedEffect(key) {
-            createColorScheme(key, block(), darkMode, this)
+            createColorScheme(key, block(), this)
         }
     }
 
     @Composable
     fun createColorScheme(key: Any, theme: Theme) {
-        createColorScheme(key, theme, LocalDarkMode.current, rememberCoroutineScope())
+        createColorScheme(key, theme, rememberCoroutineScope())
     }
 
-    fun createColorScheme(key: Any, theme: Theme, darkMode: Boolean, scope: CoroutineScope) {
-        val newScheme = if (darkMode) {
-            darkColorScheme(
+    fun createColorScheme(key: Any, theme: Theme, scope: CoroutineScope) {
+        val newTheme = ThemeHolder(
+            dark = darkColorScheme(
                 primary = Color(theme.schemes.dark.primary),
                 onPrimary = Color(theme.schemes.dark.onPrimary),
                 primaryContainer = Color(theme.schemes.dark.primaryContainer),
@@ -72,9 +70,8 @@ object SchemeTheme {
                 inverseSurface = Color(theme.schemes.dark.inverseSurface),
                 inverseOnSurface = Color(theme.schemes.dark.inverseOnSurface),
                 inversePrimary = Color(theme.schemes.dark.inversePrimary)
-            )
-        } else {
-            lightColorScheme(
+            ),
+            light = lightColorScheme(
                 primary = Color(theme.schemes.light.primary),
                 onPrimary = Color(theme.schemes.light.onPrimary),
                 primaryContainer = Color(theme.schemes.light.primaryContainer),
@@ -108,23 +105,19 @@ object SchemeTheme {
                 inverseOnSurface = Color(theme.schemes.light.inverseOnSurface),
                 inversePrimary = Color(theme.schemes.light.inversePrimary),
             )
-        }
+        )
 
         scope.launchIO {
             val currentMap = (itemScheme.firstOrNull() ?: itemScheme.value).toMutableMap()
-            currentMap[key] = newScheme
+            currentMap[key] = newTheme
             itemScheme.emit(currentMap)
         }
-    }
-
-    fun getPrimaryColorOf(key: Any, fallback: Color): Color {
-        return itemScheme.mapNotNull { it.getOrDefault(key, null)?.primary }.getValueBlocking(fallback)
     }
 }
 
 @Composable
 fun SchemeTheme(key: Any, content: @Composable () -> Unit) {
-    val colorScheme by SchemeTheme.itemScheme.map {
+    val themeHolder by SchemeTheme.itemScheme.map {
         it.firstNotNullOfOrNull { entry ->
             if (entry.key == key) {
                 entry.value
@@ -134,13 +127,20 @@ fun SchemeTheme(key: Any, content: @Composable () -> Unit) {
         }
     }.collectAsStateSafe { null }
 
+    val scheme = (if (LocalDarkMode.current) themeHolder?.dark else themeHolder?.light) ?: MaterialTheme.colorScheme
+
     MaterialTheme(
-        colorScheme = colorScheme ?: MaterialTheme.colorScheme
+        colorScheme = scheme
     ) {
         androidx.compose.material.MaterialTheme(
-            colors = colorScheme?.toLegacyColors(LocalDarkMode.current) ?: androidx.compose.material.MaterialTheme.colors
+            colors = scheme.toLegacyColors(LocalDarkMode.current)
         ) {
             content()
         }
     }
 }
+
+data class ThemeHolder(
+    val dark: ColorScheme,
+    val light: ColorScheme
+)
