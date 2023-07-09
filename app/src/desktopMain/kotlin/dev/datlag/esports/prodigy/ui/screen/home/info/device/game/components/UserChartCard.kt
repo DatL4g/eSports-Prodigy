@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,11 +16,13 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.game.model.steam.User
 import dev.datlag.esports.prodigy.ui.loadImageScheme
 import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
 import io.kamel.core.Resource
 import io.kamel.image.asyncPainterResource
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.*
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -31,7 +34,9 @@ fun UserChartCard(
     user: User,
     width: Int,
     height: Int,
-    onSizeChange: (Pair<Int, Int>) -> Unit
+    loadAvatar: () -> Flow<String>,
+    onSizeChange: (Pair<Int, Int>) -> Unit,
+    onClick: () -> Unit
 ) {
     val widthDp = with(LocalDensity.current) {
         width.toDp()
@@ -81,7 +86,26 @@ fun UserChartCard(
                     }
 
                     when (val resource = user.avatarFile?.let { asyncPainterResource(it) }) {
-                        null, is Resource.Failure, is Resource.Loading -> {
+                        null, is Resource.Failure -> {
+                            val fallbackAvatar by loadAvatar().collectAsStateSafe { null }
+
+                            when (val fallbackResource = fallbackAvatar?.let { asyncPainterResource(it) }) {
+                                null, is Resource.Failure, is Resource.Loading -> {
+                                    Box(modifier = Modifier.size(56.dp).background(color = fallbackColor, shape = MaterialTheme.shapes.small))
+                                }
+                                is Resource.Success -> {
+                                    loadImageScheme(user.id, fallbackResource.value)
+                                    Image(
+                                        painter = fallbackResource.value,
+                                        contentDescription = user.name,
+                                        contentScale = ContentScale.FillBounds,
+                                        alignment = Alignment.Center,
+                                        modifier = Modifier.size(56.dp).clip(MaterialTheme.shapes.small)
+                                    )
+                                }
+                            }
+                        }
+                        is Resource.Loading -> {
                             Box(modifier = Modifier.size(56.dp).background(color = fallbackColor, shape = MaterialTheme.shapes.small))
                         }
                         is Resource.Success -> {
@@ -143,7 +167,7 @@ fun UserChartCard(
                 }
                 Button(
                     onClick = {
-
+                        onClick()
                     },
                     modifier = Modifier.align(Alignment.End)
                 ) {

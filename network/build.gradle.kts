@@ -23,6 +23,7 @@ kotlin {
                 api(libs.ktor.okhttp)
                 api(libs.ktor.content.negotiation)
                 api(libs.ktor.serialization.json)
+                api(libs.ktor.serialization.xml)
                 api(libs.datetime)
             }
         }

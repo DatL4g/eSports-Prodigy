@@ -17,6 +17,7 @@ kotlin {
             dependencies {
                 api(libs.parcelable)
                 api(libs.serialization.json)
+                api(libs.serialization.xml)
                 api(libs.coroutines)
             }
         }

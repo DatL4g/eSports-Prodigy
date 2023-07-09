@@ -155,9 +155,19 @@ fun GameView(component: GameComponent) {
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         users.forEach { user ->
-                            UserChartCard(user, width, height) {
-                                width = it.first
-                                height = it.second
+                            UserChartCard(
+                                user = user,
+                                width = width,
+                                height = height,
+                                loadAvatar = {
+                                    component.loadUserAvatar(user)
+                                },
+                                onSizeChange = {
+                                    width = it.first
+                                    height = it.second
+                                }
+                            ) {
+                                // ToDo("load stats")
                             }
                         }
                     }

@@ -3,12 +3,12 @@ package dev.datlag.esports.prodigy.network.repository
 import com.hadiyarajesh.flower_core.Resource
 import com.hadiyarajesh.flower_core.dbBoundResource
 import dev.datlag.esports.prodigy.model.steam.UserStatsForGame
-import dev.datlag.esports.prodigy.network.Steam
+import dev.datlag.esports.prodigy.network.SteamAPI
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.transform
 
 class CSStatsRepository(
-    val steamAPI: Steam
+    val steamAPI: SteamAPI
 ) {
 
     val userStats: MutableStateFlow<UserStatsForGame?> = MutableStateFlow(null)

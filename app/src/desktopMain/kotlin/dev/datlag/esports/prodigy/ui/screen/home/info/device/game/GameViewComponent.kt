@@ -1,22 +1,16 @@
 package dev.datlag.esports.prodigy.ui.screen.home.info.device.game
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import com.arkivanov.decompose.ComponentContext
-import com.netguru.multiplatform.charts.line.LineChartData
-import com.netguru.multiplatform.charts.line.LineChartPoint
-import com.netguru.multiplatform.charts.line.LineChartSeries
-import dev.datlag.esports.prodigy.common.ioScope
-import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.game.model.LocalGame
+import dev.datlag.esports.prodigy.game.model.steam.User
 import dev.datlag.esports.prodigy.model.UnsupportedUserChartGame
-import dev.datlag.esports.prodigy.model.common.asList
 import dev.datlag.esports.prodigy.network.repository.CSStatsRepository
-import kotlinx.datetime.Clock
+import dev.datlag.esports.prodigy.network.repository.SteamRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.mapNotNull
 import org.kodein.di.DI
 import org.kodein.di.instance
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 class GameViewComponent(
     componentContext: ComponentContext,
@@ -26,6 +20,7 @@ class GameViewComponent(
 ) : GameComponent, ComponentContext by componentContext {
 
     private val csStats: CSStatsRepository by di.instance()
+    private val steamRepo: SteamRepository by di.instance()
 
     override val unsupportedUserChartGames: Collection<UnsupportedUserChartGame> = listOf(
         UnsupportedUserChartGame(
@@ -43,4 +38,6 @@ class GameViewComponent(
     override fun goBack() {
         back()
     }
+
+    override fun loadUserAvatar(user: User): Flow<String> = steamRepo.userProfile(user.id).mapNotNull { it?.avatar }
 }

@@ -44,6 +44,14 @@ fun CoroutineScope.launchMain(block: suspend CoroutineScope.() -> Unit): Job {
     }
 }
 
+fun LifecycleOwner.launchIO(block: suspend  CoroutineScope.() -> Unit): Job {
+    return ioScope().launchIO(block)
+}
+
+fun LifecycleOwner.launchMain(block: suspend  CoroutineScope.() -> Unit): Job {
+    return mainScope().launchMain(block)
+}
+
 suspend fun <T> withIOContext(
     block: suspend CoroutineScope.() -> T
 ): T {

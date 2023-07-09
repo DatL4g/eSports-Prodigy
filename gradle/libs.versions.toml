@@ -37,6 +37,7 @@ protobuf = "0.9.3"
 protoc = "3.23.4"
 sekret = "0.1.4"
 serialization-json = "1.5.1"
+serialization-xml = "0.86.1"
 skrapeit = "1.3.0-alpha.1"
 splashscreen = "1.0.1"
 sqldelight = "1.5.5"
@@ -73,6 +74,7 @@ ktor = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-serialization-xml = { group = "io.ktor", name = "ktor-serialization-kotlinx-xml", version.ref = "ktor" }
 ktorfit = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-lib", version.ref = "ktorfit" }
 lang = { group = "org.apache.commons", name = "commons-lang3", version.ref = "lang" }
 lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
@@ -86,6 +88,7 @@ protobuf = { group = "com.google.protobuf", name = "protobuf-java", version.ref 
 protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protoc" }
 sekret = { group = "net.afanasev", name = "sekret-annotation", version.ref = "sekret" }
 serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization-json" }
+serialization-xml = { group = "io.github.pdvrieze.xmlutil", name = "serialization", version.ref = "serialization-xml" }
 skrapeit = { group = "it.skrape", name = "skrapeit", version.ref = "skrapeit" }
 splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 sqldelight-android = { group = "com.squareup.sqldelight", name = "android-driver", version.ref = "sqldelight" }
