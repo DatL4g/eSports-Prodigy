@@ -32,7 +32,7 @@ kotlin {
         jvmToolchain(11)
     }
     jvm("desktop") {
-        jvmToolchain(11)
+        jvmToolchain(17)
     }
 
     sourceSets {
