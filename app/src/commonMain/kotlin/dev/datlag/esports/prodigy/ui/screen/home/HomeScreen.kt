@@ -22,6 +22,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
 import dev.datlag.esports.prodigy.ui.WindowSize
+import dev.datlag.esports.prodigy.ui.custom.ExpandedPages
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
@@ -108,11 +109,8 @@ fun MediumScreen(
                 Spacer(modifier = Modifier.weight(1F))
             }
 
-            Pages(
-                pages = component.pages,
-                onPageSelected = { index ->
-                    component.selectPage(index)
-                }
+            ExpandedPages(
+                pages = component.pages
             ) { index, page ->
                 selectedPage = index
                 page.render()
@@ -163,11 +161,8 @@ fun ExpandedScreen(
             Box(
                 contentAlignment = Alignment.TopStart
             ) {
-                Pages(
-                    pages = component.pages,
-                    onPageSelected = { index ->
-                        component.selectPage(index)
-                    }
+                ExpandedPages(
+                    pages = component.pages
                 ) { index, page ->
                     selectedPage = index
                     page.render()

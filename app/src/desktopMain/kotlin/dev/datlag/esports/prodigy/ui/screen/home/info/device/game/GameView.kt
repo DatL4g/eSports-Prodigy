@@ -155,13 +155,13 @@ fun GameView(component: GameComponent) {
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         users.forEach { user ->
+                            val avatar = remember(user.id) { component.loadUserAvatar(user) }
+
                             UserChartCard(
                                 user = user,
                                 width = width,
                                 height = height,
-                                loadAvatar = {
-                                    component.loadUserAvatar(user)
-                                },
+                                avatar = avatar,
                                 onSizeChange = {
                                     width = it.first
                                     height = it.second

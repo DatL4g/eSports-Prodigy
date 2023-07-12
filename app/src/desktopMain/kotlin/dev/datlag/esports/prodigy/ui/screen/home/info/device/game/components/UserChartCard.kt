@@ -34,7 +34,7 @@ fun UserChartCard(
     user: User,
     width: Int,
     height: Int,
-    loadAvatar: () -> Flow<String>,
+    avatar: Flow<String>,
     onSizeChange: (Pair<Int, Int>) -> Unit,
     onClick: () -> Unit
 ) {
@@ -87,7 +87,7 @@ fun UserChartCard(
 
                     when (val resource = user.avatarFile?.let { asyncPainterResource(it) }) {
                         null, is Resource.Failure -> {
-                            val fallbackAvatar by loadAvatar().collectAsStateSafe { null }
+                            val fallbackAvatar by avatar.collectAsStateSafe { null }
 
                             when (val fallbackResource = fallbackAvatar?.let { asyncPainterResource(it) }) {
                                 null, is Resource.Failure, is Resource.Loading -> {
