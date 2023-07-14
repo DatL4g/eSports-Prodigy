@@ -288,12 +288,12 @@ compose {
 
 
                 linux {
-                    iconFile.set(file("src/commonMain/resources/MR/assets/png/launcher_128.png"))
+                    iconFile.set(file("src/commonMain/resources/MR/assets/png/launcher_1024.png"))
                     rpmLicenseType = "AGPL-3.0"
                     debMaintainer = "Jeff Retz (DatLag)"
                 }
                 windows {
-                    iconFile.set(file("src/commonMain/resources/MR/assets/ico/launcher_128.ico"))
+                    iconFile.set(file("src/commonMain/resources/MR/assets/ico/launcher_192.ico"))
                     upgradeUuid = "8f3be63c-60aa-4b77-a63c-dce53b962a75"
                 }
                 macOS {
