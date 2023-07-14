@@ -3,6 +3,7 @@ package dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -156,8 +157,12 @@ fun UserChartCard(
                     Column(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Text(text = user.id)
-                        Text(text = user.data.accountName)
+                        SelectionContainer {
+                            Text(text = user.id)
+                        }
+                        SelectionContainer {
+                            Text(text = user.data.accountName)
+                        }
                         val instant = Instant.fromEpochSeconds(user.data.timestamp)
                         val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
                         val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)

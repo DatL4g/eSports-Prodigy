@@ -1,5 +1,8 @@
 package dev.datlag.esports.prodigy.ui
 
+import androidx.compose.foundation.DarkDefaultContextMenuRepresentation
+import androidx.compose.foundation.LightDefaultContextMenuRepresentation
+import androidx.compose.foundation.LocalContextMenuRepresentation
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -38,8 +41,16 @@ fun App(
         is ThemeMode.DARK -> true
         else -> detectedTheme
     }
+    val contextMenuStyling = if (useDarkTheme) {
+        DarkDefaultContextMenuRepresentation
+    } else {
+        LightDefaultContextMenuRepresentation
+    }
 
-    CompositionLocalProvider(LocalDarkMode provides useDarkTheme) {
+    CompositionLocalProvider(
+        LocalDarkMode provides useDarkTheme,
+        LocalContextMenuRepresentation provides contextMenuStyling
+    ) {
         MaterialTheme(
             colorScheme = if (useDarkTheme) Colors.getDarkScheme() else Colors.getLightScheme(),
             typography = ManropeTypography()
