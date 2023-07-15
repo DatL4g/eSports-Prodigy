@@ -3,11 +3,15 @@ package dev.datlag.esports.prodigy.ui.screen.settings
 import androidx.compose.runtime.Composable
 import androidx.datastore.core.DataStore
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.router.slot.*
+import com.arkivanov.decompose.value.Value
 import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.common.mainScope
 import dev.datlag.esports.prodigy.datastore.common.updateAppearance
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import dev.datlag.esports.prodigy.model.ThemeMode
+import dev.datlag.esports.prodigy.ui.dialog.DialogComponent
+import dev.datlag.esports.prodigy.ui.screen.settings.dialog.SteamFinderDialogComponent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.kodein.di.DI
@@ -25,6 +29,20 @@ actual class SettingsScreenComponent actual constructor(
         ThemeMode.ofValue(it)
     }
 
+    private val dialogNavigation = SlotNavigation<DialogConfig>()
+    private val _dialog = childSlot(
+        source = dialogNavigation
+    ) { config, componentContext ->
+        when (config) {
+            is DialogConfig.SteamFinder -> SteamFinderDialogComponent(
+                componentContext = componentContext,
+                onDismissed = dialogNavigation::dismiss,
+                di = di
+            )
+        }
+    }
+    override val dialog: Value<ChildSlot<DialogConfig, DialogComponent>> = _dialog
+
     override fun back() {
         this.back.invoke()
     }
@@ -40,5 +58,9 @@ actual class SettingsScreenComponent actual constructor(
                 themeMode = mode.saveValue
             )
         }
+    }
+
+    override fun showDialog(config: DialogConfig) {
+        dialogNavigation.activate(config)
     }
 }

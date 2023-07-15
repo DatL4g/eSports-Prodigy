@@ -2,6 +2,7 @@ package dev.datlag.esports.prodigy.ui.screen.settings
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -10,13 +11,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.getValueBlocking
+import dev.datlag.esports.prodigy.common.launchIO
+import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.model.ThemeMode
+import dev.datlag.esports.prodigy.model.common.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import org.apache.commons.lang3.SystemUtils
+import java.io.File
 
 @Composable
 actual fun SettingsScreen(component: SettingsComponent) {
+    val steamDirs by SteamLauncher.steamFolders.collectAsStateSafe { emptyList() }
+    val dialogState by component.dialog.subscribeAsState()
+
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
@@ -35,6 +46,39 @@ actual fun SettingsScreen(component: SettingsComponent) {
                 }
             ) {
                 Text(text = "Back")
+            }
+        }
+        item {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Steam",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.weight(1F))
+                Button(
+                    onClick = {
+                        component.showDialog(DialogConfig.SteamFinder)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null
+                    )
+                    Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+                    Text("Find")
+                }
+            }
+        }
+        items(steamDirs) {
+            ElevatedCard(modifier = Modifier.fillParentMaxWidth()) {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = it.absolutePath
+                )
             }
         }
         item {
@@ -133,5 +177,9 @@ actual fun SettingsScreen(component: SettingsComponent) {
                 }
             }
         }
+    }
+
+    dialogState.child?.also { (_, instance) ->
+        instance.render()
     }
 }

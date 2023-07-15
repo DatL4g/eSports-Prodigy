@@ -1,6 +1,6 @@
 package dev.datlag.esports.prodigy.ui.screen.home.info.device
 
-import com.arkivanov.decompose.router.overlay.ChildOverlay
+import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value
 import dev.datlag.esports.prodigy.game.model.LocalGame
 import dev.datlag.esports.prodigy.game.model.LocalGameInfo
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import java.awt.Image
 
 actual interface DeviceComponent : Component {
-    val child: Value<ChildOverlay<GameConfig, Any>>
+    val child: Value<ChildSlot<GameConfig, Any>>
 
     val games: Flow<List<LocalGame>>
 

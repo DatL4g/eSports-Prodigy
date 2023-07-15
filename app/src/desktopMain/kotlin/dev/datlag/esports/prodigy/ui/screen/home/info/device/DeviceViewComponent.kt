@@ -2,14 +2,12 @@ package dev.datlag.esports.prodigy.ui.screen.home.info.device
 
 import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.overlay.ChildOverlay
-import com.arkivanov.decompose.router.overlay.OverlayNavigation
-import com.arkivanov.decompose.router.overlay.activate
-import com.arkivanov.decompose.router.overlay.childOverlay
+import com.arkivanov.decompose.router.slot.ChildSlot
+import com.arkivanov.decompose.router.slot.SlotNavigation
+import com.arkivanov.decompose.router.slot.activate
+import com.arkivanov.decompose.router.slot.childSlot
 import com.arkivanov.decompose.value.Value
-import dev.datlag.esports.prodigy.color.createTheme
 import dev.datlag.esports.prodigy.common.ioScope
-import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.game.HeroicLauncher
 import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.game.model.LocalGame
@@ -17,12 +15,10 @@ import dev.datlag.esports.prodigy.game.model.LocalGameInfo
 import dev.datlag.esports.prodigy.model.common.listFrom
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameConfig
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameViewComponent
-import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.transform
 import org.kodein.di.DI
-import java.awt.Image
 
 actual class DeviceViewComponent actual constructor(
     componentContext: ComponentContext,
@@ -35,8 +31,8 @@ actual class DeviceViewComponent actual constructor(
     private val wantedSteamGameIds = listOf("730", "252950")
     private val wantedHeroicGames = listOf("Rocket League", "Rocket League®")
 
-    private val navigation = OverlayNavigation<GameConfig>()
-    private val _child = childOverlay(
+    private val navigation = SlotNavigation<GameConfig>()
+    private val _child = childSlot(
         source = navigation,
         initialConfiguration = {
             GameConfig.EMPTY
@@ -55,7 +51,7 @@ actual class DeviceViewComponent actual constructor(
             else -> config
         }
     }
-    override val child: Value<ChildOverlay<GameConfig, Any>> = _child
+    override val child: Value<ChildSlot<GameConfig, Any>> = _child
 
     private val steamGames: Flow<List<LocalGameInfo>> = SteamLauncher.appManifests.transform {
         return@transform emit(it.filter { app ->
