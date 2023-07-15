@@ -95,7 +95,7 @@ fun GameView(component: GameComponent) {
                 }
             }
 
-            if (caches.isNotEmpty()) {
+            if (caches.flatMap { c -> c.value }.isNotEmpty()) {
                 item {
                     Text(
                         modifier = Modifier.padding(extraPadding).padding(top = 32.dp, bottom = 16.dp),
