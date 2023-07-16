@@ -5,12 +5,17 @@ import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 interface SteamFinderComponent : DialogComponent {
-    val foundSteamDirs: Flow<List<File>>
+    val managedSteamDirs: Flow<List<File>>
+    val unmanagedSteamDirs: Flow<List<File>>
+    val settingsExisting: Flow<List<File>>
     val currentSearchDir: Flow<File>
     val searchState: Flow<State>
-    val existingSteamDirs: Flow<List<File>>
 
     fun search()
+
+    fun save()
+
+    fun deleteItem(item: File)
 
     sealed interface State {
         object RUNNING : State

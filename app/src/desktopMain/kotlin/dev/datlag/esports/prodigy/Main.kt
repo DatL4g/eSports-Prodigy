@@ -1,6 +1,7 @@
 package dev.datlag.esports.prodigy
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
@@ -10,15 +11,21 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.singleWindowApplication
+import androidx.datastore.core.DataStore
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import dev.datlag.esports.prodigy.common.basedOnSize
 import dev.datlag.esports.prodigy.common.basedOnWidth
+import dev.datlag.esports.prodigy.common.launchIO
+import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
+import dev.datlag.esports.prodigy.game.SteamLauncher
+import dev.datlag.esports.prodigy.model.common.normalize
 import dev.datlag.esports.prodigy.module.NetworkModule
 import dev.datlag.esports.prodigy.ui.*
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
+import dev.icerock.moko.resources.compose.fontFamilyResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import io.github.aakira.napier.DebugAntilog
@@ -27,7 +34,11 @@ import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.takeFrom
 import io.kamel.image.config.*
 import io.ktor.client.plugins.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.map
 import org.kodein.di.DI
+import org.kodein.di.instance
 import java.io.File
 
 @OptIn(ExperimentalDecomposeApi::class, ExperimentalComposeUiApi::class)
@@ -96,6 +107,14 @@ fun main() {
             SharedRes.assets.png.launcher_24,
             SharedRes.assets.png.launcher_16
         )
+
+        val appSettings: DataStore<AppSettings> by di.instance()
+        LaunchedEffect(appSettings) {
+            val savedPaths = appSettings.data.map { it.paths.steamList.map { path ->
+                File(path)
+            }.normalize() }
+            SteamLauncher.userSteamFolders.emitAll(savedPaths)
+        }
 
         CompositionLocalProvider(
             LocalWindowSize provides WindowSize.basedOnWidth(windowState),

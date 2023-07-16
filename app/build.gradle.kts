@@ -265,7 +265,7 @@ compose {
             dependsOn(createNativeLib)
 
             nativeDistributions {
-                packageName = "eSports Prodigy"
+                packageName = "eSports-Prodigy"
                 packageVersion = appVersion
                 description = "Get your eSports Information here."
                 copyright = "© 2020 Jeff Retz (DatLag). All rights reserved."

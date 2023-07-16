@@ -83,7 +83,7 @@ actual fun SettingsScreen(component: SettingsComponent) {
         }
         item {
             val themeMode by component.themeMode.collectAsStateSafe {
-                component.themeMode.getValueBlocking(ThemeMode.SYSTEM)
+                ThemeMode.SYSTEM
             }
             var showMenu by remember { mutableStateOf(false) }
 

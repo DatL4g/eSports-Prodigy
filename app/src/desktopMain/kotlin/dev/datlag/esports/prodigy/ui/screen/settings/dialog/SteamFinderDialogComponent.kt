@@ -1,21 +1,20 @@
 package dev.datlag.esports.prodigy.ui.screen.settings.dialog
 
 import androidx.compose.runtime.Composable
+import androidx.datastore.core.DataStore
 import com.arkivanov.decompose.ComponentContext
-import dev.datlag.esports.prodigy.common.launchIO
-import dev.datlag.esports.prodigy.common.mainScope
-import dev.datlag.esports.prodigy.common.safeEmit
+import dev.datlag.esports.prodigy.common.*
+import dev.datlag.esports.prodigy.datastore.common.updatePaths
+import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.model.common.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import org.kodein.di.DI
+import org.kodein.di.instance
 import java.io.File
 
 class SteamFinderDialogComponent(
@@ -26,8 +25,7 @@ class SteamFinderDialogComponent(
 
     private val scope = mainScope()
 
-    private val _foundSteamDirs: MutableStateFlow<List<File>> = MutableStateFlow(emptyList())
-    override val foundSteamDirs: Flow<List<File>> = _foundSteamDirs
+    private val appSettings: DataStore<AppSettings> by di.instance()
 
     private val _currentSearchDir: MutableStateFlow<File?> = MutableStateFlow(null)
     override val currentSearchDir: Flow<File> = _currentSearchDir.mapNotNull { it }
@@ -36,7 +34,14 @@ class SteamFinderDialogComponent(
     private val _searchState: MutableStateFlow<SteamFinderComponent.State?> = MutableStateFlow(null)
     override val searchState: Flow<SteamFinderComponent.State> = _searchState.mapNotNull { it }
 
-    override var existingSteamDirs = SteamLauncher.steamFolders
+    override val settingsExisting = appSettings.data.map { it.paths.steamList.map { path ->
+        File(path)
+    }.normalize() }
+
+    override val managedSteamDirs = SteamLauncher.defaultSteamFolders
+
+    private val _unmanagedSteamDirs: MutableStateFlow<List<File>> = MutableStateFlow(settingsExisting.getValueBlocking(emptyList()))
+    override val unmanagedSteamDirs: Flow<List<File>> = _unmanagedSteamDirs
 
     @Composable
     override fun render() {
@@ -62,23 +67,56 @@ class SteamFinderDialogComponent(
                         if (File(step, "steamapps").existsRSafely()
                             && File(step, "config").existsRSafely()
                             && File(step, "userdata").existsRSafely()) {
-                            _foundSteamDirs.safeEmit(listFrom(_foundSteamDirs.value, listOf(step)).normalize(), this)
-                            step
+                            if (managedSteamDirs.value.any { e -> step.isSame(e) }) {
+                                null
+                            } else {
+                                _unmanagedSteamDirs.safeEmit(listFrom(_unmanagedSteamDirs.value, listOf(step)).normalize(), this)
+                                step
+                            }
                         } else {
                             null
                         }
                     }.toList()
                 } }.awaitAll().flatten().normalize()
 
-                _foundSteamDirs.emit(found)
+                val managed = managedSteamDirs.firstOrNull()?.ifEmpty { null } ?: managedSteamDirs.value
+                val unmanaged = listFrom(found, settingsExisting.firstOrNull() ?: emptyList()).toMutableList().apply {
+                    removeAll {
+                        managed.any { e -> e.isSame(it) }
+                    }
+                    addAll(
+                        settingsExisting.firstOrNull() ?: emptyList()
+                    )
+                }.toSet().normalize()
 
-                val existing = existingSteamDirs.firstOrNull() ?: emptyList()
-                if (_foundSteamDirs.value.all { existing.any { e -> e.isSame(it) } }) {
+                _unmanagedSteamDirs.emit(unmanaged)
+
+                if (unmanaged.isEmpty()) {
                     _searchState.emit(SteamFinderComponent.State.EXISTING)
                 } else {
                     _searchState.emit(SteamFinderComponent.State.FINISHED)
                 }
             }
+        }
+    }
+
+    override fun save() {
+        scope.launchIO {
+            appSettings.updatePaths(
+                steam = _unmanagedSteamDirs.value.mapNotNull { it.absolutePath }
+            )
+            withMainContext {
+                onDismissed()
+            }
+        }
+    }
+
+    override fun deleteItem(item: File) {
+        scope.launchIO {
+            _unmanagedSteamDirs.emit(_unmanagedSteamDirs.value.toMutableList().apply {
+                remove(item)
+            })
+            _searchState.emit(SteamFinderComponent.State.FINISHED)
         }
     }
 }

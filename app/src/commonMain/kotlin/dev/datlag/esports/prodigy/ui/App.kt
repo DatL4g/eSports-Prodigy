@@ -1,16 +1,10 @@
 package dev.datlag.esports.prodigy.ui
 
-import androidx.compose.foundation.DarkDefaultContextMenuRepresentation
-import androidx.compose.foundation.LightDefaultContextMenuRepresentation
-import androidx.compose.foundation.LocalContextMenuRepresentation
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.datastore.core.DataStore
@@ -41,31 +35,27 @@ fun App(
         is ThemeMode.DARK -> true
         else -> detectedTheme
     }
-    val contextMenuStyling = if (useDarkTheme) {
-        DarkDefaultContextMenuRepresentation
-    } else {
-        LightDefaultContextMenuRepresentation
-    }
 
     CompositionLocalProvider(
         LocalDarkMode provides useDarkTheme,
-        LocalContextMenuRepresentation provides contextMenuStyling
     ) {
-        MaterialTheme(
-            colorScheme = if (useDarkTheme) Colors.getDarkScheme() else Colors.getLightScheme(),
-            typography = ManropeTypography()
-        ) {
-            androidx.compose.material.MaterialTheme(
-                colors = MaterialTheme.colorScheme.toLegacyColors(useDarkTheme),
-                shapes = MaterialTheme.shapes.toLegacyShapes(),
-                typography = ManropeTypographyLegacy()
+        SystemProvider {
+            MaterialTheme(
+                colorScheme = if (useDarkTheme) Colors.getDarkScheme() else Colors.getLightScheme(),
+                typography = ManropeTypography()
             ) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background,
-                    contentColor = MaterialTheme.colorScheme.onBackground
+                androidx.compose.material.MaterialTheme(
+                    colors = MaterialTheme.colorScheme.toLegacyColors(useDarkTheme),
+                    shapes = MaterialTheme.shapes.toLegacyShapes(),
+                    typography = ManropeTypographyLegacy()
                 ) {
-                    content()
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background,
+                        contentColor = MaterialTheme.colorScheme.onBackground
+                    ) {
+                        content()
+                    }
                 }
             }
         }
@@ -79,3 +69,6 @@ expect fun getSystemDarkMode(initValue: Boolean): MutableState<Boolean>
 expect fun loadImageScheme(key: Any, painter: Painter)
 
 expect val isDesktop: Boolean
+
+@Composable
+expect fun SystemProvider(content: @Composable () -> Unit)

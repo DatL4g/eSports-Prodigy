@@ -79,11 +79,14 @@ fun File.getRealFile(): File {
 }
 
 fun File.isSame(file: File?): Boolean {
-    return if (file == null) {
+    val sourceFile = this.getRealFile()
+    val targetFile = file?.getRealFile()
+
+    return if (targetFile == null) {
         false
     } else {
-        this == file || scopeCatching {
-            this.absoluteFile == file.absoluteFile || Files.isSameFile(this.toPath(), file.toPath())
+        this == targetFile || scopeCatching {
+            sourceFile.absoluteFile == targetFile.absoluteFile || Files.isSameFile(sourceFile.toPath(), targetFile.toPath())
         }.getOrNull() ?: false
     }
 }

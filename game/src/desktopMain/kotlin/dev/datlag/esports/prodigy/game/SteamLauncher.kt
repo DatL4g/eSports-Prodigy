@@ -102,7 +102,7 @@ object SteamLauncher {
         } ?: emptyList()
     }
 
-    private val defaultSteamFolders: MutableStateFlow<List<File>> by lazy {
+    val defaultSteamFolders: MutableStateFlow<List<File>> by lazy {
         MutableStateFlow(steamDirectories)
     }
 
@@ -112,7 +112,7 @@ object SteamLauncher {
         }
     }
 
-    private val userSteamFolders: MutableStateFlow<List<File>> by lazy {
+    val userSteamFolders: MutableStateFlow<List<File>> by lazy {
         MutableStateFlow(emptyList())
     }
 

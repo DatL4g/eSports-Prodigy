@@ -7,6 +7,10 @@ message AppSettings {
   message Appearance {
     int32 themeMode = 1;
   }
+  message Paths {
+    repeated string steam = 1;
+  }
 
   Appearance appearance = 1;
+  Paths paths = 2;
 }

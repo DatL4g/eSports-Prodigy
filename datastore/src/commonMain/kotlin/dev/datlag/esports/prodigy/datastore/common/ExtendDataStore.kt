@@ -14,3 +14,15 @@ suspend fun DataStore<AppSettings>.updateAppearance(
         ).build()
     }
 }
+
+suspend fun DataStore<AppSettings>.updatePaths(
+    steam: List<String>? = null
+): AppSettings {
+    return this.updateData {
+        val steamSafe = steam ?: it.paths.steamList
+
+        it.toBuilder().setPaths(
+            it.paths.toBuilder().clearSteam().addAllSteam(steamSafe).build()
+        ).build()
+    }
+}

@@ -7,21 +7,23 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CreateNewFolder
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.toSize
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import dev.datlag.esports.prodigy.common.toDpSize
 import dev.datlag.esports.prodigy.model.common.isSame
+import java.io.File
 import kotlin.math.max
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -51,7 +53,7 @@ fun SteamFinderDialog(component: SteamFinderComponent) {
         },
         text = {
             Column {
-                var entryWidth by remember { mutableStateOf(0) }
+                val entryWidth = remember { mutableStateOf(0) }
 
                 Text(text = "This tries to find all your Steam installations.\nIt may take a lot of time.")
                 when (searchState) {
@@ -63,7 +65,7 @@ fun SteamFinderDialog(component: SteamFinderComponent) {
                             Text(
                                 modifier = Modifier.padding(vertical = 16.dp).sizeIn(
                                     maxWidth = max(with(LocalDensity.current) {
-                                        entryWidth.toDp()
+                                        entryWidth.value.toDp()
                                     }, 300.dp)
                                 ),
                                 text = it.absolutePath,
@@ -94,44 +96,29 @@ fun SteamFinderDialog(component: SteamFinderComponent) {
                 Column(
                     modifier = Modifier.verticalScroll(rememberScrollState())
                 ) {
-                    val items by component.foundSteamDirs.collectAsStateSafe { emptyList() }
-                    val existingItems by component.existingSteamDirs.collectAsStateSafe { emptyList() }
+                    val unmanagedItems by component.unmanagedSteamDirs.collectAsStateSafe { emptyList() }
+                    val managedItems by component.managedSteamDirs.collectAsStateSafe { emptyList() }
+                    val settingsItems by component.settingsExisting.collectAsStateSafe { emptyList() }
 
-                    items.forEach {
-                        Card(
-                            modifier = Modifier.fillMaxWidth().onSizeChanged {
-                                entryWidth = max(entryWidth, it.width)
-                            }
+                    managedItems.forEach {
+                        ItemCard(
+                            item = it,
+                            managed = true,
+                            entryWidth = entryWidth,
+                            deletable = searchState !is SteamFinderComponent.State.RUNNING
                         ) {
-                            if (existingItems.any { e -> e.isSame(it) }) {
-                                Row(
-                                    modifier = Modifier.padding(16.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Folder,
-                                        contentDescription = "Exists"
-                                    )
-                                    Text(
-                                        text = it.absolutePath
-                                    )
-                                }
-                            } else {
-                                Row(
-                                    modifier = Modifier.padding(16.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.CreateNewFolder,
-                                        contentDescription = "New"
-                                    )
-                                    Text(
-                                        text = it.absolutePath
-                                    )
-                                }
-                            }
+                            component.deleteItem(it)
+                        }
+                    }
+                    unmanagedItems.forEach {
+                        ItemCard(
+                            item = it,
+                            managed = false,
+                            saved = settingsItems.any { e -> e.isSame(it) },
+                            entryWidth = entryWidth,
+                            deletable = searchState !is SteamFinderComponent.State.RUNNING
+                        ) {
+                            component.deleteItem(it)
                         }
                     }
                 }
@@ -142,7 +129,7 @@ fun SteamFinderDialog(component: SteamFinderComponent) {
                 onClick = {
                     when (searchState) {
                         is SteamFinderComponent.State.FINISHED -> {
-                            // ToDo("save unmanaged results")
+                            component.save()
                         }
                         is SteamFinderComponent.State.EXISTING -> {
                             component.dismiss()
@@ -171,4 +158,60 @@ fun SteamFinderDialog(component: SteamFinderComponent) {
             }
         }
     )
+}
+
+@Composable
+private fun ItemCard(
+    item: File,
+    managed: Boolean,
+    saved: Boolean = managed,
+    entryWidth: MutableState<Int>,
+    deletable: Boolean,
+    onDelete: () -> Unit
+) {
+    Card(
+        modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth().onSizeChanged {
+            entryWidth.value = max(entryWidth.value, it.width)
+        }
+    ) {
+        var iconSize by remember { mutableStateOf(Size.Unspecified) }
+
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (managed || saved) {
+                Icon(
+                    modifier = Modifier.onSizeChanged {
+                        iconSize = it.toSize()
+                    },
+                    imageVector = Icons.Default.Folder,
+                    contentDescription = "Exists"
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.CreateNewFolder,
+                    contentDescription = "New"
+                )
+            }
+            Text(
+                text = item.absolutePath
+            )
+            if (!managed) {
+                IconButton(
+                    modifier = Modifier.size(iconSize.toDpSize(24.dp, 24.dp)),
+                    onClick = {
+                        onDelete()
+                    },
+                    enabled = deletable
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete"
+                    )
+                }
+            }
+        }
+    }
 }

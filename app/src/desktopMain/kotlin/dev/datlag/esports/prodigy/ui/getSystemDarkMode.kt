@@ -1,5 +1,8 @@
 package dev.datlag.esports.prodigy.ui
 
+import androidx.compose.foundation.DarkDefaultContextMenuRepresentation
+import androidx.compose.foundation.LightDefaultContextMenuRepresentation
+import androidx.compose.foundation.LocalContextMenuRepresentation
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toAwtImage
@@ -8,6 +11,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import dev.datlag.esports.prodigy.color.createTheme
 import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.other.Constants
+import dev.datlag.esports.prodigy.ui.theme.LocalDarkMode
 import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
 import dev.datlag.esports.prodigy.ui.theme.ThemeDetector
 import evalBash
@@ -42,3 +46,18 @@ actual fun loadImageScheme(key: Any, painter: Painter) {
 }
 
 actual val isDesktop: Boolean = true
+
+@Composable
+actual fun SystemProvider(content: @Composable () -> Unit) {
+    val contextMenuStyling = if (LocalDarkMode.current) {
+        DarkDefaultContextMenuRepresentation
+    } else {
+        LightDefaultContextMenuRepresentation
+    }
+
+    CompositionLocalProvider(
+        LocalContextMenuRepresentation provides contextMenuStyling
+    ) {
+        content()
+    }
+}
