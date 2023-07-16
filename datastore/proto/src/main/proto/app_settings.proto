@@ -6,6 +6,7 @@ option java_multiple_files = true;
 message AppSettings {
   message Appearance {
     int32 themeMode = 1;
+    bool contentColors = 2;
   }
   message Paths {
     repeated string steam = 1;

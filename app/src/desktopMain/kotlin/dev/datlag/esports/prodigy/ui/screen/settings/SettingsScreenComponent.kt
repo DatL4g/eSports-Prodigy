@@ -29,6 +29,7 @@ actual class SettingsScreenComponent actual constructor(
     override val themeMode: Flow<ThemeMode> = appSettings.data.map { it.appearance.themeMode }.map {
         ThemeMode.ofValue(it)
     }
+    override val contentColors: Flow<Boolean> = appSettings.data.map { it.appearance.contentColors }
 
     private val dialogNavigation = SlotNavigation<DialogConfig>()
     private val _dialog = childSlot(
@@ -57,6 +58,14 @@ actual class SettingsScreenComponent actual constructor(
         scope.launchIO {
             appSettings.updateAppearance(
                 themeMode = mode.saveValue
+            )
+        }
+    }
+
+    override fun changeContentColors(enabled: Boolean) {
+        scope.launchIO {
+            appSettings.updateAppearance(
+                contentColors = enabled
             )
         }
     }

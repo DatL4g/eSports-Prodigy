@@ -7,8 +7,12 @@ import java.io.OutputStream
 
 class AppSettingsSerializer : Serializer<AppSettings> {
 
-    override val defaultValue: AppSettings
-        get() = AppSettings.getDefaultInstance()
+    override val defaultValue: AppSettings = AppSettings.newBuilder()
+        .setAppearance(AppSettings.Appearance.newBuilder()
+            .setThemeMode(0)
+            .setContentColors(true)
+        ).setPaths(AppSettings.Paths.getDefaultInstance())
+        .build()
 
     override suspend fun readFrom(input: InputStream): AppSettings {
         return try {

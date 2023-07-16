@@ -36,8 +36,11 @@ fun App(
         else -> detectedTheme
     }
 
+    val contentColors by settings.data.map { it.appearance.contentColors }.collectAsStateSafe { true }
+
     CompositionLocalProvider(
         LocalDarkMode provides useDarkTheme,
+        LocalContentColors provides contentColors
     ) {
         SystemProvider {
             MaterialTheme(

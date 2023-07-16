@@ -10,11 +10,14 @@ import kotlinx.coroutines.flow.Flow
 actual interface SettingsComponent : Component {
 
     val themeMode: Flow<ThemeMode>
+    val contentColors: Flow<Boolean>
     val dialog: Value<ChildSlot<DialogConfig, DialogComponent>>
 
     actual fun back()
 
     fun changeThemeMode(mode: ThemeMode)
+
+    fun changeContentColors(enabled: Boolean)
 
     fun showDialog(config: DialogConfig)
 

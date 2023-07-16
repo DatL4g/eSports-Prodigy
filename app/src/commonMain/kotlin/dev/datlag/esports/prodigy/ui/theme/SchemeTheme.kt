@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 
 val LocalDarkMode = compositionLocalOf<Boolean> { error("No dark mode state provided") }
+val LocalContentColors = compositionLocalOf<Boolean> { error("No content color state provided") }
 
 object SchemeTheme {
 
@@ -117,26 +118,30 @@ object SchemeTheme {
 
 @Composable
 fun SchemeTheme(key: Any, content: @Composable () -> Unit) {
-    val themeHolder by SchemeTheme.itemScheme.map {
-        it.firstNotNullOfOrNull { entry ->
-            if (entry.key == key) {
-                entry.value
-            } else {
-                null
+    if (LocalContentColors.current) {
+        val themeHolder by SchemeTheme.itemScheme.map {
+            it.firstNotNullOfOrNull { entry ->
+                if (entry.key == key) {
+                    entry.value
+                } else {
+                    null
+                }
+            }
+        }.collectAsStateSafe { null }
+
+        val scheme = (if (LocalDarkMode.current) themeHolder?.dark else themeHolder?.light) ?: MaterialTheme.colorScheme
+
+        MaterialTheme(
+            colorScheme = scheme
+        ) {
+            androidx.compose.material.MaterialTheme(
+                colors = scheme.toLegacyColors(LocalDarkMode.current)
+            ) {
+                content()
             }
         }
-    }.collectAsStateSafe { null }
-
-    val scheme = (if (LocalDarkMode.current) themeHolder?.dark else themeHolder?.light) ?: MaterialTheme.colorScheme
-
-    MaterialTheme(
-        colorScheme = scheme
-    ) {
-        androidx.compose.material.MaterialTheme(
-            colors = scheme.toLegacyColors(LocalDarkMode.current)
-        ) {
-            content()
-        }
+    } else {
+        content()
     }
 }
 

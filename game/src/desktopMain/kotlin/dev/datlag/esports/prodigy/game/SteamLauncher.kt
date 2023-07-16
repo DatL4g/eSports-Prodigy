@@ -169,7 +169,11 @@ object SteamLauncher {
                     User.fromMap(config) { id ->
                         findUserAvatar(id, list)
                     }
-                }.sortedWith(compareByDescending<User> { u -> u.data.mostRecent }.thenByDescending { u -> u.data.timestamp })
+                }.sortedWith(compareByDescending<User> { u ->
+                    u.data.mostRecent
+                }.thenByDescending { u ->
+                    u.data.timestamp
+                }).distinctBy { u -> u.id }
             })
         }
     }

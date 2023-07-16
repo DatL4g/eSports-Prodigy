@@ -15,6 +15,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.getValueBlocking
 import dev.datlag.esports.prodigy.common.launchIO
+import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.model.ThemeMode
 import dev.datlag.esports.prodigy.model.common.*
@@ -55,7 +56,7 @@ actual fun SettingsScreen(component: SettingsComponent) {
             ) {
                 Text(
                     text = "Steam",
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.weight(1F))
@@ -69,17 +70,24 @@ actual fun SettingsScreen(component: SettingsComponent) {
                         contentDescription = null
                     )
                     Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-                    Text("Find")
+                    Text("Search")
                 }
             }
         }
         items(steamDirs) {
-            ElevatedCard(modifier = Modifier.fillParentMaxWidth()) {
+            Card(modifier = Modifier.padding(vertical = 8.dp).fillParentMaxWidth()) {
                 Text(
                     modifier = Modifier.padding(16.dp),
                     text = it.absolutePath
                 )
             }
+        }
+        item {
+            Text(
+                text = "Appearance",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
         }
         item {
             val themeMode by component.themeMode.collectAsStateSafe {
@@ -175,6 +183,25 @@ actual fun SettingsScreen(component: SettingsComponent) {
                         )
                     }
                 }
+            }
+        }
+        item {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val contentColors by component.contentColors.collectAsStateSafe { true }
+
+                Text(
+                    text = "Use Content Colors"
+                )
+                Spacer(modifier = Modifier.weight(1F))
+                Switch(
+                    checked = contentColors,
+                    onCheckedChange = {
+                        component.changeContentColors(it)
+                    }
+                )
             }
         }
     }

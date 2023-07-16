@@ -79,8 +79,15 @@ fun File.getRealFile(): File {
 }
 
 fun File.isSame(file: File?): Boolean {
-    val sourceFile = this.getRealFile()
-    val targetFile = file?.getRealFile()
+    var sourceFile = this.getRealFile()
+    if (!sourceFile.existsSafely()) {
+        sourceFile = this
+    }
+
+    var targetFile = file?.getRealFile() ?: file
+    if (!targetFile.existsSafely()) {
+        targetFile = file
+    }
 
     return if (targetFile == null) {
         false
@@ -179,4 +186,34 @@ fun File.parentSafely(): File? {
     }.getOrNull() ?: scopeCatching {
         this.parentFile
     }.getOrNull()
+}
+
+fun Collection<File>.existsSafely(): List<File> {
+    return this.mapNotNull {
+        if (it.existsSafely()) {
+            it
+        } else {
+            null
+        }
+    }
+}
+
+fun Collection<File>.existsRSafely(): List<File> {
+    return this.mapNotNull {
+        if (it.existsRSafely()) {
+            it
+        } else {
+            null
+        }
+    }
+}
+
+fun Collection<File>.existsRWSafely(): List<File> {
+    return this.mapNotNull {
+        if (it.existsRWSafely()) {
+            it
+        } else {
+            null
+        }
+    }
 }
