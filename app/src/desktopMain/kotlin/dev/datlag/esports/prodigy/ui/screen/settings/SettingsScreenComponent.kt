@@ -10,12 +10,15 @@ import dev.datlag.esports.prodigy.common.mainScope
 import dev.datlag.esports.prodigy.datastore.common.updateAppearance
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import dev.datlag.esports.prodigy.model.ThemeMode
+import dev.datlag.esports.prodigy.model.common.deleteSafely
+import dev.datlag.esports.prodigy.model.common.suffix
 import dev.datlag.esports.prodigy.ui.dialog.DialogComponent
 import dev.datlag.esports.prodigy.ui.screen.settings.dialog.SteamFinderDialogComponent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.kodein.di.DI
 import org.kodein.di.instance
+import java.io.File
 
 actual class SettingsScreenComponent actual constructor(
     componentContext: ComponentContext,
@@ -25,6 +28,8 @@ actual class SettingsScreenComponent actual constructor(
 
     private val scope = mainScope()
     private val appSettings: DataStore<AppSettings> by di.instance()
+    private val appSettingsFile: File by di.instance("AppSettingsFile")
+    private val appSettingsTempFile = appSettingsFile.suffix(".tmp")
     override val themeMode: Flow<ThemeMode> = appSettings.data.map { it.appearance.themeMode }.map {
         ThemeMode.ofValue(it)
     }
@@ -54,6 +59,7 @@ actual class SettingsScreenComponent actual constructor(
 
     override fun changeThemeMode(mode: ThemeMode) {
         scope.launchIO {
+            appSettingsTempFile.deleteSafely()
             appSettings.updateAppearance(
                 themeMode = mode.saveValue
             )

@@ -26,6 +26,8 @@ class SteamFinderDialogComponent(
     private val scope = mainScope()
 
     private val appSettings: DataStore<AppSettings> by di.instance()
+    private val appSettingsFile: File by di.instance("AppSettingsFile")
+    private val appSettingsTempFile = appSettingsFile.suffix(".tmp")
 
     private val _currentSearchDir: MutableStateFlow<File?> = MutableStateFlow(null)
     override val currentSearchDir: Flow<File> = _currentSearchDir.mapNotNull { it }
@@ -102,6 +104,7 @@ class SteamFinderDialogComponent(
 
     override fun save() {
         scope.launchIO {
+            appSettingsTempFile.deleteSafely()
             appSettings.updatePaths(
                 steam = _unmanagedSteamDirs.value.mapNotNull { it.absolutePath }
             )

@@ -172,3 +172,40 @@ fun File.isDirectorySafely(): Boolean {
         Files.isDirectory(this.toPath())
     }.getOrNull() ?: false
 }
+
+fun File.parentSafely(): File? {
+    return scopeCatching {
+        this.toPath().parent?.toFile()
+    }.getOrNull() ?: scopeCatching {
+        this.parentFile
+    }.getOrNull()
+}
+
+fun File.suffix(ending: String): File {
+    fun fallbackFile(): File {
+        var path = this.absolutePath
+        if (path.endsWith('/')) {
+            path = path.substringBeforeLast('/')
+        }
+
+        return File("${path}${ending}")
+    }
+
+    val up = this.parentSafely()
+
+    return if (up == null) {
+        fallbackFile()
+    } else {
+        val consideredFile = File(up, "${this.name}${ending}")
+
+        if (consideredFile.existsSafely()) {
+            consideredFile
+        } else {
+            if (File(up, this.name).existsSafely()) {
+                consideredFile
+            } else {
+                fallbackFile()
+            }
+        }
+    }
+}
