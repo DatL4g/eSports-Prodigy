@@ -13,13 +13,16 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(libs.datastore)
+                api(libs.datastore.core)
                 api(project("proto"))
                 implementation(project(":model"))
             }
         }
         val androidMain by getting {
             apply(plugin = "org.gradle.android.cache-fix")
+            dependencies {
+                api(libs.datastore)
+            }
         }
         val desktopMain by getting
     }

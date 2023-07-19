@@ -30,8 +30,7 @@ import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
-import io.kamel.core.config.KamelConfig
-import io.kamel.core.config.takeFrom
+import io.kamel.core.config.*
 import io.kamel.image.config.*
 import io.ktor.client.plugins.*
 import kotlinx.coroutines.GlobalScope
@@ -54,10 +53,18 @@ fun main() {
 
     val root = NavHostComponent.create(DefaultComponentContext(lifecycle), di)
     val imageConfig = KamelConfig {
-        takeFrom(KamelConfig.Default)
-        resourcesFetcher()
+        imageBitmapCacheSize = DefaultCacheSize
+        imageVectorCacheSize = DefaultCacheSize
+        svgCacheSize = DefaultCacheSize
+        imageBitmapDecoder()
         imageVectorDecoder()
-        svgDecoder()
+        stringMapper()
+        urlMapper()
+        uriMapper()
+        fileFetcher()
+        httpFetcher()
+        resourcesFetcher()
+        decoder(SvgDecoder)
     }
     Napier.base(DebugAntilog())
 

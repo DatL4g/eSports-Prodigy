@@ -7,6 +7,9 @@ import com.arkivanov.essenty.parcelable.Parcelize
 sealed class ScreenConfig : Parcelable {
 
     @Parcelize
+    object Welcome : ScreenConfig(), Parcelable
+
+    @Parcelize
     object Home : ScreenConfig(), Parcelable
 
     @Parcelize

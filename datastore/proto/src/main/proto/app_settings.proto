@@ -12,6 +12,7 @@ message AppSettings {
     repeated string steam = 1;
   }
 
-  Appearance appearance = 1;
-  Paths paths = 2;
+  bool welcomed = 1;
+  Appearance appearance = 2;
+  Paths paths = 3;
 }

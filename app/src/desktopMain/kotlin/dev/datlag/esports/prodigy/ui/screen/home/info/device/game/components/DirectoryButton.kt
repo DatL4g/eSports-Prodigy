@@ -85,7 +85,7 @@ private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: LocalGam
                 }.getOrNull()
             },
             enabled = openSupported && preferredDirectory != null,
-            shape = LeftRoundedShape
+            shape = LeftRoundedShape()
         ) {
             Icon(
                 imageVector = Icons.Default.Folder,
@@ -102,7 +102,7 @@ private fun RowScope.MultiDirectoryButton(openSupported: Boolean, game: LocalGam
             onClick = {
                 showMenu = true
             },
-            shape = RightRoundedShape
+            shape = RightRoundedShape()
         ) {
             Icon(
                 imageVector = Icons.Default.ExpandMore,

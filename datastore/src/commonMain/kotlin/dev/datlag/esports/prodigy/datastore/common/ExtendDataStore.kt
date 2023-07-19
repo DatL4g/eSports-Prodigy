@@ -29,3 +29,11 @@ suspend fun DataStore<AppSettings>.updatePaths(
         ).build()
     }
 }
+
+suspend fun DataStore<AppSettings>.updateWelcomed(
+    done: Boolean
+): AppSettings {
+    return this.updateData {
+        it.toBuilder().setWelcomed(done).build()
+    }
+}

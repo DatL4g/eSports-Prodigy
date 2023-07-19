@@ -1,6 +1,8 @@
 package dev.datlag.esports.prodigy
 
 import androidx.multidex.MultiDexApplication
+import dev.datlag.esports.prodigy.module.NetworkModule
+import dev.datlag.esports.prodigy.module.PlatformModule
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.kodein.di.DI
@@ -13,6 +15,8 @@ class App : MultiDexApplication(), DIAware {
         bindSingleton {
             applicationContext
         }
+
+        import(NetworkModule.di)
     }
 
     override fun onCreate() {

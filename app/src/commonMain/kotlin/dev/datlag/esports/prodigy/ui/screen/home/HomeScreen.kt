@@ -131,7 +131,6 @@ fun ExpandedScreen(
             modifier = Modifier.padding(it),
             drawerContent = {
                 PermanentDrawerSheet(
-                    modifier = Modifier.padding(start = 16.dp),
                     drawerShape = RoundedCornerShape(
                         topStart = 0.dp,
                         topEnd = 16.dp,

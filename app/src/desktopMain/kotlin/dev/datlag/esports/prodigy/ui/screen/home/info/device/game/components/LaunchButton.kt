@@ -109,7 +109,7 @@ private fun MultiGameLaunchButton(game: LocalGame, launching: (LocalGameInfo) ->
                 }
             },
             enabled = launchClickable,
-            shape = LeftRoundedShape
+            shape = LeftRoundedShape()
         ) {
             val painter = when (preferredGame) {
                 is LocalGameInfo.Steam -> painterResource(SharedRes.images.steam)
@@ -139,7 +139,7 @@ private fun MultiGameLaunchButton(game: LocalGame, launching: (LocalGameInfo) ->
             onClick = {
                 showMenu = true
             },
-            shape = RightRoundedShape
+            shape = RightRoundedShape()
         ) {
             Icon(
                 imageVector = Icons.Default.ExpandMore,

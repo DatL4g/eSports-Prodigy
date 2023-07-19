@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStoreFactory
 import dev.datlag.esports.prodigy.database.HLTVDB
 import dev.datlag.esports.prodigy.datastore.AppSettingsSerializer
 import dev.datlag.esports.prodigy.datastore.UserSettingsSerializer
+import dev.datlag.esports.prodigy.model.ThemeMode
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
@@ -23,7 +24,9 @@ object DataStoreModule {
         }
         bindSingleton {
             DataStoreFactory.create(
-                AppSettingsSerializer(),
+                AppSettingsSerializer(
+                    defaultThemeMode = ThemeMode.SYSTEM.saveValue
+                ),
                 produceFile = { instance("AppSettingsFile") }
             )
         }

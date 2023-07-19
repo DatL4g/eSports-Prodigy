@@ -95,6 +95,7 @@ kotlin {
                 implementation(compose.desktop.currentOs)
 
                 implementation(libs.appdirs)
+                implementation(libs.batik.transcoder)
                 implementation(libs.coroutines.swing)
                 implementation(libs.filepicker)
                 implementation(libs.kscript)

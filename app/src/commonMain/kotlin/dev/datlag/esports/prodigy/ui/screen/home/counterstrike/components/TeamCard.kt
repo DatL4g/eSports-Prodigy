@@ -66,7 +66,7 @@ private fun TeamIcon(team: Home.Team) {
         }
         is Resource.Success -> {
             // apply tint to SVGs as they don't support css (yet)
-            val isSVG = remember { isSVG(preferredIcon) && isDesktop }
+            val isSVG = remember { false }// isSVG(preferredIcon) && isDesktop }
             Image(
                 modifier = Modifier.size(24.dp),
                 painter = resource.value,

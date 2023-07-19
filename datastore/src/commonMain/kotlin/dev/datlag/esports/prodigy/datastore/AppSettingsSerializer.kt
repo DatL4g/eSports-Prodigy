@@ -5,11 +5,14 @@ import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import java.io.InputStream
 import java.io.OutputStream
 
-class AppSettingsSerializer : Serializer<AppSettings> {
+class AppSettingsSerializer(
+    val defaultThemeMode: Int
+) : Serializer<AppSettings> {
 
     override val defaultValue: AppSettings = AppSettings.newBuilder()
+        .setWelcomed(false)
         .setAppearance(AppSettings.Appearance.newBuilder()
-            .setThemeMode(0)
+            .setThemeMode(defaultThemeMode)
             .setContentColors(true)
         ).setPaths(AppSettings.Paths.getDefaultInstance())
         .build()
