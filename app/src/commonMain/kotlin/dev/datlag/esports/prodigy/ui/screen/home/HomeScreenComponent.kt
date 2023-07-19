@@ -19,6 +19,7 @@ import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.CounterStrikeView
 import dev.datlag.esports.prodigy.ui.screen.home.info.InfoViewComponent
 import org.kodein.di.DI
 import dev.datlag.esports.prodigy.SharedRes
+import dev.datlag.esports.prodigy.ui.screen.home.other.OtherScreenComponent
 
 class HomeScreenComponent(
     componentContext: ComponentContext,
@@ -60,7 +61,8 @@ class HomeScreenComponent(
             Pages(
                 items = listOf(
                     View.Info,
-                    View.CounterStrike
+                    View.CounterStrike,
+                    View.Other
                 ),
                 selectedIndex = 0
             )
@@ -86,6 +88,10 @@ class HomeScreenComponent(
                 goToSettings
             )
             is View.CounterStrike -> CounterStrikeViewComponent(
+                componentContext,
+                di
+            )
+            is View.Other -> OtherScreenComponent(
                 componentContext,
                 di
             )

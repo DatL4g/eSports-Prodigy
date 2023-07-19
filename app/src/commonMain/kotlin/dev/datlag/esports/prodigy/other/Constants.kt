@@ -10,4 +10,6 @@ object Constants {
     const val WIN_THEME_REGISTRY_PATH = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"
     const val WIN_THEME_REGISTRY_VALUE = "AppsUseLightTheme"
 
+    const val GITHUB_PROJECT = "https://github.com/DatL4g/eSports-Prodigy"
+
 }

@@ -17,6 +17,9 @@ import dev.datlag.esports.prodigy.ui.theme.*
 import kotlinx.coroutines.flow.map
 import org.kodein.di.DI
 import org.kodein.di.instance
+import dev.datlag.esports.prodigy.other.Commonizer
+
+val LocalCommonizer = compositionLocalOf<Commonizer> { error("No Commonizer state provided") }
 
 @Composable
 fun App(

@@ -132,9 +132,9 @@ private fun FirstPage(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val res = if (LocalDarkMode.current) {
-            SharedRes.images.welcome_cats_dark
+            SharedRes.images.dreamer_dark
         } else {
-            SharedRes.images.welcome_cats_light
+            SharedRes.images.dreamer_light
         }
 
         Image(

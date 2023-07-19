@@ -11,4 +11,7 @@ sealed class View : Parcelable {
 
     @Parcelize
     object CounterStrike : View(), Parcelable
+
+    @Parcelize
+    object Other : View(), Parcelable
 }

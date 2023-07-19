@@ -9,15 +9,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.arkivanov.decompose.defaultComponentContext
 import dev.datlag.esports.prodigy.App
-import dev.datlag.esports.prodigy.ui.LocalWindowSize
-import dev.datlag.esports.prodigy.ui.App
-import dev.datlag.esports.prodigy.ui.LocalOrientation
-import dev.datlag.esports.prodigy.ui.Orientation
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
 import okio.Path.Companion.toOkioPath
 import dev.datlag.esports.prodigy.R
-import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.common.basedOnWidth
+import dev.datlag.esports.prodigy.other.Commonizer
+import dev.datlag.esports.prodigy.ui.*
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.takeFrom
 import io.kamel.image.config.*
@@ -54,7 +51,8 @@ class MainActivity : AppCompatActivity() {
             CompositionLocalProvider(
                 LocalKamelConfig provides imageConfig,
                 LocalOrientation provides orientation,
-                LocalWindowSize provides WindowSize.basedOnWidth(this)
+                LocalWindowSize provides WindowSize.basedOnWidth(this),
+                LocalCommonizer provides Commonizer(this)
             ) {
                 App(di) {
                     root.render()

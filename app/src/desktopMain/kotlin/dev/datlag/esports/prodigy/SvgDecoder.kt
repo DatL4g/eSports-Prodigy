@@ -11,11 +11,7 @@ import org.apache.batik.transcoder.Transcoder
 import org.apache.batik.transcoder.TranscoderInput
 import org.apache.batik.transcoder.TranscoderOutput
 import org.apache.batik.transcoder.image.PNGTranscoder
-import org.apache.batik.transcoder.svg2svg.SVGTranscoder
-import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
-import java.io.PipedInputStream
-import java.io.PipedOutputStream
 import javax.imageio.ImageIO
 import kotlin.reflect.KClass
 

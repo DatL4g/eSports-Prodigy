@@ -23,6 +23,7 @@ import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.model.common.normalize
 import dev.datlag.esports.prodigy.module.NetworkModule
+import dev.datlag.esports.prodigy.other.Commonizer
 import dev.datlag.esports.prodigy.ui.*
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
 import dev.icerock.moko.resources.compose.fontFamilyResource
@@ -126,7 +127,8 @@ fun main() {
         CompositionLocalProvider(
             LocalWindowSize provides WindowSize.basedOnWidth(windowState),
             LocalOrientation provides Orientation.basedOnSize(windowState),
-            LocalKamelConfig provides imageConfig
+            LocalKamelConfig provides imageConfig,
+            LocalCommonizer provides Commonizer()
         ) {
             App(di) {
                 root.render()
