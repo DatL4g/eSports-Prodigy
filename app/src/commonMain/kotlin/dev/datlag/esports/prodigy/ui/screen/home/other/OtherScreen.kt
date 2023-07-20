@@ -3,8 +3,9 @@ package dev.datlag.esports.prodigy.ui.screen.home.other
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Savings
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,6 +75,44 @@ fun OtherScreen() {
                     }
                 }
             )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = {
+                        commonizer.openInBrowser(Constants.GITHUB_PROJECT)
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(SharedRes.images.GitHub),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(
+                        text = "GitHub",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Button(
+                    onClick = {
+                        commonizer.openInBrowser(Constants.GITHUB_SPONSOR)
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Savings,
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(
+                        text = "Sponsor",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
         }
     }
 }
