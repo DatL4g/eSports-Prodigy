@@ -12,5 +12,6 @@ object Constants {
 
     const val GITHUB_PROJECT = "https://github.com/DatL4g/eSports-Prodigy"
     const val GITHUB_SPONSOR = "https://github.com/sponsors/DATL4G"
+    const val STEAM_PROFILE = "https://steamcommunity.com/profiles/76561198442496940"
 
 }

@@ -37,3 +37,11 @@ suspend fun DataStore<AppSettings>.updateWelcomed(
         it.toBuilder().setWelcomed(done).build()
     }
 }
+
+suspend fun DataStore<AppSettings>.updateCommented(
+    done: Boolean
+): AppSettings {
+    return this.updateData {
+        it.toBuilder().setCommented(done).build()
+    }
+}

@@ -11,6 +11,7 @@ import androidx.datastore.core.DataStore
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.getValueBlocking
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
+import dev.datlag.esports.prodigy.game.Celebrity
 import dev.datlag.esports.prodigy.model.ThemeMode
 import dev.datlag.esports.prodigy.ui.theme.Colors
 import dev.datlag.esports.prodigy.ui.theme.*
@@ -20,6 +21,7 @@ import org.kodein.di.instance
 import dev.datlag.esports.prodigy.other.Commonizer
 
 val LocalCommonizer = compositionLocalOf<Commonizer> { error("No Commonizer state provided") }
+val LocalCelebrity = compositionLocalOf<Celebrity?> { null }
 
 @Composable
 fun App(

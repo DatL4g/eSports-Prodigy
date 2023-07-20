@@ -1,5 +1,6 @@
 package dev.datlag.esports.prodigy.game.model.steam
 
+import dev.datlag.esports.prodigy.game.Celebrity
 import dev.datlag.esports.prodigy.game.ValveDataFormat
 import dev.datlag.esports.prodigy.model.common.scopeCatching
 import kotlinx.serialization.SerialName
@@ -59,6 +60,8 @@ data class User(
 ) {
 
     val name = data.personaName?.ifBlank { null } ?: data.accountName.ifBlank { id }
+
+    val celebrity: Celebrity? = Celebrity.valueOf(id)
 
     companion object {
         inline fun fromMap(map: Map<String, UserData>, avatarFileResolver: (String) -> File?) = map.map { (id, data) ->

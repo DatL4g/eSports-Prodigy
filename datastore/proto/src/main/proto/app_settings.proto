@@ -13,6 +13,7 @@ message AppSettings {
   }
 
   bool welcomed = 1;
-  Appearance appearance = 2;
-  Paths paths = 3;
+  bool commented = 2;
+  Appearance appearance = 3;
+  Paths paths = 4;
 }

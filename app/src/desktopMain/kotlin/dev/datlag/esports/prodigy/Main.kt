@@ -2,6 +2,7 @@ package dev.datlag.esports.prodigy
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
@@ -18,6 +19,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleC
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import dev.datlag.esports.prodigy.common.basedOnSize
 import dev.datlag.esports.prodigy.common.basedOnWidth
+import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import dev.datlag.esports.prodigy.game.SteamLauncher
@@ -37,6 +39,7 @@ import io.ktor.client.plugins.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import org.kodein.di.DI
 import org.kodein.di.instance
 import java.io.File
@@ -124,11 +127,14 @@ fun main() {
             SteamLauncher.userSteamFolders.emitAll(savedPaths)
         }
 
+        val celebrity by SteamLauncher.loggedInUsers.mapNotNull { it.firstNotNullOfOrNull { u -> u.celebrity } }.collectAsStateSafe { null }
+
         CompositionLocalProvider(
             LocalWindowSize provides WindowSize.basedOnWidth(windowState),
             LocalOrientation provides Orientation.basedOnSize(windowState),
             LocalKamelConfig provides imageConfig,
-            LocalCommonizer provides Commonizer()
+            LocalCommonizer provides Commonizer(),
+            LocalCelebrity provides celebrity
         ) {
             App(di) {
                 root.render()

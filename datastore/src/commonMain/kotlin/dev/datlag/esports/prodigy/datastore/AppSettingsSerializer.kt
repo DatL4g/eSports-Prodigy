@@ -11,6 +11,7 @@ class AppSettingsSerializer(
 
     override val defaultValue: AppSettings = AppSettings.newBuilder()
         .setWelcomed(false)
+        .setCommented(false)
         .setAppearance(AppSettings.Appearance.newBuilder()
             .setThemeMode(defaultThemeMode)
             .setContentColors(true)
