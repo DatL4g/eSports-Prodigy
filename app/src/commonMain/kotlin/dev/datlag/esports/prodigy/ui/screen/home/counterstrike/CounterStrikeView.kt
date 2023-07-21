@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.fullRow
 import dev.datlag.esports.prodigy.common.fullRowItems
@@ -28,6 +29,8 @@ import dev.datlag.esports.prodigy.ui.LocalWindowSize
 import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.components.NewsCard
 import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.components.TeamCard
+import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.team.TeamComponent
+import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.team.TeamViewComponent
 import io.kamel.core.Resource
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
@@ -43,17 +46,39 @@ fun CounterStrikeView(component: CounterStrikeComponent) {
 
 @Composable
 private fun DefaultView(component: CounterStrikeComponent) {
-    MainView(component, Modifier.fillMaxWidth())
+    val childState by component.child.subscribeAsState()
+    childState.child?.also { (config, instance) ->
+        when (config) {
+            is CounterStrikeConfig.Team -> {
+                (instance as TeamComponent).render()
+            }
+            else -> {
+                MainView(component, Modifier.fillMaxWidth())
+            }
+        }
+    } ?: MainView(component, Modifier.fillMaxWidth())
 }
 
 @Composable
 private fun ExpandedView(component: CounterStrikeComponent) {
+    val childState by component.child.subscribeAsState()
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         MainView(component, Modifier.widthIn(max = 700.dp))
-        Box(modifier = Modifier.weight(2F)) {
-            Text(text = "Expanded")
+
+        childState.child?.also { (config, instance) ->
+            when (config) {
+                is CounterStrikeConfig.Team -> {
+                    Box(
+                        modifier = Modifier.weight(2F)
+                    ) {
+                        (instance as TeamComponent).render()
+                    }
+                }
+                else -> { }
+            }
         }
     }
 }
@@ -65,7 +90,7 @@ private fun MainView(component: CounterStrikeComponent, modifier: Modifier) {
 
     if (homeStatus is Status.LOADING) {
         Box(
-            modifier = modifier.fillMaxHeight(),
+            modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
@@ -106,14 +131,15 @@ private fun MainView(component: CounterStrikeComponent, modifier: Modifier) {
                     }
                 }
                 fullRowItems(home?.teams ?: emptyList()) { team ->
-                    TeamCard(team)
+                    TeamCard(team) {
+                        component.teamClicked(team)
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HeroImage(hero: Home.Hero, onClick: () -> Unit) {
     Card(

@@ -17,13 +17,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.ui.isDesktop
+import dev.datlag.esports.prodigy.ui.loadImageScheme
 import dev.datlag.esports.prodigy.ui.theme.LocalDarkMode
 import io.kamel.core.Resource
 import io.kamel.image.asyncPainterResource
 import io.ktor.http.*
 
 @Composable
-fun TeamCard(team: Home.Team) {
+fun TeamCard(
+    team: Home.Team,
+    onDetailsClicked: () -> Unit
+) {
     ElevatedCard {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -43,7 +47,7 @@ fun TeamCard(team: Home.Team) {
             Spacer(modifier = Modifier.weight(1F))
             OutlinedButton(
                 onClick = {
-
+                    onDetailsClicked()
                 }
             ) {
                 Text(text = "Details")
@@ -65,14 +69,12 @@ private fun TeamIcon(team: Home.Team) {
             Spacer(modifier = Modifier.size(24.dp))
         }
         is Resource.Success -> {
-            // apply tint to SVGs as they don't support css (yet)
-            val isSVG = remember { false }// isSVG(preferredIcon) && isDesktop }
+            loadImageScheme(team.id, resource.value)
             Image(
                 modifier = Modifier.size(24.dp),
                 painter = resource.value,
                 contentDescription = team.name,
-                contentScale = ContentScale.FillBounds,
-                colorFilter = if (isSVG) ColorFilter.tint(LocalContentColor.current) else null
+                contentScale = ContentScale.FillBounds
             )
         }
         is Resource.Failure -> {
@@ -81,13 +83,12 @@ private fun TeamIcon(team: Home.Team) {
                     Spacer(modifier = Modifier.size(24.dp))
                 }
                 is Resource.Success -> {
-                    val isSVG = remember { isSVG(fallbackIcon) && isDesktop }
+                    loadImageScheme(team.id, fallbackResource.value)
                     Image(
                         modifier = Modifier.size(24.dp),
                         painter = fallbackResource.value,
                         contentDescription = team.name,
-                        contentScale = ContentScale.FillBounds,
-                        colorFilter = if (isSVG) ColorFilter.tint(LocalContentColor.current) else null
+                        contentScale = ContentScale.FillBounds
                     )
                 }
                 is Resource.Failure -> {

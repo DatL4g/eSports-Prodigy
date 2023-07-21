@@ -32,7 +32,7 @@ class SteamRepository(
                 (it.status as? Resource.Status.Loading)?.data
             }
             is Resource.Status.EmptySuccess -> {
-                null
+                userProfiles.getOrDefault(id, null)
             }
             is Resource.Status.Error -> {
                 (it.status as? Resource.Status.Error)?.data

@@ -24,7 +24,7 @@ class HLTVRepository(
     val homeState: MutableStateFlow<Home?> = MutableStateFlow(initialHome)
 
     val newsState: MutableStateFlow<List<News>?> = MutableStateFlow(initialNews)
-    val teamState: MutableStateFlow<Team?> = MutableStateFlow(null)
+    private val teams: MutableMap<String, Team> = mutableMapOf()
 
     private val _home: Flow<Resource<Home?>> by lazy {
         dbBoundResource(
@@ -70,28 +70,6 @@ class HLTVRepository(
         )
     }
 
-    private val _team: Flow<Resource<Team?>> by lazy {
-        dbBoundResource(
-            makeNetworkRequest = {
-                val result = HLTVScraper.scrapeTeam(6667, client)
-                if (result.isSuccess) {
-                    ApiSuccessResponse(result.getOrNull(), emptySet())
-                } else {
-                    ApiErrorResponse(result.exceptionOrNull()?.message ?: String(), 0)
-                }
-            },
-            fetchFromLocal = {
-                teamState
-            },
-            shouldMakeNetworkRequest = {
-                it == null
-            },
-            saveResponseData = {
-                teamState.emit(it)
-            }
-        )
-    }
-
     private val _homeStatus by lazy {
         _home.transform {
             return@transform emit(it.status)
@@ -104,12 +82,6 @@ class HLTVRepository(
         }
     }
 
-    private val _teamStatus by lazy {
-        _team.transform {
-            return@transform emit(it.status)
-        }
-    }
-
     val homeStatus by lazy {
         _homeStatus.transform {
             return@transform emit(Status.create(it))
@@ -118,12 +90,6 @@ class HLTVRepository(
 
     val newsStatus by lazy {
         _newsStatus.transform {
-            return@transform emit(Status.create(it))
-        }
-    }
-
-    val teamStatus by lazy {
-        _teamStatus.transform {
             return@transform emit(Status.create(it))
         }
     }
@@ -166,22 +132,38 @@ class HLTVRepository(
         }
     }
 
-    val team by lazy {
-        _teamStatus.transform {
-            return@transform emit(when (it) {
-                is Resource.Status.Loading -> {
-                    it.data
-                }
-                is Resource.Status.EmptySuccess -> {
-                    teamState.value
-                }
-                is Resource.Status.Success -> {
-                    it.data
-                }
-                is Resource.Status.Error -> {
-                    it.data ?: teamState.value
-                }
-            })
+    fun team(href: String, id: Number) = dbBoundResource(
+        makeNetworkRequest = {
+            val result = HLTVScraper.scrapeTeam(href, id, client)
+            if (result.isSuccess) {
+                ApiSuccessResponse(result.getOrNull(), emptySet())
+            } else {
+                ApiErrorResponse(result.exceptionOrNull()?.message ?: String(), 0)
+            }
+        },
+        shouldMakeNetworkRequest = {
+            it == null
+        },
+        fetchFromLocal = {
+            flowOf(teams.getOrDefault(href, null))
+        },
+        saveResponseData = {
+            teams[href] = it
         }
+    ).transform {
+        return@transform emit(when (it.status) {
+            is Resource.Status.Loading -> {
+                (it.status as? Resource.Status.Loading)?.data
+            }
+            is Resource.Status.EmptySuccess -> {
+                teams.getOrDefault(href, null)
+            }
+            is Resource.Status.Error -> {
+                (it.status as? Resource.Status.Error)?.data
+            }
+            is Resource.Status.Success -> {
+                (it.status as? Resource.Status.Success)?.data
+            }
+        })
     }
 }

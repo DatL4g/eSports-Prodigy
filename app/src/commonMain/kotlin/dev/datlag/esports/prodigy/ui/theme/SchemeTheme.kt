@@ -117,7 +117,7 @@ object SchemeTheme {
 }
 
 @Composable
-fun SchemeTheme(key: Any, content: @Composable () -> Unit) {
+fun SchemeTheme(key: Any?, content: @Composable () -> Unit) {
     if (LocalContentColors.current) {
         val themeHolder by SchemeTheme.itemScheme.map {
             it.firstNotNullOfOrNull { entry ->

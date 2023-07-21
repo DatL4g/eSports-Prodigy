@@ -96,10 +96,18 @@ object HLTVScraper {
         }
     }
 
-    suspend fun scrapeTeam(id: Number, client: HttpClient): Result<Team> {
+    suspend fun scrapeTeam(href: String, id: Number, client: HttpClient): Result<Team> {
+        var targetHref = href
+        if (targetHref.startsWith('/')) {
+            targetHref = targetHref.substring(1)
+        }
+        if (targetHref.startsWith("team", true)) {
+            targetHref = targetHref.substringAfter('/')
+        }
+
         return skrape(KtorFetcher(client)) {
             request {
-                url("https://www.hltv.org/team/$id/$id")
+                url("https://www.hltv.org/team/$targetHref")
             }
             response {
                 if (responseStatus.code != 200) {

@@ -54,7 +54,7 @@ private fun DefaultView(component: DeviceComponent) {
     childState.child?.also { (config, instance) ->
         when (config) {
             is GameConfig.Overview -> {
-                GameView(instance as GameComponent)
+                (instance as GameComponent).render()
             }
             else -> {
                 MainView(component, Modifier.fillMaxWidth())
@@ -82,7 +82,7 @@ private fun ExpandedView(component: DeviceComponent) {
                     Box(
                         modifier = Modifier.weight(2F)
                     ) {
-                        GameView(instance as GameComponent)
+                        (instance as GameComponent).render()
                     }
                 }
                 else -> { }
