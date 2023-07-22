@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import java.awt.Image
 
 actual interface DeviceComponent : Component {
-    val child: Value<ChildSlot<GameConfig, Any>>
+    val child: Value<ChildSlot<GameConfig, Component>>
 
     val games: Flow<List<LocalGame>>
 

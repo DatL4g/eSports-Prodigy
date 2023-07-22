@@ -8,8 +8,5 @@ import dev.datlag.esports.prodigy.model.hltv.Home
 sealed class CounterStrikeConfig : Parcelable {
 
     @Parcelize
-    object EMPTY : CounterStrikeConfig(), Parcelable
-
-    @Parcelize
     data class Team(val initialTeam: Home.Team) : CounterStrikeConfig(), Parcelable
 }

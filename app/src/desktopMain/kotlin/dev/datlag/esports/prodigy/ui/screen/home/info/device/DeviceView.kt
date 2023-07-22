@@ -51,15 +51,8 @@ actual fun DeviceView(component: DeviceComponent) {
 @Composable
 private fun DefaultView(component: DeviceComponent) {
     val childState by component.child.subscribeAsState()
-    childState.child?.also { (config, instance) ->
-        when (config) {
-            is GameConfig.Overview -> {
-                (instance as GameComponent).render()
-            }
-            else -> {
-                MainView(component, Modifier.fillMaxWidth())
-            }
-        }
+    childState.child?.also { (_, instance) ->
+        instance.render()
     } ?: MainView(component, Modifier.fillMaxWidth())
 }
 
@@ -76,16 +69,11 @@ private fun ExpandedView(component: DeviceComponent) {
         }
         MainView(component, modifier)
 
-        childState.child?.also { (config, instance) ->
-            when (config) {
-                is GameConfig.Overview -> {
-                    Box(
-                        modifier = Modifier.weight(2F)
-                    ) {
-                        (instance as GameComponent).render()
-                    }
-                }
-                else -> { }
+        childState.child?.also { (_, instance) ->
+            Box(
+                modifier = Modifier.weight(2F)
+            ) {
+                instance.render()
             }
         }
     }

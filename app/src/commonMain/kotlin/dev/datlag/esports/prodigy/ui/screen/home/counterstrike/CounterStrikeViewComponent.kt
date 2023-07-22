@@ -19,6 +19,7 @@ import dev.datlag.esports.prodigy.model.hltv.News
 import dev.datlag.esports.prodigy.model.hltv.Team
 import dev.datlag.esports.prodigy.network.Status
 import dev.datlag.esports.prodigy.network.repository.HLTVRepository
+import dev.datlag.esports.prodigy.ui.navigation.Component
 import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.team.TeamViewComponent
 import kotlinx.coroutines.flow.*
 import org.kodein.di.DI
@@ -39,9 +40,6 @@ class CounterStrikeViewComponent(
     private val navigation = SlotNavigation<CounterStrikeConfig>()
     private val _child = childSlot(
         source = navigation,
-        initialConfiguration = {
-            CounterStrikeConfig.EMPTY
-        },
         handleBackButton = true
     ) { config, componentContext ->
         when (config) {
@@ -50,11 +48,10 @@ class CounterStrikeViewComponent(
                 config.initialTeam,
                 di
             )
-            else -> config
         }
     }
 
-    override val child: Value<ChildSlot<CounterStrikeConfig, Any>> = _child
+    override val child: Value<ChildSlot<CounterStrikeConfig, Component>> = _child
 
     @Composable
     override fun render() {

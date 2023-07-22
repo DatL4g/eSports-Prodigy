@@ -13,7 +13,7 @@ interface CounterStrikeComponent : Component {
 
     val home: Flow<Home?>
     val homeStatus: Flow<Status>
-    val child: Value<ChildSlot<CounterStrikeConfig, Any>>
+    val child: Value<ChildSlot<CounterStrikeConfig, Component>>
 
     fun teamClicked(team: Home.Team)
 

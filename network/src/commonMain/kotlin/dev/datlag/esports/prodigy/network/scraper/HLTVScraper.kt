@@ -133,13 +133,17 @@ object HLTVScraper {
                         val timeOnTeam = element.findByIndex(2, "td").text.trim()
                         val mapsPlayed = element.findByIndex(3, "td").text.trim().toIntOrNull() ?: -1
                         val type = element.findFirst(".player-status").text.trim()
+                        val img = element.findFirstOrNull(".playersBox-img-wrapper img")?.eachSrc?.firstNotNullOfOrNull {
+                            it.ifBlank { null }
+                        }
 
                         Team.Player(
                             type = Team.Player.Type.byLabel(type),
                             id = playerId,
                             name = playerName,
                             timeOnTeam = timeOnTeam,
-                            mapsPlayed = mapsPlayed
+                            mapsPlayed = mapsPlayed,
+                            image = img
                         )
                     }
                     val country = Country(

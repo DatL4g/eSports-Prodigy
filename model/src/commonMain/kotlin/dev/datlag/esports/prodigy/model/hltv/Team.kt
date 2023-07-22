@@ -23,7 +23,8 @@ data class Team(
         val id: Number,
         val name: String,
         val timeOnTeam: String,
-        val mapsPlayed: Number
+        val mapsPlayed: Number,
+        val image: String? = null
     ) {
 
         sealed class Type(val label: String) {
@@ -31,6 +32,9 @@ data class Team(
             object STARTER : Type("Starter")
             object SUBSTITUTE : Type("Substitute")
             object BENCHED : Type("Benched")
+
+            val isPlayer: Boolean
+                get() = this is STARTER
 
             companion object {
                 fun byLabel(value: String): Type {

@@ -16,6 +16,7 @@ sealed class Celebrity(
         steamID = "76561198013760707",
         nicknames = listOf(
             "Kevin",
+            "Quentin",
             "Papakacke",
             "Lattensep",
             "Lattendaddy",

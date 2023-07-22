@@ -2,10 +2,7 @@ package dev.datlag.esports.prodigy.ui.screen.home.info.device
 
 import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.slot.ChildSlot
-import com.arkivanov.decompose.router.slot.SlotNavigation
-import com.arkivanov.decompose.router.slot.activate
-import com.arkivanov.decompose.router.slot.childSlot
+import com.arkivanov.decompose.router.slot.*
 import com.arkivanov.decompose.value.Value
 import dev.datlag.esports.prodigy.common.ioScope
 import dev.datlag.esports.prodigy.game.HeroicLauncher
@@ -13,6 +10,7 @@ import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.game.model.LocalGame
 import dev.datlag.esports.prodigy.game.model.LocalGameInfo
 import dev.datlag.esports.prodigy.model.common.listFrom
+import dev.datlag.esports.prodigy.ui.navigation.Component
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameConfig
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameViewComponent
 import kotlinx.coroutines.flow.Flow
@@ -34,9 +32,6 @@ actual class DeviceViewComponent actual constructor(
     private val navigation = SlotNavigation<GameConfig>()
     private val _child = childSlot(
         source = navigation,
-        initialConfiguration = {
-            GameConfig.EMPTY
-        },
         handleBackButton = true
     ) { config, componentContext ->
         when (config) {
@@ -45,13 +40,11 @@ actual class DeviceViewComponent actual constructor(
                 config.game,
                 di
             ) {
-                navigation.activate(GameConfig.EMPTY)
+                navigation.dismiss()
             }
-
-            else -> config
         }
     }
-    override val child: Value<ChildSlot<GameConfig, Any>> = _child
+    override val child: Value<ChildSlot<GameConfig, Component>> = _child
 
     private val steamGames: Flow<List<LocalGameInfo>> = SteamLauncher.appManifests.transform {
         return@transform emit(it.filter { app ->

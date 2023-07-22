@@ -47,15 +47,8 @@ fun CounterStrikeView(component: CounterStrikeComponent) {
 @Composable
 private fun DefaultView(component: CounterStrikeComponent) {
     val childState by component.child.subscribeAsState()
-    childState.child?.also { (config, instance) ->
-        when (config) {
-            is CounterStrikeConfig.Team -> {
-                (instance as TeamComponent).render()
-            }
-            else -> {
-                MainView(component, Modifier.fillMaxWidth())
-            }
-        }
+    childState.child?.also { (_, instance) ->
+        instance.render()
     } ?: MainView(component, Modifier.fillMaxWidth())
 }
 
@@ -69,15 +62,10 @@ private fun ExpandedView(component: CounterStrikeComponent) {
         MainView(component, Modifier.widthIn(max = 700.dp))
 
         childState.child?.also { (config, instance) ->
-            when (config) {
-                is CounterStrikeConfig.Team -> {
-                    Box(
-                        modifier = Modifier.weight(2F)
-                    ) {
-                        (instance as TeamComponent).render()
-                    }
-                }
-                else -> { }
+            Box(
+                modifier = Modifier.weight(2F)
+            ) {
+                instance.render()
             }
         }
     }

@@ -8,8 +8,5 @@ import dev.datlag.esports.prodigy.game.model.LocalGame
 sealed class GameConfig : Parcelable {
 
     @Parcelize
-    object EMPTY : GameConfig(), Parcelable
-
-    @Parcelize
     data class Overview(val game: LocalGame) : GameConfig(), Parcelable
 }

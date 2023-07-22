@@ -63,13 +63,18 @@ private fun TeamIcon(team: Home.Team) {
     } else {
         team.imgLight to team.imgDark
     }
+    val (suffix, fallbackSuffix) = if (LocalDarkMode.current) {
+        "dark" to "light"
+    } else {
+        "light" to "dark"
+    }
 
     when (val resource = asyncPainterResource(preferredIcon)) {
         is Resource.Loading -> {
             Spacer(modifier = Modifier.size(24.dp))
         }
         is Resource.Success -> {
-            loadImageScheme(team.id, resource.value)
+            loadImageScheme("${team.id}-$suffix", resource.value)
             Image(
                 modifier = Modifier.size(24.dp),
                 painter = resource.value,
@@ -83,7 +88,7 @@ private fun TeamIcon(team: Home.Team) {
                     Spacer(modifier = Modifier.size(24.dp))
                 }
                 is Resource.Success -> {
-                    loadImageScheme(team.id, fallbackResource.value)
+                    loadImageScheme("${team.id}-$fallbackSuffix", fallbackResource.value)
                     Image(
                         modifier = Modifier.size(24.dp),
                         painter = fallbackResource.value,
@@ -101,15 +106,4 @@ private fun TeamIcon(team: Home.Team) {
             }
         }
     }
-}
-
-fun <I : Any> isSVG(data: I): Boolean {
-    val dataPath = when (data) {
-        is Url -> data
-        else -> runCatching {
-            Url(data.toString())
-        }.getOrNull()
-    }?.encodedPath
-
-    return (dataPath ?: data.toString()).substringAfterLast('.').equals("svg", true)
 }
