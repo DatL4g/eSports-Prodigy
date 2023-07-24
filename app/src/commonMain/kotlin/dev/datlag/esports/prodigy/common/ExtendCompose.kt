@@ -89,3 +89,8 @@ fun Dp.scaled(): Dp {
         }
     }
 }
+
+@Composable
+fun Number.scaledDp(): Dp {
+    return this.toDouble().dp.scaled()
+}

@@ -18,10 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import dev.datlag.esports.prodigy.common.collectAsStateSafe
-import dev.datlag.esports.prodigy.common.fullRow
-import dev.datlag.esports.prodigy.common.fullRowItems
-import dev.datlag.esports.prodigy.common.onClick
+import dev.datlag.esports.prodigy.common.*
 import dev.datlag.esports.prodigy.model.common.safeSubList
 import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.network.Status
@@ -59,9 +56,9 @@ private fun ExpandedView(component: CounterStrikeComponent) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        MainView(component, Modifier.widthIn(max = 700.dp))
+        MainView(component, Modifier.widthIn(max = 700.scaledDp()))
 
-        childState.child?.also { (config, instance) ->
+        childState.child?.also { (_, instance) ->
             Box(
                 modifier = Modifier.weight(2F)
             ) {

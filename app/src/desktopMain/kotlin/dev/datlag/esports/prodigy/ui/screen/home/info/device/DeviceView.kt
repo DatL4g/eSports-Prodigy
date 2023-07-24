@@ -26,6 +26,7 @@ import dev.datlag.esports.prodigy.color.createTheme
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.common.scaled
+import dev.datlag.esports.prodigy.common.scaledDp
 import dev.datlag.esports.prodigy.game.common.containsInvalidEntries
 import dev.datlag.esports.prodigy.game.model.LocalGame
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
@@ -65,7 +66,7 @@ private fun ExpandedView(component: DeviceComponent) {
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         val modifier = when (childState.child?.configuration) {
-            is GameConfig.Overview -> Modifier.widthIn(max = 700.dp.scaled())
+            is GameConfig.Overview -> Modifier.widthIn(max = 700.scaledDp())
             else -> Modifier.widthIn(max = 700.dp)
         }
         MainView(component, modifier)
