@@ -56,7 +56,7 @@ private fun ExpandedView(component: CounterStrikeComponent) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        MainView(component, Modifier.widthIn(max = 700.scaledDp()))
+        MainView(component, Modifier.widthIn(max = 700.scaledDp(200.dp)))
 
         childState.child?.also { (_, instance) ->
             Box(

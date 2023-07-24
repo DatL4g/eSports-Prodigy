@@ -66,7 +66,7 @@ private fun ExpandedView(component: DeviceComponent) {
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         val modifier = when (childState.child?.configuration) {
-            is GameConfig.Overview -> Modifier.widthIn(max = 700.scaledDp())
+            is GameConfig.Overview -> Modifier.widthIn(max = 700.scaledDp(200.dp))
             else -> Modifier.widthIn(max = 700.dp)
         }
         MainView(component, modifier)

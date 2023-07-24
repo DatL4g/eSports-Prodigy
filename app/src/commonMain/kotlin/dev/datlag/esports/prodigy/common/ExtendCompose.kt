@@ -77,13 +77,13 @@ fun Size.toDpSize(minWidth: Dp = 0.dp, minHeight: Dp = 0.dp): DpSize {
 }
 
 @Composable
-fun Dp.scaled(): Dp {
+fun Dp.scaled(min: Dp? = null): Dp {
     return if (this.isUnspecified || this.value <= 0F) {
         this
     } else {
         val newValue = (this.value / LocalScaling.current)
-        if (newValue <= 0.0) {
-            this
+        if (newValue <= (min?.value ?: 0F)) {
+            min ?: this
         } else {
             newValue.dp
         }
@@ -91,6 +91,6 @@ fun Dp.scaled(): Dp {
 }
 
 @Composable
-fun Number.scaledDp(): Dp {
-    return this.toDouble().dp.scaled()
+fun Number.scaledDp(min: Dp? = null): Dp {
+    return this.toDouble().dp.scaled(min)
 }
