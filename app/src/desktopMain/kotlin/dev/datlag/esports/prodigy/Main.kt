@@ -17,6 +17,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.mayakapps.compose.windowstyler.WindowStyle
 import dev.datlag.esports.prodigy.common.basedOnSize
 import dev.datlag.esports.prodigy.common.basedOnWidth
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
@@ -134,7 +135,8 @@ fun main() {
             LocalOrientation provides Orientation.basedOnSize(windowState),
             LocalKamelConfig provides imageConfig,
             LocalCommonizer provides Commonizer(),
-            LocalCelebrity provides celebrity
+            LocalCelebrity provides celebrity,
+            LocalWindow provides this.window
         ) {
             App(di) {
                 root.render()

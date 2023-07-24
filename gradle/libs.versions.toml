@@ -44,6 +44,7 @@ splashscreen = "1.0.1"
 sqldelight = "1.5.5"
 versions = "0.47.0"
 windowsize = "1.1.1"
+window-styler = "0.3.2"
 
 [libraries]
 aboutlibraries =  { group = "com.mikepenz", name = "aboutlibraries-core", version.ref = "aboutlibraries" }
@@ -99,6 +100,7 @@ sqldelight-coroutines = { group = "com.squareup.sqldelight", name = "coroutines-
 sqldelight-sqlite = { group = "com.squareup.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
 stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 windowsize = { group = "androidx.compose.material3", name = "material3-window-size-class", version.ref = "windowsize" }
+window-styler = { group = "com.mayakapps.compose", name = "window-styler", version.ref = "window-styler" }
 
 [plugins]
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }

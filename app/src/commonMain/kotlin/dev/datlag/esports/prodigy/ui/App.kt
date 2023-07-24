@@ -47,16 +47,16 @@ fun App(
         LocalDarkMode provides useDarkTheme,
         LocalContentColors provides contentColors
     ) {
-        SystemProvider {
-            MaterialTheme(
-                colorScheme = if (useDarkTheme) Colors.getDarkScheme() else Colors.getLightScheme(),
-                typography = ManropeTypography()
+        MaterialTheme(
+            colorScheme = if (useDarkTheme) Colors.getDarkScheme() else Colors.getLightScheme(),
+            typography = ManropeTypography()
+        ) {
+            androidx.compose.material.MaterialTheme(
+                colors = MaterialTheme.colorScheme.toLegacyColors(useDarkTheme),
+                shapes = MaterialTheme.shapes.toLegacyShapes(),
+                typography = ManropeTypographyLegacy()
             ) {
-                androidx.compose.material.MaterialTheme(
-                    colors = MaterialTheme.colorScheme.toLegacyColors(useDarkTheme),
-                    shapes = MaterialTheme.shapes.toLegacyShapes(),
-                    typography = ManropeTypographyLegacy()
-                ) {
+                SystemProvider {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background,

@@ -107,6 +107,8 @@ kotlin {
                 implementation(libs.jfa.get().toString()) {
                     exclude(group = "net.java.dev.jna", module = "jna")
                 }
+
+                implementation(libs.window.styler)
             }
         }
     }
