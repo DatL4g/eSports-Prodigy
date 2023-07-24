@@ -16,15 +16,20 @@ import com.mayakapps.compose.windowstyler.WindowFrameStyle
 import com.mayakapps.compose.windowstyler.WindowStyleManager
 import dev.datlag.esports.prodigy.color.createTheme
 import dev.datlag.esports.prodigy.common.launchIO
+import dev.datlag.esports.prodigy.model.common.scopeCatching
 import dev.datlag.esports.prodigy.other.Constants
-import dev.datlag.esports.prodigy.ui.theme.Colors
-import dev.datlag.esports.prodigy.ui.theme.LocalDarkMode
-import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
-import dev.datlag.esports.prodigy.ui.theme.ThemeDetector
+import dev.datlag.esports.prodigy.ui.theme.*
 import evalBash
 import org.apache.commons.lang3.SystemUtils
 import org.jetbrains.skiko.SystemTheme
 import org.jetbrains.skiko.currentSystemTheme
+import java.awt.GraphicsDevice
+import java.awt.GraphicsEnvironment
+import java.awt.Rectangle
+import java.awt.Window
+import java.util.Comparator
+import kotlin.math.abs
+import kotlin.math.max
 
 val LocalWindow = compositionLocalOf<ComposeWindow> { error("No window state provided") }
 
@@ -79,7 +84,8 @@ actual fun SystemProvider(content: @Composable () -> Unit) {
     )
 
     CompositionLocalProvider(
-        LocalContextMenuRepresentation provides contextMenuStyling
+        LocalContextMenuRepresentation provides contextMenuStyling,
+        LocalScaling provides windowScaling()
     ) {
         content()
     }
@@ -106,4 +112,44 @@ private fun WindowStyle(
     LaunchedEffect(backdropType) {
         manager.backdropType = backdropType
     }
+}
+
+@Composable
+private fun windowScaling(
+    window: Window = LocalWindow.current
+): Double {
+    val device = windowDevice(window)
+
+    val initScale = scopeCatching {
+        if (SystemUtils.IS_OS_LINUX) {
+            GtkUtilities.scaleFactor()
+        } else {
+            device.defaultConfiguration.defaultTransform.scaleX
+        }
+    }.getOrNull() ?: 0.0
+
+    return if (initScale <= 0.0) {
+        scopeCatching {
+            device.displayMode.width / device.defaultConfiguration.bounds.width
+        }.getOrNull()?.toDouble() ?: 1.0
+    } else {
+        initScale
+    }
+}
+
+fun windowDevice(window: Window): GraphicsDevice {
+    fun square(rect: Rectangle): Int {
+        return abs(rect.width * rect.height)
+    }
+
+    val bounds = window.bounds
+    val device = scopeCatching {
+        GraphicsEnvironment.getLocalGraphicsEnvironment().screenDevices.filter { d ->
+            d.defaultConfiguration.bounds.intersects(bounds)
+        }.maxByOrNull { d ->
+            square(d.defaultConfiguration.bounds.intersection(bounds))
+        }
+    }.getOrNull() ?: window.graphicsConfiguration.device
+
+    return device
 }

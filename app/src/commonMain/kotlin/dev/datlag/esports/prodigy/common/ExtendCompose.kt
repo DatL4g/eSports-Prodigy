@@ -14,6 +14,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isUnspecified
+import dev.datlag.esports.prodigy.ui.LocalScaling
 import org.kodein.di.DIContext
 import kotlin.math.max
 
@@ -72,4 +74,18 @@ fun Size.toDpSize(minWidth: Dp = 0.dp, minHeight: Dp = 0.dp): DpSize {
     }, with(LocalDensity.current) {
         minHeight.toPx()
     })
+}
+
+@Composable
+fun Dp.scaled(): Dp {
+    return if (this.isUnspecified || this.value <= 0F) {
+        this
+    } else {
+        val newValue = (this.value / LocalScaling.current)
+        if (newValue <= 0.0) {
+            this
+        } else {
+            newValue.dp
+        }
+    }
 }

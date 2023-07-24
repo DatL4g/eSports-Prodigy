@@ -22,6 +22,7 @@ import dev.datlag.esports.prodigy.other.Commonizer
 
 val LocalCommonizer = compositionLocalOf<Commonizer> { error("No Commonizer state provided") }
 val LocalCelebrity = compositionLocalOf<Celebrity?> { null }
+val LocalScaling = compositionLocalOf<Double> { 1.0 }
 
 @Composable
 fun App(
