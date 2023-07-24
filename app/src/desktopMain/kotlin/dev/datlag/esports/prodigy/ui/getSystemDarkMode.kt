@@ -92,7 +92,7 @@ private fun WindowStyle(
     backdropType: WindowBackdrop = WindowBackdrop.Default,
     frameStyle: WindowFrameStyle = WindowFrameStyle()
 ) {
-    val manager = remember { WindowStyleManager(
+    val manager = remember(isDarkTheme) { WindowStyleManager(
         window = window,
         isDarkTheme = isDarkTheme,
         backdropType = backdropType,
