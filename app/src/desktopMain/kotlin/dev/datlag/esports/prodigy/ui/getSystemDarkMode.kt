@@ -59,21 +59,9 @@ actual val isDesktop: Boolean = true
 @Composable
 actual fun SystemProvider(content: @Composable () -> Unit) {
     val isDarkTheme = LocalDarkMode.current
-    val backdrop = WindowBackdrop.Solid(MaterialTheme.colorScheme.background)
-    val window = LocalWindow.current
     val backgroundColor = MaterialTheme.colorScheme.background
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground
-
-    val manager = remember { WindowStyleManager(
-        window = window,
-        isDarkTheme = isDarkTheme,
-        backdropType = backdrop,
-        frameStyle = WindowFrameStyle(
-            borderColor = backgroundColor,
-            titleBarColor = backgroundColor,
-            captionColor = onBackgroundColor
-        )
-    ) }
+    val backdrop = WindowBackdrop.Solid(backgroundColor)
 
     val contextMenuStyling = if (isDarkTheme) {
         DarkDefaultContextMenuRepresentation
@@ -81,17 +69,41 @@ actual fun SystemProvider(content: @Composable () -> Unit) {
         LightDefaultContextMenuRepresentation
     }
 
-    LaunchedEffect(isDarkTheme) {
-        manager.isDarkTheme = isDarkTheme
-    }
-
-    LaunchedEffect(backdrop) {
-        manager.backdropType = backdrop
-    }
+    WindowStyle(
+        backdropType = backdrop,
+        frameStyle = WindowFrameStyle(
+            borderColor = backgroundColor,
+            titleBarColor = backgroundColor,
+            captionColor = onBackgroundColor
+        )
+    )
 
     CompositionLocalProvider(
         LocalContextMenuRepresentation provides contextMenuStyling
     ) {
         content()
+    }
+}
+
+@Composable
+private fun WindowStyle(
+    window: ComposeWindow = LocalWindow.current,
+    isDarkTheme: Boolean = LocalDarkMode.current,
+    backdropType: WindowBackdrop = WindowBackdrop.Default,
+    frameStyle: WindowFrameStyle = WindowFrameStyle()
+) {
+    val manager = remember { WindowStyleManager(
+        window = window,
+        isDarkTheme = isDarkTheme,
+        backdropType = backdropType,
+        frameStyle = frameStyle
+    ) }
+
+    LaunchedEffect(isDarkTheme) {
+        manager.isDarkTheme = isDarkTheme
+    }
+
+    LaunchedEffect(backdropType) {
+        manager.backdropType = backdropType
     }
 }
