@@ -70,7 +70,7 @@ actual fun SystemProvider(content: @Composable () -> Unit) {
         backdropType = backdrop,
         frameStyle = WindowFrameStyle(
             borderColor = backgroundColor,
-            titleBarColor = onBackgroundColor,
+            titleBarColor = backgroundColor,
             captionColor = onBackgroundColor
         )
     ) }
