@@ -58,18 +58,9 @@ fun main() {
 
     val root = NavHostComponent.create(DefaultComponentContext(lifecycle), di)
     val imageConfig = KamelConfig {
-        imageBitmapCacheSize = DefaultCacheSize
-        imageVectorCacheSize = DefaultCacheSize
-        svgCacheSize = DefaultCacheSize
-        imageBitmapDecoder()
-        imageVectorDecoder()
-        stringMapper()
-        urlMapper()
-        uriMapper()
-        fileFetcher()
-        httpFetcher()
+        takeFrom(KamelConfig.Default)
         resourcesFetcher()
-        decoder(SvgDecoder)
+        batikSvgDecoder()
     }
     Napier.base(DebugAntilog())
 

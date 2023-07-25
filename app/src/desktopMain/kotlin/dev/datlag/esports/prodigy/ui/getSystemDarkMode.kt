@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.LayoutDirection
 import com.mayakapps.compose.windowstyler.WindowBackdrop
+import com.mayakapps.compose.windowstyler.WindowCornerPreference
 import com.mayakapps.compose.windowstyler.WindowFrameStyle
 import com.mayakapps.compose.windowstyler.WindowStyleManager
 import dev.datlag.esports.prodigy.color.createTheme
@@ -79,7 +80,8 @@ actual fun SystemProvider(content: @Composable () -> Unit) {
         frameStyle = WindowFrameStyle(
             borderColor = backgroundColor,
             titleBarColor = backgroundColor,
-            captionColor = onBackgroundColor
+            captionColor = onBackgroundColor,
+            cornerPreference = WindowCornerPreference.ROUNDED
         )
     )
 

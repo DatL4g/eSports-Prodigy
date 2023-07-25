@@ -18,12 +18,12 @@ import kotlinx.coroutines.flow.transform
 class HLTVRepository(
     private val client: HttpClient,
     private val initialHome: Home?,
-    private val initialNews: List<News>?
+    private val initialNews: Collection<News>?
 ) {
 
     val homeState: MutableStateFlow<Home?> = MutableStateFlow(initialHome)
 
-    val newsState: MutableStateFlow<List<News>?> = MutableStateFlow(initialNews)
+    val newsState: MutableStateFlow<List<News>?> = MutableStateFlow(initialNews?.toList())
     private val teams: MutableMap<String, Team> = mutableMapOf()
 
     private val _home: Flow<Resource<Home?>> by lazy {

@@ -90,7 +90,7 @@ object GtkUtilities {
         fun gdk_screen_get_resolution(screen: Pointer): Double
 
         companion object {
-            val INSTANCE = Native.loadLibrary("gtk-x11-2.0", GTK2::class.java)
+            val INSTANCE = Native.load("gtk-x11-2.0", GTK2::class.java)
         }
     }
 
