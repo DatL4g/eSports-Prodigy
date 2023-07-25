@@ -15,12 +15,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import dev.datlag.esports.prodigy.common.scaled
 import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.model.hltv.Team
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
@@ -49,18 +51,9 @@ fun TeamView(component: TeamComponent) {
         LazyColumn {
             item {
                 Box(modifier = Modifier.padding(bottom = 16.dp).fillParentMaxWidth()) {
-                    FlowRow(
-                        modifier = Modifier.fillParentMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        team?.players?.filter { it.type.isPlayer }?.forEach { player ->
-                            TeamPlayer(player)
-                        }
-                    }
                     IconButton(
                         onClick = {
-
+                            component.back()
                         },
                         modifier = Modifier.padding(8.dp).background(
                             color = Color.Black.copy(alpha = 0.5F),
@@ -77,6 +70,7 @@ fun TeamView(component: TeamComponent) {
             }
             item {
                 Row(
+                    modifier = Modifier.fillParentMaxWidth().padding(bottom = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -103,20 +97,30 @@ fun TeamView(component: TeamComponent) {
                         Text(
                             text = team?.name ?: component.initialTeam.name,
                             fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleLarge
+                            style = MaterialTheme.typography.headlineLarge
                         )
                     }
                 }
             }
             item {
-                Button(
-                    onClick = {
-
-                    }
+                Column(
+                    modifier = Modifier.fillParentMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Sample button"
+                        text = "Players",
+                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.titleLarge
                     )
+                    FlowRow(
+                        modifier = Modifier.fillParentMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        team?.players?.filter { it.type.isPlayer }?.forEach { player ->
+                            PlayerCard(player)
+                        }
+                    }
                 }
             }
         }
@@ -124,35 +128,43 @@ fun TeamView(component: TeamComponent) {
 }
 
 @Composable
-private fun TeamPlayer(player: Team.Player) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        when (val resource = asyncPainterResource(player.image ?: String())) {
-            is Resource.Loading, is Resource.Failure -> {
-
+private fun PlayerCard(player: Team.Player) {
+    ElevatedCard {
+        Box(
+            modifier = Modifier.defaultMinSize(minWidth = 50.dp, minHeight = 50.dp)
+        ) {
+            val maxWidth = when (LocalWindowSize.current) {
+                is WindowSize.EXPANDED -> 200.dp.scaled(100.dp)
+                is WindowSize.MEDIUM -> 120.dp.scaled(60.dp)
+                is WindowSize.COMPACT -> 100.dp.scaled(50.dp)
             }
-            is Resource.Success -> {
-                val maxWidth = when (LocalWindowSize.current) {
-                    is WindowSize.EXPANDED -> 200.dp
-                    is WindowSize.MEDIUM -> 120.dp
-                    is WindowSize.COMPACT -> 100.dp
+
+            when (val resource = asyncPainterResource(player.image ?: String())) {
+                is Resource.Loading, is Resource.Failure -> {
+
                 }
-
-                Image(
-                    modifier = Modifier.widthIn(max = maxWidth),
-                    painter = resource.value,
-                    contentDescription = player.name,
-                    contentScale = ContentScale.FillWidth
-                )
+                is Resource.Success -> {
+                    Image(
+                        modifier = Modifier.width(maxWidth),
+                        painter = resource.value,
+                        contentDescription = player.name,
+                        contentScale = ContentScale.FillWidth
+                    )
+                }
             }
+            Box(modifier = Modifier.matchParentSize().background(Brush.verticalGradient(
+                colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7F)),
+                startY = maxWidth.value / 2
+            )))
+            Text(
+                text = player.name,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 4.dp),
+                color = contentColorFor(Color.Black.copy(0.7F)),
+                maxLines = 1
+            )
         }
-        Text(
-            text = player.name,
-            fontWeight = FontWeight.Medium,
-            textAlign = TextAlign.Center
-        )
     }
 }
 

@@ -2,10 +2,7 @@ package dev.datlag.esports.prodigy.ui.screen.home.counterstrike
 
 import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.slot.ChildSlot
-import com.arkivanov.decompose.router.slot.SlotNavigation
-import com.arkivanov.decompose.router.slot.activate
-import com.arkivanov.decompose.router.slot.childSlot
+import com.arkivanov.decompose.router.slot.*
 import com.arkivanov.decompose.value.Value
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
@@ -46,7 +43,8 @@ class CounterStrikeViewComponent(
             is CounterStrikeConfig.Team -> TeamViewComponent(
                 componentContext,
                 config.initialTeam,
-                di
+                di,
+                ::componentBack
             )
         }
     }
@@ -60,6 +58,10 @@ class CounterStrikeViewComponent(
 
     override fun teamClicked(team: Home.Team) {
         navigation.activate(CounterStrikeConfig.Team(team))
+    }
+
+    private fun componentBack() {
+        navigation.dismiss()
     }
 
     companion object {

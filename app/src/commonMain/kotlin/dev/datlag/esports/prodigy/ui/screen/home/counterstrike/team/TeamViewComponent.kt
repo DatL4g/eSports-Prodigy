@@ -12,7 +12,8 @@ import org.kodein.di.instance
 class TeamViewComponent(
     componentContext: ComponentContext,
     override val initialTeam: Home.Team,
-    override val di: DI
+    override val di: DI,
+    private val onBack: () -> Unit
 ) : TeamComponent {
 
     private val hltvRepository: HLTVRepository by di.instance()
@@ -21,5 +22,9 @@ class TeamViewComponent(
     @Composable
     override fun render() {
         TeamView(this)
+    }
+
+    override fun back() {
+        onBack()
     }
 }

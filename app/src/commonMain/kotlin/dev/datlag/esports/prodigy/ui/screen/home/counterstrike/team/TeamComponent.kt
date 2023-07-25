@@ -9,4 +9,6 @@ interface TeamComponent : Component {
 
     val initialTeam: Home.Team
     val team: Flow<Team?>
+
+    fun back()
 }
