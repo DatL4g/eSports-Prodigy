@@ -9,10 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -23,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.scaled
+import dev.datlag.esports.prodigy.common.tilt
 import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.model.hltv.Team
 import dev.datlag.esports.prodigy.ui.LocalWindowSize
@@ -129,7 +127,9 @@ fun TeamView(component: TeamComponent) {
 
 @Composable
 private fun PlayerCard(player: Team.Player) {
-    ElevatedCard {
+    ElevatedCard(
+        modifier = Modifier.tilt(10F)
+    ) {
         Box(
             modifier = Modifier.defaultMinSize(minWidth = 50.dp, minHeight = 50.dp)
         ) {
