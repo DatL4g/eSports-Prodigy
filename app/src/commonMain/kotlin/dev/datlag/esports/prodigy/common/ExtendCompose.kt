@@ -22,6 +22,7 @@ import dev.datlag.esports.prodigy.ui.LocalScaling
 import org.kodein.di.DIContext
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -102,13 +103,19 @@ fun Number.scaledDp(min: Dp? = null): Dp {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun Modifier.tilt(maxTilt: Float, onTilt: (x: Float, y: Float) -> Unit = { _, _ -> }): Modifier {
+fun Modifier.tilt(
+    maxTilt: Float,
+    resetOnPress: Boolean = false,
+    onTilt: (x: Float, y: Float) -> Unit = { _, _ -> }
+): Modifier {
     var size by remember { mutableStateOf(Size.Unspecified) }
     var posX by remember { mutableStateOf(-1F) }
     var posY by remember { mutableStateOf(-1F) }
 
     var rotY by remember { mutableStateOf(0F) }
     var rotX by remember { mutableStateOf(0F) }
+
+    var pressed by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = size.widthOr(0F), key2 = posX.roundToInt()) {
         val widthMiddle = if (size.isEmpty()) {
@@ -118,8 +125,8 @@ fun Modifier.tilt(maxTilt: Float, onTilt: (x: Float, y: Float) -> Unit = { _, _ 
         }
 
         val absPosX = abs(posX - widthMiddle)
-        val percentage = absPosX / widthMiddle * 100
-        val tilt = kotlin.math.min(((percentage / 100) * maxTilt), maxTilt)
+        val percentage = absPosX / widthMiddle
+        val tilt = min((percentage * maxTilt), maxTilt)
         rotY = tilt.negativeIf(posX > widthMiddle)
     }
 
@@ -131,8 +138,8 @@ fun Modifier.tilt(maxTilt: Float, onTilt: (x: Float, y: Float) -> Unit = { _, _ 
         }
 
         val absPosY = abs(posY - heightMiddle)
-        val percentage = absPosY / heightMiddle * 100
-        val tilt = kotlin.math.min(((percentage / 100) * maxTilt), maxTilt)
+        val percentage = absPosY / heightMiddle
+        val tilt = min((percentage * maxTilt), maxTilt)
         rotX = tilt.negativeIf(posY < heightMiddle)
     }
 
@@ -146,14 +153,18 @@ fun Modifier.tilt(maxTilt: Float, onTilt: (x: Float, y: Float) -> Unit = { _, _ 
     }.onPointerEvent(PointerEventType.Exit) {
         posX = -1F
         posY = -1F
+    }.onPointerEvent(PointerEventType.Press) {
+        pressed = true
+    }.onPointerEvent(PointerEventType.Release) {
+        pressed = false
     }.graphicsLayer {
-        val tiltY = if (posX < 0F) {
+        val tiltY = if (posX < 0F || (resetOnPress && pressed)) {
             0F
         } else {
             rotY
         }
 
-        val tiltX = if (posY < 0F) {
+        val tiltX = if (posY < 0F || (resetOnPress && pressed)) {
             0F
         } else {
             rotX

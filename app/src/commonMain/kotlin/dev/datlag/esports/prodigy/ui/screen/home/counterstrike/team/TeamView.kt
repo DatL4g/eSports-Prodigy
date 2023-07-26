@@ -128,7 +128,7 @@ fun TeamView(component: TeamComponent) {
 @Composable
 private fun PlayerCard(player: Team.Player) {
     ElevatedCard(
-        modifier = Modifier.tilt(10F)
+        modifier = Modifier.tilt(10F, true)
     ) {
         Box(
             modifier = Modifier.defaultMinSize(minWidth = 50.dp, minHeight = 50.dp)
