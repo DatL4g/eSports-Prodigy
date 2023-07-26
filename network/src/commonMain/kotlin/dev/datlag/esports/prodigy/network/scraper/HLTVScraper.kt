@@ -136,6 +136,13 @@ object HLTVScraper {
                         val img = element.findFirstOrNull(".playersBox-img-wrapper img")?.eachSrc?.firstNotNullOfOrNull {
                             it.ifBlank { null }
                         }
+                        val flagElement = element.findFirstOrNull(".playersBox-playernick .flag")
+                        val country = flagElement?.let {
+                            Country(
+                                name = it.attribute("alt"),
+                                code = it.eachSrc.firstOrNull()?.split('/')?.last()?.split('.')?.first() ?: String()
+                            )
+                        }
 
                         Team.Player(
                             type = Team.Player.Type.byLabel(type),
@@ -143,7 +150,8 @@ object HLTVScraper {
                             name = playerName,
                             timeOnTeam = timeOnTeam,
                             mapsPlayed = mapsPlayed,
-                            image = img
+                            image = img,
+                            country = country
                         )
                     }
                     val country = Country(

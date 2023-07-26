@@ -24,7 +24,8 @@ data class Team(
         val name: String,
         val timeOnTeam: String,
         val mapsPlayed: Number,
-        val image: String? = null
+        val image: String?,
+        val country: Country?
     ) {
 
         sealed class Type(val label: String) {

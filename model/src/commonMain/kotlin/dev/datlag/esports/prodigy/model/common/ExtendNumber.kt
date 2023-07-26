@@ -24,6 +24,7 @@ fun <T : Number> T.absolute(): T {
         is Double -> abs(this)
         is BigInteger -> this.abs()
         is BigDecimal -> this.abs()
+        is Byte -> abs(this.toInt()).toByte()
         else -> this
     } as T
 }
@@ -36,12 +37,13 @@ fun <T : Number> T.negative(absoluteSource: Boolean = true): T {
     }
 
     return when (source) {
-        is Int -> -source
-        is Long -> -source
-        is Float -> -source
-        is Double -> -source
+        is Int -> source.unaryMinus()
+        is Long -> source.unaryMinus()
+        is Float -> source.unaryMinus()
+        is Double -> source.unaryMinus()
         is BigInteger -> source.negate()
         is BigDecimal -> source.negate()
+        is Byte -> source.toInt().unaryMinus().toByte()
         else -> source
     } as T
 }

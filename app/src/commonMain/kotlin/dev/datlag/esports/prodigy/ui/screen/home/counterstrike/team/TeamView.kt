@@ -128,7 +128,7 @@ fun TeamView(component: TeamComponent) {
 @Composable
 private fun PlayerCard(player: Team.Player) {
     ElevatedCard(
-        modifier = Modifier.tilt(10F, true)
+        modifier = Modifier.padding(vertical = 4.dp).tilt(10F, true)
     ) {
         Box(
             modifier = Modifier.defaultMinSize(minWidth = 50.dp, minHeight = 50.dp)
@@ -156,14 +156,28 @@ private fun PlayerCard(player: Team.Player) {
                 colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7F)),
                 startY = maxWidth.value / 2
             )))
-            Text(
-                text = player.name,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
+            Row(
                 modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 4.dp),
-                color = contentColorFor(Color.Black.copy(0.7F)),
-                maxLines = 1
-            )
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+            ) {
+                player.country?.let {
+                    Image(
+                        modifier = Modifier.size(18.dp),
+                        painter = painterResource(CountryImage.getByCode(it.code)),
+                        contentDescription = it.name,
+                        contentScale = ContentScale.Inside
+                    )
+                }
+
+                Text(
+                    text = player.name,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    color = contentColorFor(Color.Black.copy(0.7F)),
+                    maxLines = 1
+                )
+            }
         }
     }
 }
