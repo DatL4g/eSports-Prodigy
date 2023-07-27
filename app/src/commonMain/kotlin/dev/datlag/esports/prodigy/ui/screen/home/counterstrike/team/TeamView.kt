@@ -1,10 +1,13 @@
 package dev.datlag.esports.prodigy.ui.screen.home.counterstrike.team
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BrokenImage
@@ -15,6 +18,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -126,7 +130,7 @@ fun TeamView(component: TeamComponent) {
     }
 }
 
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun PlayerCard(player: Team.Player) {
     ElevatedCard(
@@ -164,12 +168,24 @@ private fun PlayerCard(player: Team.Player) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
             ) {
                 player.country?.let {
-                    Image(
-                        modifier = Modifier.size(18.dp),
-                        painter = painterResource(CountryImage.getByCode(it.code)),
-                        contentDescription = it.name,
-                        contentScale = ContentScale.Inside
-                    )
+                    TooltipArea(
+                        tooltip = {
+                            Text(
+                                modifier = Modifier.clip(
+                                    RoundedCornerShape(4.dp)
+                                ).background(MaterialTheme.colorScheme.surfaceVariant).padding(4.dp),
+                                text = it.name,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    ) {
+                        Image(
+                            modifier = Modifier.size(18.dp),
+                            painter = painterResource(CountryImage.getByCode(it.code)),
+                            contentDescription = it.name,
+                            contentScale = ContentScale.Inside
+                        )
+                    }
                 }
 
                 Text(
