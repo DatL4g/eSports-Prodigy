@@ -7,7 +7,7 @@ plugins {
 group = "dev.datlag.esports.prodigy.color"
 
 kotlin {
-    android()
+    android("android")
     jvm()
 
     sourceSets {

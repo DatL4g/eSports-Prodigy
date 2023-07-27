@@ -9,6 +9,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,12 +28,11 @@ import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.other.Constants
 import dev.datlag.esports.prodigy.ui.LocalCelebrity
 import dev.datlag.esports.prodigy.ui.LocalCommonizer
-import dev.datlag.esports.prodigy.ui.LocalWindowSize
-import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.icerock.moko.resources.compose.painterResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun InfoView(component: InfoComponent) {
     Column {
@@ -40,8 +42,8 @@ fun InfoView(component: InfoComponent) {
         val commonizer = LocalCommonizer.current
 
         if (celebrity != null && displayCard) {
-            val (shape, padding) = when (LocalWindowSize.current) {
-                is WindowSize.COMPACT -> RectangleShape to 0.dp
+            val (shape, padding) = when (calculateWindowSizeClass().widthSizeClass) {
+                WindowWidthSizeClass.Compact -> RectangleShape to 0.dp
                 else -> CardDefaults.shape to 16.dp
             }
 

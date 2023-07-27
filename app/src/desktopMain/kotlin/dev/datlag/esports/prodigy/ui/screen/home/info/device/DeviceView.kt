@@ -8,6 +8,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +32,6 @@ import dev.datlag.esports.prodigy.common.scaled
 import dev.datlag.esports.prodigy.common.scaledDp
 import dev.datlag.esports.prodigy.game.common.containsInvalidEntries
 import dev.datlag.esports.prodigy.game.model.LocalGame
-import dev.datlag.esports.prodigy.ui.LocalWindowSize
-import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.ui.loadImageScheme
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameComponent
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.GameConfig
@@ -42,10 +43,11 @@ import io.kamel.core.Resource
 import io.kamel.image.asyncPainterResource
 import io.kamel.image.lazyPainterResource
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 actual fun DeviceView(component: DeviceComponent) {
-    when (LocalWindowSize.current) {
-        is WindowSize.EXPANDED -> ExpandedView(component)
+    when (calculateWindowSizeClass().widthSizeClass) {
+        WindowWidthSizeClass.Expanded -> ExpandedView(component)
         else -> DefaultView(component)
     }
 }

@@ -7,7 +7,7 @@ plugins {
 group = "dev.datlag.esports.prodigy.datastore"
 
 kotlin {
-    android()
+    android("android")
     jvm("desktop")
 
     sourceSets {

@@ -8,19 +8,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import dev.datlag.esports.prodigy.ui.LocalWindowSize
-import dev.datlag.esports.prodigy.ui.WindowSize
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun HeroBackButton(onClick: () -> Unit) {
-    when (LocalWindowSize.current) {
-        is WindowSize.COMPACT -> CompactBackButton(onClick)
-        is WindowSize.MEDIUM -> MediumBackButton(onClick)
-        is WindowSize.EXPANDED -> MediumBackButton(onClick)
+    when (calculateWindowSizeClass().widthSizeClass) {
+        WindowWidthSizeClass.Compact -> CompactBackButton(onClick)
+        WindowWidthSizeClass.Medium -> MediumBackButton(onClick)
+        WindowWidthSizeClass.Expanded -> MediumBackButton(onClick)
     }
 }
 

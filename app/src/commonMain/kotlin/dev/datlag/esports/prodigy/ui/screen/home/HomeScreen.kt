@@ -5,34 +5,28 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.pages.Pages
-import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
-import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
-import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
-import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import dev.datlag.esports.prodigy.ui.LocalWindowSize
-import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.ui.custom.ExpandedPages
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun HomeScreen(component: HomeComponent) {
-    when (LocalWindowSize.current) {
-        WindowSize.COMPACT -> CompactScreen(component)
-        WindowSize.MEDIUM -> MediumScreen(component)
-        WindowSize.EXPANDED -> ExpandedScreen(component)
+    when (calculateWindowSizeClass().widthSizeClass) {
+        WindowWidthSizeClass.Compact -> CompactScreen(component)
+        WindowWidthSizeClass.Medium -> MediumScreen(component)
+        WindowWidthSizeClass.Expanded -> ExpandedScreen(component)
     }
 }
 

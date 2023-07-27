@@ -28,7 +28,7 @@ group = artifact
 version = appVersion
 
 kotlin {
-    android {
+    android("android") {
         jvmToolchain(11)
     }
     jvm("desktop") {
@@ -59,6 +59,8 @@ kotlin {
                 api(libs.kamel)
                 api(libs.napier)
 
+                api(libs.windowsize.multiplatform)
+
                 api(project(":color"))
                 api(project(":game"))
                 api(project(":datastore"))
@@ -70,6 +72,8 @@ kotlin {
         }
 
         val androidMain by getting {
+            dependsOn(commonMain)
+
             apply(plugin = "kotlin-parcelize")
             apply(plugin = "org.gradle.android.cache-fix")
             apply(plugin = "net.afanasev.sekret")
@@ -90,6 +94,8 @@ kotlin {
         }
 
         val desktopMain by getting {
+            dependsOn(commonMain)
+
             apply(plugin = "net.afanasev.sekret")
             dependencies {
                 implementation(compose.desktop.currentOs)
@@ -260,8 +266,6 @@ val createNativeLib = tasks.create<Copy>("createNativeLib") {
 }
 
 compose {
-    kotlinCompilerPlugin.set("androidx.compose.compiler:compiler:1.4.6")
-
     desktop {
         application {
             mainClass = "$artifact.MainKt"

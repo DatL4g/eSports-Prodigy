@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS News(
     link TEXT NOT NULL PRIMARY KEY,
     title TEXT NOT NULL,
-    date INTEGER AS Long NOT NULL,
+    date INTEGER NOT NULL,
     countryCode TEXT NOT NULL,
     FOREIGN KEY (countryCode) REFERENCES NewsCountry(code) ON DELETE NO ACTION
 );

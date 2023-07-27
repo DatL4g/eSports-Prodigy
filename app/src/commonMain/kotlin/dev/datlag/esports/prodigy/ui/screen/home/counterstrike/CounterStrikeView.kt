@@ -10,6 +10,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,8 +25,6 @@ import dev.datlag.esports.prodigy.common.*
 import dev.datlag.esports.prodigy.model.common.safeSubList
 import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.network.Status
-import dev.datlag.esports.prodigy.ui.LocalWindowSize
-import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.components.NewsCard
 import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.components.TeamCard
 import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.team.TeamComponent
@@ -33,10 +34,11 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import io.ktor.http.*
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun CounterStrikeView(component: CounterStrikeComponent) {
-    when (LocalWindowSize.current) {
-        is WindowSize.EXPANDED -> ExpandedView(component)
+    when (calculateWindowSizeClass().widthSizeClass) {
+        WindowWidthSizeClass.Expanded -> ExpandedView(component)
         else -> DefaultView(component)
     }
 }

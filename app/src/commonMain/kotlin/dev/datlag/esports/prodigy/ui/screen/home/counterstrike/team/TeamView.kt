@@ -9,6 +9,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,8 +26,6 @@ import dev.datlag.esports.prodigy.common.scaled
 import dev.datlag.esports.prodigy.common.tilt
 import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.model.hltv.Team
-import dev.datlag.esports.prodigy.ui.LocalWindowSize
-import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.ui.loadImageScheme
 import dev.datlag.esports.prodigy.ui.theme.CountryImage
 import dev.datlag.esports.prodigy.ui.theme.LocalDarkMode
@@ -125,6 +126,7 @@ fun TeamView(component: TeamComponent) {
     }
 }
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 private fun PlayerCard(player: Team.Player) {
     ElevatedCard(
@@ -133,10 +135,10 @@ private fun PlayerCard(player: Team.Player) {
         Box(
             modifier = Modifier.defaultMinSize(minWidth = 50.dp, minHeight = 50.dp)
         ) {
-            val maxWidth = when (LocalWindowSize.current) {
-                is WindowSize.EXPANDED -> 200.dp.scaled(100.dp)
-                is WindowSize.MEDIUM -> 120.dp.scaled(60.dp)
-                is WindowSize.COMPACT -> 100.dp.scaled(50.dp)
+            val maxWidth = when (calculateWindowSizeClass().widthSizeClass) {
+                WindowWidthSizeClass.Expanded -> 200.dp.scaled(100.dp)
+                WindowWidthSizeClass.Medium -> 120.dp.scaled(60.dp)
+                else -> 100.dp.scaled(50.dp)
             }
 
             when (val resource = asyncPainterResource(player.image ?: String())) {

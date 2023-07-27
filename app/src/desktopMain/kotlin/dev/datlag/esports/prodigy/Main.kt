@@ -1,9 +1,6 @@
 package dev.datlag.esports.prodigy
 
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -17,11 +14,8 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.mayakapps.compose.windowstyler.WindowStyle
 import dev.datlag.esports.prodigy.common.basedOnSize
-import dev.datlag.esports.prodigy.common.basedOnWidth
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
-import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.model.common.normalize
@@ -29,15 +23,12 @@ import dev.datlag.esports.prodigy.module.NetworkModule
 import dev.datlag.esports.prodigy.other.Commonizer
 import dev.datlag.esports.prodigy.ui.*
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
-import dev.icerock.moko.resources.compose.fontFamilyResource
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.kamel.core.config.*
 import io.kamel.image.config.*
-import io.ktor.client.plugins.*
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -122,7 +113,6 @@ fun main() {
         val celebrity by SteamLauncher.loggedInUsers.mapNotNull { it.firstNotNullOfOrNull { u -> u.celebrity } }.collectAsStateSafe { null }
 
         CompositionLocalProvider(
-            LocalWindowSize provides WindowSize.basedOnWidth(windowState),
             LocalOrientation provides Orientation.basedOnSize(windowState),
             LocalKamelConfig provides imageConfig,
             LocalCommonizer provides Commonizer(),

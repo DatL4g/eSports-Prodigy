@@ -7,7 +7,7 @@ plugins {
 group = "dev.datlag.esports.prodigy.nanoid"
 
 kotlin {
-    android()
+    android("android")
     jvm("desktop")
 
     sourceSets {

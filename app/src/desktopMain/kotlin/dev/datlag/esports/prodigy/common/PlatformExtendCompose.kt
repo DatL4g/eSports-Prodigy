@@ -2,6 +2,8 @@ package dev.datlag.esports.prodigy.common
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.onClick
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -10,7 +12,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.window.WindowState
-import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.ui.Orientation
 import dev.icerock.moko.resources.FontResource
 import dev.icerock.moko.resources.compose.toComposeFont
@@ -27,16 +28,6 @@ actual fun FontResource.toComposeFont(
     weight: FontWeight,
     style: FontStyle
 ): Font = this.toComposeFont(weight, style)
-
-@Composable
-fun WindowSize.Companion.basedOnWidth(windowState: WindowState): WindowSize {
-    return basedOnWidth(windowState.size.width)
-}
-
-@Composable
-fun WindowSize.Companion.basedOnHeight(windowState: WindowState): WindowSize {
-    return basedOnWidth(windowState.size.height)
-}
 
 @Composable
 fun Orientation.Companion.basedOnSize(windowState: WindowState): Orientation {

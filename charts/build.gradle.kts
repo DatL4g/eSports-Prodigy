@@ -5,7 +5,7 @@ plugins {
 }
 
 kotlin {
-    android()
+    android("android")
     jvm("desktop")
 
     sourceSets {

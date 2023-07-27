@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
             CompositionLocalProvider(
                 LocalKamelConfig provides imageConfig,
                 LocalOrientation provides orientation,
-                LocalWindowSize provides WindowSize.basedOnWidth(this),
                 LocalCommonizer provides Commonizer(this)
             ) {
                 App(di) {

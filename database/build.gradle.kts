@@ -7,7 +7,7 @@ plugins {
 group = "dev.datlag.esports.prodigy.database"
 
 kotlin {
-    android()
+    android("android")
     jvm("desktop")
 
     sourceSets {
@@ -52,12 +52,14 @@ android {
 }
 
 sqldelight {
-    database("HLTVDB") {
-        packageName = "dev.datlag.esports.prodigy.database"
-        sourceFolders = listOf("hltv")
-    }
-    database("CounterStrikeDB") {
-        packageName = "dev.datlag.esports.prodigy.database"
-        sourceFolders = listOf("user")
+    databases {
+        create("HLTVDB") {
+            packageName.set("dev.datlag.esports.prodigy.database")
+            srcDirs("src/commonMain/hltv")
+        }
+        create("CounterStrikeDB") {
+            packageName.set("dev.datlag.esports.prodigy.database")
+            srcDirs(listOf("src/commonMain/user"))
+        }
     }
 }

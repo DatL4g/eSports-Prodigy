@@ -1,42 +1,26 @@
 package dev.datlag.esports.prodigy.ui.screen.home.info.device.game
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.Measurable
-import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.netguru.multiplatform.charts.ChartAnimation
-import com.netguru.multiplatform.charts.line.LineChart
-import com.netguru.multiplatform.charts.line.LineChartData
-import com.netguru.multiplatform.charts.line.LineChartPoint
-import com.netguru.multiplatform.charts.line.LineChartSeries
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.openInBrowser
 import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.game.model.LocalGameInfo
-import dev.datlag.esports.prodigy.model.common.asList
-import dev.datlag.esports.prodigy.ui.LocalWindowSize
-import dev.datlag.esports.prodigy.ui.WindowSize
 import dev.datlag.esports.prodigy.ui.screen.home.info.device.game.components.*
 import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
-import kotlinx.serialization.json.JsonNull.content
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun GameView(component: GameComponent) {
     val caches by component.game.dxvkCaches.collectAsStateSafe { emptyMap() }
@@ -46,20 +30,20 @@ fun GameView(component: GameComponent) {
                 || it.name.contains(component.game.name, true)
     }
 
-    val (columnPadding, extraPadding) = when (LocalWindowSize.current) {
-        is WindowSize.COMPACT -> PaddingValues(0.dp) to PaddingValues(horizontal = 16.dp)
-        is WindowSize.MEDIUM -> PaddingValues(16.dp) to PaddingValues(0.dp)
-        is WindowSize.EXPANDED -> PaddingValues(16.dp) to PaddingValues(0.dp)
+    val (columnPadding, extraPadding) = when (calculateWindowSizeClass().widthSizeClass) {
+        WindowWidthSizeClass.Medium -> PaddingValues(16.dp) to PaddingValues(0.dp)
+        WindowWidthSizeClass.Expanded -> PaddingValues(16.dp) to PaddingValues(0.dp)
+        else -> PaddingValues(0.dp) to PaddingValues(horizontal = 16.dp)
     }
     SchemeTheme(component.game.name) {
         LazyColumn(contentPadding = columnPadding) {
             item {
                 val game = component.game
 
-                val modifier = when (LocalWindowSize.current) {
-                    WindowSize.COMPACT -> Modifier.fillMaxWidth()
-                    WindowSize.MEDIUM -> Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
-                    WindowSize.EXPANDED -> Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
+                val modifier = when (calculateWindowSizeClass().widthSizeClass) {
+                    WindowWidthSizeClass.Medium -> Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
+                    WindowWidthSizeClass.Expanded -> Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
+                    else -> Modifier.fillMaxWidth()
                 }
                 Box(
                     modifier = modifier

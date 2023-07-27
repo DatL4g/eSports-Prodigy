@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.slot.*
 import com.arkivanov.decompose.value.Value
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import dev.datlag.esports.prodigy.common.ioDispatcher
 import dev.datlag.esports.prodigy.common.ioScope
 import dev.datlag.esports.prodigy.common.launchIO
