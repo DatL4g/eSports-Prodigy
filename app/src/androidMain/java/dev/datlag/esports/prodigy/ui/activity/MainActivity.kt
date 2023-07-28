@@ -10,9 +10,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.arkivanov.decompose.defaultComponentContext
 import dev.datlag.esports.prodigy.App
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
-import okio.Path.Companion.toOkioPath
 import dev.datlag.esports.prodigy.R
-import dev.datlag.esports.prodigy.common.basedOnWidth
 import dev.datlag.esports.prodigy.other.Commonizer
 import dev.datlag.esports.prodigy.ui.*
 import io.kamel.core.config.KamelConfig

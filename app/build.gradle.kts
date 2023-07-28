@@ -151,6 +151,10 @@ android {
         resources.pickFirsts.add("**")
         resources.pickFirsts.add("*")
     }
+
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 fun propertiesFile(): File {

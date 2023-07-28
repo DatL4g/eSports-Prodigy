@@ -27,3 +27,16 @@ expect fun Modifier.onClick(
     onLongClick: (() -> Unit)? = null,
     onClick: () -> Unit
 ) : Modifier
+
+@Composable
+expect fun Modifier.tilt(
+    maxTilt: Float,
+    resetOnPress: Boolean = false,
+    onTilt: (x: Float, y: Float) -> Unit = { _, _ -> }
+): Modifier
+
+@Composable
+expect fun Tooltip(
+    tooltip: @Composable () -> Unit = { },
+    content: @Composable () -> Unit
+)

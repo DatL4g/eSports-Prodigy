@@ -2,7 +2,6 @@ package dev.datlag.esports.prodigy.ui.screen.home.counterstrike.team
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dev.datlag.esports.prodigy.common.Tooltip
 import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.scaled
 import dev.datlag.esports.prodigy.common.tilt
@@ -168,7 +168,7 @@ private fun PlayerCard(player: Team.Player) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
             ) {
                 player.country?.let {
-                    TooltipArea(
+                    Tooltip(
                         tooltip = {
                             Text(
                                 modifier = Modifier.clip(
