@@ -17,9 +17,12 @@ kotlin {
             }
         }
         val androidMain by getting {
+            dependsOn(commonMain)
             apply(plugin = "org.gradle.android.cache-fix")
         }
-        val desktopMain by getting
+        val desktopMain by getting {
+            dependsOn(commonMain)
+        }
     }
 }
 
@@ -31,7 +34,6 @@ android {
 
     defaultConfig {
         minSdk = Configuration.minSdk
-        targetSdk = Configuration.targetSdk
     }
 
     compileOptions {
@@ -39,7 +41,7 @@ android {
         targetCompatibility = CompileOptions.targetCompatibility
     }
 
-    packagingOptions {
+    packaging {
         resources.excludes.add("META-INF/*")
     }
 }

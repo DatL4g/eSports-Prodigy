@@ -19,10 +19,12 @@ kotlin {
             }
         }
         val androidMain by getting {
+            dependsOn(commonMain)
             apply(plugin = "org.gradle.android.cache-fix")
             apply(plugin = "kotlin-parcelize")
         }
         val desktopMain by getting {
+            dependsOn(commonMain)
             dependencies {
                 api(libs.lang)
             }
@@ -38,7 +40,6 @@ android {
 
     defaultConfig {
         minSdk = Configuration.minSdk
-        targetSdk = Configuration.targetSdk
     }
 
     compileOptions {

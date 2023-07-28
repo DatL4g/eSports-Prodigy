@@ -29,10 +29,10 @@ version = appVersion
 
 kotlin {
     android("android") {
-        jvmToolchain(11)
+        jvmToolchain(CompileOptions.jvmTargetVersion)
     }
     jvm("desktop") {
-        jvmToolchain(17)
+        jvmToolchain(CompileOptions.jvmTargetVersion)
     }
 
     sourceSets {
@@ -127,6 +127,7 @@ android {
 
     compileSdk = Configuration.compileSdk
     buildToolsVersion = Configuration.buildTools
+    namespace = artifact
 
     defaultConfig {
         applicationId = artifact
@@ -144,7 +145,7 @@ android {
         targetCompatibility = CompileOptions.targetCompatibility
     }
 
-    packagingOptions {
+    packaging {
         resources.merges.add("META-INF/LICENSE")
         resources.merges.add("META-INF/DEPENDENCIES")
         resources.pickFirsts.add("**")

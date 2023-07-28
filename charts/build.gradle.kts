@@ -29,7 +29,6 @@ android {
 
     defaultConfig {
         minSdk = Configuration.minSdk
-        targetSdk = Configuration.targetSdk
     }
 
     compileOptions {
@@ -37,7 +36,7 @@ android {
         targetCompatibility = CompileOptions.targetCompatibility
     }
 
-    packagingOptions {
+    packaging {
         resources.excludes.add("META-INF/*")
     }
 }

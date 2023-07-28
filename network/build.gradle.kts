@@ -28,9 +28,12 @@ kotlin {
             }
         }
 
-        val jvmMain by getting
+        val jvmMain by getting {
+            dependsOn(commonMain)
+        }
 
         val androidMain by getting {
+            dependsOn(commonMain)
             apply(plugin = "org.gradle.android.cache-fix")
         }
     }
@@ -44,7 +47,6 @@ android {
 
     defaultConfig {
         minSdk = Configuration.minSdk
-        targetSdk = Configuration.targetSdk
     }
 
     compileOptions {

@@ -19,12 +19,15 @@ kotlin {
             }
         }
         val androidMain by getting {
+            dependsOn(commonMain)
             apply(plugin = "org.gradle.android.cache-fix")
             dependencies {
                 api(libs.datastore)
             }
         }
-        val desktopMain by getting
+        val desktopMain by getting {
+            dependsOn(commonMain)
+        }
     }
 }
 
@@ -36,7 +39,6 @@ android {
 
     defaultConfig {
         minSdk = Configuration.minSdk
-        targetSdk = Configuration.targetSdk
     }
 
     compileOptions {

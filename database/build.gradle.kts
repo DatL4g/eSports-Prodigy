@@ -18,12 +18,14 @@ kotlin {
         }
 
         val androidMain by getting {
+            dependsOn(commonMain)
             dependencies {
                 implementation(libs.sqldelight.android)
             }
         }
 
         val desktopMain by getting {
+            dependsOn(commonMain)
             dependencies {
                 implementation(libs.sqldelight.sqlite)
             }
@@ -42,7 +44,6 @@ android {
 
     defaultConfig {
         minSdk = Configuration.minSdk
-        targetSdk = Configuration.targetSdk
     }
 
     compileOptions {
