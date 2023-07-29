@@ -8,8 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.BrokenImage
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -20,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,8 +38,11 @@ import dev.icerock.moko.resources.compose.painterResource
 import io.kamel.core.Resource
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import dev.icerock.moko.resources.ImageResource
+import dev.datlag.esports.prodigy.SharedRes
+import dev.datlag.esports.prodigy.ui.LocalCommonizer
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun TeamView(component: TeamComponent) {
     val team by component.team.collectAsStateSafe { null }
@@ -49,16 +52,27 @@ fun TeamView(component: TeamComponent) {
     } else {
         "light"
     }
+    val (columnPadding, extraPadding) = when (calculateWindowSizeClass().widthSizeClass) {
+        WindowWidthSizeClass.Medium -> PaddingValues(16.dp) to PaddingValues(0.dp)
+        WindowWidthSizeClass.Expanded -> PaddingValues(16.dp) to PaddingValues(0.dp)
+        else -> PaddingValues(0.dp) to PaddingValues(horizontal = 16.dp)
+    }
 
     SchemeTheme("$teamId-$suffix") {
-        LazyColumn {
+        LazyColumn(
+            contentPadding = columnPadding
+        ) {
             item {
-                Box(modifier = Modifier.padding(bottom = 16.dp).fillParentMaxWidth()) {
+                Row(
+                    modifier = Modifier.fillParentMaxWidth().padding(bottom = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     IconButton(
                         onClick = {
                             component.back()
                         },
-                        modifier = Modifier.padding(8.dp).background(
+                        modifier = Modifier.background(
                             color = Color.Black.copy(alpha = 0.5F),
                             shape = CircleShape
                         )
@@ -69,14 +83,7 @@ fun TeamView(component: TeamComponent) {
                             tint = Color.White
                         )
                     }
-                }
-            }
-            item {
-                Row(
-                    modifier = Modifier.fillParentMaxWidth().padding(bottom = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+
                     TeamIcon(team, component.initialTeam, teamId)
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -103,11 +110,66 @@ fun TeamView(component: TeamComponent) {
                             style = MaterialTheme.typography.headlineLarge
                         )
                     }
+                    Spacer(modifier = Modifier.weight(1F))
+                    FlowRow(
+                        maxItemsInEachRow = 2,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val commonizer = LocalCommonizer.current
+
+                        team?.socials?.let { socials ->
+                            socials.instagram?.let {
+                                FilledIconButton(
+                                    onClick = {
+                                        commonizer.openInBrowser(
+                                            url = it
+                                        )
+                                    }
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painterResource(SharedRes.images.Instagram),
+                                        contentDescription = "Instagram",
+                                    )
+                                }
+                            }
+                            socials.twitter?.let {
+                                FilledIconButton(
+                                    onClick = {
+                                        commonizer.openInBrowser(
+                                            url = it
+                                        )
+                                    }
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        painter = painterResource(SharedRes.images.Twitter),
+                                        contentDescription = "Twitter"
+                                    )
+                                }
+                            }
+                            socials.facebook?.let {
+                                FilledIconButton(
+                                    onClick = {
+                                        commonizer.openInBrowser(
+                                            url = it
+                                        )
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Facebook,
+                                        contentDescription = "Facebook"
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
             item {
                 Column(
-                    modifier = Modifier.fillParentMaxWidth(),
+                    modifier = Modifier.fillParentMaxWidth().padding(extraPadding),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
