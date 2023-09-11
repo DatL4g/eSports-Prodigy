@@ -85,8 +85,8 @@ actual class CryptoManager(
 
     companion object {
         private const val ALGORITHM = "AES"
-        private const val BLOCK_MODE = "CBC"
-        private const val PADDING = "PKCS5Padding"
+        private const val BLOCK_MODE = "GCM"
+        private const val PADDING = "NoPadding"
 
         private const val TRANSFORMATION = "$ALGORITHM/$BLOCK_MODE/$PADDING"
     }
