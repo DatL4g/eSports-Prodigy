@@ -16,5 +16,6 @@ interface CounterStrikeComponent : Component {
     val child: Value<ChildSlot<CounterStrikeConfig, Component>>
 
     fun teamClicked(team: Home.Team)
+    fun articleClicked(href: String)
 
 }

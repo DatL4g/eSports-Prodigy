@@ -2,16 +2,20 @@ package dev.datlag.esports.prodigy.module
 
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.ktorfitBuilder
+import dev.datlag.esports.prodigy.network.OctaneAPI
 import dev.datlag.esports.prodigy.network.Steam
 import dev.datlag.esports.prodigy.network.SteamAPI
 import dev.datlag.esports.prodigy.network.converter.FlowerResponseConverter
 import dev.datlag.esports.prodigy.network.repository.CSStatsRepository
 import dev.datlag.esports.prodigy.network.repository.HLTVRepository
 import dev.datlag.esports.prodigy.network.repository.SteamRepository
+import dev.datlag.esports.prodigy.network.repository.WebRepository
+import dev.datlag.esports.prodigy.network.state.OctaneEventsStateMachine
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.serialization.kotlinx.xml.*
 import kotlinx.serialization.json.Json
@@ -28,6 +32,10 @@ object NetworkModule {
         import(DatabaseModule.di)
 
         bindSingleton {
+            val json = Json {
+                ignoreUnknownKeys = true
+                isLenient = true
+            }
             val xml = XML {
                 recommended()
                 defaultPolicy {
@@ -42,12 +50,11 @@ object NetworkModule {
                     }
                 }
                 install(ContentNegotiation) {
-                    json(Json {
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                    })
+                    json(json, ContentType.Application.Json)
+                    json(json, ContentType.Text.Plain)
                     xml(xml, ContentType.Text.Xml)
                     xml(xml, ContentType.Application.Xml)
+                    xml(xml, ContentType.Text.Plain)
                 }
             }
         }
@@ -75,6 +82,12 @@ object NetworkModule {
                 baseUrl("https://steamcommunity.com/")
             }
         }
+        bindSingleton("Octane") {
+            val builder: Ktorfit.Builder = instance()
+            builder.build {
+                baseUrl("https://zsr.octane.gg/")
+            }
+        }
         bindSingleton {
             val steamApi: Ktorfit = instance("SteamAPI")
             steamApi.create<SteamAPI>()
@@ -84,10 +97,20 @@ object NetworkModule {
             steam.create<Steam>()
         }
         bindSingleton {
+            val octane: Ktorfit = instance("Octane")
+            octane.create<OctaneAPI>()
+        }
+        bindSingleton {
             CSStatsRepository(instance())
         }
         bindSingleton {
             SteamRepository(instance())
+        }
+        bindSingleton {
+            WebRepository()
+        }
+        bindSingleton {
+            OctaneEventsStateMachine(instance())
         }
     }
 }

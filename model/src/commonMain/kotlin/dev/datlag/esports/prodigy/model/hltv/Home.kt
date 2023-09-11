@@ -9,7 +9,8 @@ import kotlinx.serialization.Serializable
 @Parcelize
 data class Home(
     val hero: Hero?,
-    val teams: List<Home.Team>
+    val teams: List<Home.Team>,
+    val news: List<Home.News>
 ) : Parcelable {
 
     @Parcelize
@@ -39,4 +40,11 @@ data class Home(
                     ?: href.getDigitsOrNull()?.toIntOrNull() ?: 0
             }
     }
+
+    @Serializable
+    @Parcelize
+    data class News(
+        val title: String,
+        val href: String
+    ) : Parcelable
 }

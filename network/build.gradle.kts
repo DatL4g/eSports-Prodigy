@@ -10,7 +10,7 @@ group = "dev.datlag.esports.prodigy.network"
 
 kotlin {
     jvm()
-    android("android")
+    androidTarget("android")
 
     sourceSets {
         val commonMain by getting {
@@ -25,6 +25,8 @@ kotlin {
                 api(libs.ktor.serialization.json)
                 api(libs.ktor.serialization.xml)
                 api(libs.datetime)
+                implementation(libs.flexmark.html2md)
+                api(libs.flowredux)
             }
         }
 
@@ -33,7 +35,7 @@ kotlin {
         }
 
         val androidMain by getting {
-            dependsOn(commonMain)
+            dependsOn(jvmMain)
             apply(plugin = "org.gradle.android.cache-fix")
         }
     }

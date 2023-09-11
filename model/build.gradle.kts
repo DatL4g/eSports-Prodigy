@@ -10,7 +10,7 @@ group = "dev.datlag.esports.prodigy.model"
 
 kotlin {
     jvm()
-    android("android")
+    androidTarget("android")
 
     sourceSets {
         val commonMain by getting {

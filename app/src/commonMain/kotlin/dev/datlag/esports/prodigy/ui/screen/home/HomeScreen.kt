@@ -1,8 +1,10 @@
 package dev.datlag.esports.prodigy.ui.screen.home
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -11,10 +13,13 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.pages.Pages
+import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.datlag.esports.prodigy.ui.custom.ExpandedPages
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.compose.painterResource
@@ -23,10 +28,60 @@ import dev.icerock.moko.resources.compose.stringResource
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun HomeScreen(component: HomeComponent) {
-    when (calculateWindowSizeClass().widthSizeClass) {
-        WindowWidthSizeClass.Compact -> CompactScreen(component)
-        WindowWidthSizeClass.Medium -> MediumScreen(component)
-        WindowWidthSizeClass.Expanded -> ExpandedScreen(component)
+    val settingsVisible by component.settingsVisible.subscribeAsState()
+    val animationProgress by animateFloatAsState(
+        targetValue = if (settingsVisible) 1F else 0F,
+        animationSpec = tween()
+    )
+    val transition = updateTransition(targetState = animationProgress)
+    val animatedShape by transition.animateValue(
+        TwoWayConverter(
+            convertToVector = { AnimationVector1D(0F) },
+            convertFromVector = { GenericShape { _, _ -> } }
+        )
+    ) { progress ->
+        GenericShape { size, _ ->
+            val centerH = size.width / 2F
+            val multiplierW = 1.5F + size.height / size.width
+
+            moveTo(
+                x = centerH - centerH * progress * multiplierW,
+                y = 0F
+            )
+
+            val currentWidth = (centerH * progress * multiplierW * 2.5F)
+
+            cubicTo(
+                x1 = centerH - centerH * progress * 1.5f,
+                y1 = currentWidth * 0.5f,
+                x2 = centerH + centerH * progress * 1.5f,
+                y2 = currentWidth * 0.5f,
+                x3 = centerH + centerH * progress * multiplierW,
+                y3 = 0F
+            )
+
+            close()
+        }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        when (calculateWindowSizeClass().widthSizeClass) {
+            WindowWidthSizeClass.Compact -> CompactScreen(component)
+            WindowWidthSizeClass.Medium -> MediumScreen(component)
+            WindowWidthSizeClass.Expanded -> ExpandedScreen(component)
+        }
+
+        if (animationProgress > 0F) {
+            Surface(
+                color = Color.Red,
+                modifier = Modifier.fillMaxSize().graphicsLayer {
+                    clip = true
+                    shape = animatedShape
+                }
+            ) {  }
+        }
     }
 }
 
@@ -79,7 +134,11 @@ fun MediumScreen(
 ) {
     var selectedPage by remember { mutableStateOf(0) }
 
-    Scaffold {
+    Scaffold(
+        floatingActionButton = {
+
+        }
+    ) {
         Row(modifier = Modifier.padding(it)) {
             NavigationRail(
                 modifier = Modifier.fillMaxHeight()

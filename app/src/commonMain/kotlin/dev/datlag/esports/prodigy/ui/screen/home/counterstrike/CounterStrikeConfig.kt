@@ -9,4 +9,7 @@ sealed class CounterStrikeConfig : Parcelable {
 
     @Parcelize
     data class Team(val initialTeam: Home.Team) : CounterStrikeConfig(), Parcelable
+
+    @Parcelize
+    data class Article(val href: String) : CounterStrikeConfig(), Parcelable
 }

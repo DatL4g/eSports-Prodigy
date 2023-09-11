@@ -16,6 +16,8 @@ interface HomeComponent : Component {
     val pages: Value<ChildPages<*, Component>>
     fun selectPage(index: Int)
 
+    val settingsVisible: Value<Boolean>
+
     data class PagerItem(
         internal val key: Int,
         val label: StringResource,

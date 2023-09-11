@@ -24,7 +24,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import dev.icerock.moko.resources.compose.stringResource
 import dev.datlag.esports.prodigy.SharedRes
-import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.other.Constants
 import dev.datlag.esports.prodigy.ui.LocalCelebrity
 import dev.datlag.esports.prodigy.ui.LocalCommonizer
@@ -37,7 +37,7 @@ import kotlinx.coroutines.flow.flow
 fun InfoView(component: InfoComponent) {
     Column {
         val celebrity = LocalCelebrity.current
-        val commented by component.commented.collectAsStateSafe { false }
+        val commented by component.commented.collectAsStateWithLifecycle(false)
         var displayCard by remember(commented) { mutableStateOf(!commented) }
         val commonizer = LocalCommonizer.current
 
@@ -74,7 +74,7 @@ fun InfoView(component: InfoComponent) {
                                 pos = 0
                             }
                         }
-                    }.collectAsStateSafe { list.first() }
+                    }.collectAsStateWithLifecycle(initialValue = list.first())
                     Column(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ){

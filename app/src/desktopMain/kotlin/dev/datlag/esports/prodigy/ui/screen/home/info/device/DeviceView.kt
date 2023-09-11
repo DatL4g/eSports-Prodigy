@@ -1,6 +1,10 @@
 package dev.datlag.esports.prodigy.ui.screen.home.info.device
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.calculateCentroid
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,21 +17,30 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toAwtImage
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.datlag.esports.prodigy.SharedRes
 import dev.datlag.esports.prodigy.color.createTheme
-import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.launchIO
+import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.common.scaled
 import dev.datlag.esports.prodigy.common.scaledDp
 import dev.datlag.esports.prodigy.game.common.containsInvalidEntries
@@ -41,7 +54,6 @@ import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import io.kamel.core.Resource
 import io.kamel.image.asyncPainterResource
-import io.kamel.image.lazyPainterResource
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -83,10 +95,10 @@ private fun ExpandedView(component: DeviceComponent) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 private fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) {
-    val games by component.games.collectAsStateSafe { emptyList() }
+    val games by component.games.collectAsStateWithLifecycle(initialValue = emptyList())
 
     LazyColumn(
         modifier = modifier.padding(horizontal = 16.dp)
@@ -97,10 +109,23 @@ private fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) 
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                var settingsOffset: Offset? by remember { mutableStateOf(null) }
+                var settingsPosition: Offset? by remember { mutableStateOf(null) }
+
                 FilledTonalIconButton(
-                    modifier = Modifier.size(48.dp),
+                    modifier = Modifier.size(48.dp).onGloballyPositioned {
+                        settingsPosition = it.positionInWindow()
+                    }.onPointerEvent(PointerEventType.Press) {
+                        settingsOffset = it.changes.firstOrNull()?.position
+                    },
                     onClick = {
-                        component.navigateToSettings()
+                        val offset = settingsOffset?.let {
+                            Offset(
+                                x = it.x + (settingsPosition?.x ?: 0F),
+                                y = it.y + (settingsPosition?.y ?: 0F)
+                            )
+                        } ?: settingsPosition
+                        component.navigateToSettings(offset)
                     },
                     shape = RoundedCornerShape(16.dp)
                 ) {
@@ -152,9 +177,10 @@ private fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) 
                     GameHeader(game)
                 }
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val caches by game.dxvkCaches.collectAsStateSafe { emptyMap() }
+                    val caches by game.dxvkCaches.collectAsStateWithLifecycle(initialValue = emptyMap())
 
                     Text(
                         modifier = Modifier.weight(1F),

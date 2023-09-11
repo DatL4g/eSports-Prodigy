@@ -43,6 +43,11 @@ kotlin {
                 api(compose.material)
                 api(compose.material3)
                 api(compose.materialIconsExtended)
+                api(compose.ui)
+                api(compose.animation)
+                api(compose.animationGraphics)
+                api(compose.uiTooling)
+                api(libs.compose.ui.util)
 
                 api(libs.stdlib)
 
@@ -60,6 +65,8 @@ kotlin {
                 api(libs.napier)
 
                 api(libs.windowsize.multiplatform)
+                api(libs.markdown.renderer)
+                api(libs.insetsx)
 
                 api(project(":color"))
                 api(project(":game"))
@@ -68,6 +75,7 @@ kotlin {
                 api(project(":charts"))
                 api(project(":network"))
                 api(project(":database"))
+                api(project(":compose-collapsing-toolbar"))
             }
         }
 
@@ -89,7 +97,6 @@ kotlin {
                 implementation(libs.multidex)
                 implementation(libs.sekret)
                 implementation(libs.splashscreen)
-                implementation(libs.windowsize)
             }
         }
 
@@ -102,6 +109,7 @@ kotlin {
 
                 implementation(libs.appdirs)
                 implementation(libs.batik.transcoder)
+                implementation(libs.context.menu)
                 implementation(libs.coroutines.swing)
                 implementation(libs.filepicker)
                 implementation(libs.kscript)

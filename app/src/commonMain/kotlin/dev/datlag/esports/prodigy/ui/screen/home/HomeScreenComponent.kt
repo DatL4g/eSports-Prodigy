@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Pending
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.geometry.Offset
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.router.pages.*
@@ -20,12 +21,13 @@ import dev.datlag.esports.prodigy.ui.screen.home.info.InfoViewComponent
 import org.kodein.di.DI
 import dev.datlag.esports.prodigy.SharedRes
 import dev.datlag.esports.prodigy.ui.screen.home.other.OtherScreenComponent
+import dev.datlag.esports.prodigy.ui.screen.home.rocketleague.RocketLeagueViewComponent
 
 class HomeScreenComponent(
     componentContext: ComponentContext,
     override val di: DI,
     private val goToUser: () -> Unit,
-    private val goToSettings: () -> Unit
+    private val goToSettings: (offset: Offset?) -> Unit
 ) : HomeComponent, ComponentContext by componentContext {
 
     override val pagerItems = listOf(
@@ -62,6 +64,7 @@ class HomeScreenComponent(
                 items = listOf(
                     View.Info,
                     View.CounterStrike,
+                    View.RocketLeague,
                     View.Other
                 ),
                 selectedIndex = 0
@@ -76,6 +79,8 @@ class HomeScreenComponent(
         pagesNavigation.select(index = index)
     }
 
+    override val settingsVisible = MutableValue(false)
+
     private fun createChild(
         view: View,
         componentContext: ComponentContext
@@ -88,6 +93,10 @@ class HomeScreenComponent(
                 goToSettings
             )
             is View.CounterStrike -> CounterStrikeViewComponent(
+                componentContext,
+                di
+            )
+            is View.RocketLeague -> RocketLeagueViewComponent(
                 componentContext,
                 di
             )

@@ -8,6 +8,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
@@ -27,12 +28,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
-
-@Composable
-actual fun <T> Flow<T>.collectAsStateSafe(initial: () -> T): State<T> = this.collectAsState(initial())
-
-@Composable
-actual fun <T> StateFlow<T>.collectAsStateSafe(): State<T> = this.collectAsState()
 
 actual fun FontResource.toComposeFont(
     weight: FontWeight,
@@ -64,12 +59,11 @@ actual fun Modifier.onClick(
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
-@Composable
 actual fun Modifier.tilt(
     maxTilt: Float,
     resetOnPress: Boolean,
     onTilt: (x: Float, y: Float) -> Unit
-): Modifier {
+) = composed {
     var size by remember { mutableStateOf(Size.Unspecified) }
     var posX by remember { mutableStateOf(-1F) }
     var posY by remember { mutableStateOf(-1F) }
@@ -105,7 +99,7 @@ actual fun Modifier.tilt(
         rotX = tilt.negativeIf(posY < heightMiddle)
     }
 
-    return this.onSizeChanged {
+    onSizeChanged {
         size = it.toSize()
     }.onPointerEvent(PointerEventType.Move) { event ->
         event.changes.firstOrNull()?.position?.let {

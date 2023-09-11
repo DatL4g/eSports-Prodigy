@@ -1,8 +1,6 @@
 package dev.datlag.esports.prodigy.ui.screen.home.counterstrike.team
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -25,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.datlag.esports.prodigy.common.Tooltip
-import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.scaled
 import dev.datlag.esports.prodigy.common.tilt
 import dev.datlag.esports.prodigy.model.hltv.Home
@@ -40,12 +37,16 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import dev.icerock.moko.resources.ImageResource
 import dev.datlag.esports.prodigy.SharedRes
+import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.ui.LocalCommonizer
+import me.onebone.toolbar.CollapsingToolbarScaffold
+import me.onebone.toolbar.ScrollStrategy
+import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun TeamView(component: TeamComponent) {
-    val team by component.team.collectAsStateSafe { null }
+    val team by component.team.collectAsStateWithLifecycle(initialValue = null)
     val teamId = remember(team) { team?.id ?: component.initialTeam.id }
     val suffix = if (LocalDarkMode.current) {
         "dark"
@@ -59,131 +60,144 @@ fun TeamView(component: TeamComponent) {
     }
 
     SchemeTheme("$teamId-$suffix") {
-        LazyColumn(
-            contentPadding = columnPadding
+
+        CollapsingToolbarScaffold(
+            modifier = Modifier.fillMaxWidth(),
+            state = rememberCollapsingToolbarScaffoldState(),
+            scrollStrategy = ScrollStrategy.ExitUntilCollapsed,
+            toolbarModifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 56.dp).verticalScroll(
+                rememberScrollState()
+            ),
+            toolbar = {
+
+            }
         ) {
-            item {
-                Row(
-                    modifier = Modifier.fillParentMaxWidth().padding(bottom = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    IconButton(
-                        onClick = {
-                            component.back()
-                        },
-                        modifier = Modifier.background(
-                            color = Color.Black.copy(alpha = 0.5F),
-                            shape = CircleShape
-                        )
+            LazyColumn(
+                contentPadding = columnPadding
+            ) {
+                item {
+                    Row(
+                        modifier = Modifier.fillParentMaxWidth().padding(bottom = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
-                    }
-
-                    TeamIcon(team, component.initialTeam, teamId)
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        if (team != null) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Image(
-                                    modifier = Modifier.size(18.dp),
-                                    painter = painterResource(CountryImage.getByCode(team!!.country.code)),
-                                    contentDescription = team!!.country.name,
-                                    contentScale = ContentScale.Inside
-                                )
-                                Text(
-                                    text = team!!.country.name
-                                )
-                            }
+                        IconButton(
+                            onClick = {
+                                component.back()
+                            },
+                            modifier = Modifier.background(
+                                color = Color.Black.copy(alpha = 0.5F),
+                                shape = CircleShape
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Back",
+                                tint = Color.White
+                            )
                         }
-                        Text(
-                            text = team?.name ?: component.initialTeam.name,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.headlineLarge
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1F))
-                    FlowRow(
-                        maxItemsInEachRow = 2,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        val commonizer = LocalCommonizer.current
 
-                        team?.socials?.let { socials ->
-                            socials.instagram?.let {
-                                FilledIconButton(
-                                    onClick = {
-                                        commonizer.openInBrowser(
-                                            url = it
-                                        )
-                                    }
+                        TeamIcon(team, component.initialTeam, teamId)
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            if (team != null) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    Icon(
-                                        modifier = Modifier.size(24.dp),
-                                        painter = painterResource(SharedRes.images.Instagram),
-                                        contentDescription = "Instagram",
+                                    Image(
+                                        modifier = Modifier.size(18.dp),
+                                        painter = painterResource(CountryImage.getByCode(team!!.country.code)),
+                                        contentDescription = team!!.country.name,
+                                        contentScale = ContentScale.Inside
+                                    )
+                                    Text(
+                                        text = team!!.country.name
                                     )
                                 }
                             }
-                            socials.twitter?.let {
-                                FilledIconButton(
-                                    onClick = {
-                                        commonizer.openInBrowser(
-                                            url = it
+                            Text(
+                                text = team?.name ?: component.initialTeam.name,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.headlineLarge
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1F))
+                        FlowRow(
+                            maxItemsInEachRow = 2,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
+                        ) {
+                            val commonizer = LocalCommonizer.current
+
+                            team?.socials?.let { socials ->
+                                socials.instagram?.let {
+                                    FilledIconButton(
+                                        onClick = {
+                                            commonizer.openInBrowser(
+                                                url = it
+                                            )
+                                        }
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier.size(24.dp),
+                                            painter = painterResource(SharedRes.images.Instagram),
+                                            contentDescription = "Instagram",
                                         )
                                     }
-                                ) {
-                                    Icon(
-                                        modifier = Modifier.size(24.dp),
-                                        painter = painterResource(SharedRes.images.Twitter),
-                                        contentDescription = "Twitter"
-                                    )
                                 }
-                            }
-                            socials.facebook?.let {
-                                FilledIconButton(
-                                    onClick = {
-                                        commonizer.openInBrowser(
-                                            url = it
+                                socials.twitter?.let {
+                                    FilledIconButton(
+                                        onClick = {
+                                            commonizer.openInBrowser(
+                                                url = it
+                                            )
+                                        }
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier.size(24.dp),
+                                            painter = painterResource(SharedRes.images.Twitter),
+                                            contentDescription = "Twitter"
                                         )
                                     }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Facebook,
-                                        contentDescription = "Facebook"
-                                    )
+                                }
+                                socials.facebook?.let {
+                                    FilledIconButton(
+                                        onClick = {
+                                            commonizer.openInBrowser(
+                                                url = it
+                                            )
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Facebook,
+                                            contentDescription = "Facebook"
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-            item {
-                Column(
-                    modifier = Modifier.fillParentMaxWidth().padding(extraPadding),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = "Players",
-                        fontWeight = FontWeight.SemiBold,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    FlowRow(
-                        modifier = Modifier.fillParentMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                item {
+                    Column(
+                        modifier = Modifier.fillParentMaxWidth().padding(extraPadding),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        team?.players?.filter { it.type.isPlayer }?.forEach { player ->
-                            PlayerCard(player)
+                        Text(
+                            text = "Players",
+                            fontWeight = FontWeight.SemiBold,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        FlowRow(
+                            modifier = Modifier.fillParentMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
+                        ) {
+                            team?.players?.filter { it.type.isPlayer }?.forEach { player ->
+                                PlayerCard(player)
+                            }
                         }
                     }
                 }

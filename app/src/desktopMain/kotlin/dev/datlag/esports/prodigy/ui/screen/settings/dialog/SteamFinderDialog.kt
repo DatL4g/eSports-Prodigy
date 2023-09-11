@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.toSize
-import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.common.toDpSize
 import dev.datlag.esports.prodigy.model.common.isSame
 import java.io.File
@@ -29,7 +29,7 @@ import kotlin.math.max
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SteamFinderDialog(component: SteamFinderComponent) {
-    val searchState by component.searchState.collectAsStateSafe { null }
+    val searchState by component.searchState.collectAsStateWithLifecycle(initialValue = null)
 
     AlertDialog(
         onDismissRequest = {
@@ -59,7 +59,7 @@ fun SteamFinderDialog(component: SteamFinderComponent) {
                 when (searchState) {
                     null -> { }
                     is SteamFinderComponent.State.RUNNING -> {
-                        val currentSearchDir by component.currentSearchDir.collectAsStateSafe { null }
+                        val currentSearchDir by component.currentSearchDir.collectAsStateWithLifecycle(initialValue = null)
 
                         currentSearchDir?.let {
                             Text(
@@ -96,9 +96,9 @@ fun SteamFinderDialog(component: SteamFinderComponent) {
                 Column(
                     modifier = Modifier.verticalScroll(rememberScrollState())
                 ) {
-                    val unmanagedItems by component.unmanagedSteamDirs.collectAsStateSafe { emptyList() }
-                    val managedItems by component.managedSteamDirs.collectAsStateSafe { emptyList() }
-                    val settingsItems by component.settingsExisting.collectAsStateSafe { emptyList() }
+                    val unmanagedItems by component.unmanagedSteamDirs.collectAsStateWithLifecycle(initialValue = emptyList())
+                    val managedItems by component.managedSteamDirs.collectAsStateWithLifecycle(initialValue = emptyList())
+                    val settingsItems by component.settingsExisting.collectAsStateWithLifecycle(initialValue = emptyList())
 
                     managedItems.forEach {
                         ItemCard(

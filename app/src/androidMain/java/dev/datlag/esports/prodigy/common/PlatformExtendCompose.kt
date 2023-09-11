@@ -18,12 +18,6 @@ import dev.icerock.moko.resources.FontResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
-@Composable
-actual fun <T> Flow<T>.collectAsStateSafe(initial: () -> T): State<T> = this.collectAsStateWithLifecycle(initial())
-
-@Composable
-actual fun <T> StateFlow<T>.collectAsStateSafe(): State<T> = this.collectAsStateWithLifecycle()
-
 actual fun FontResource.toComposeFont(
     weight: FontWeight,
     style: FontStyle
@@ -50,7 +44,6 @@ actual fun Modifier.onClick(
     )
 }
 
-@Composable
 actual fun Modifier.tilt(
     maxTilt: Float,
     resetOnPress: Boolean,

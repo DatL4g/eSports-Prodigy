@@ -29,7 +29,9 @@
                 android:exported="true"
                 android:launchMode="singleInstance"
                 android:visibleToInstantApps="true"
-                android:resizeableActivity="true">
+                android:resizeableActivity="true"
+                android:supportsPictureInPicture="true"
+                android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

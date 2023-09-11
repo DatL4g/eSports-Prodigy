@@ -1,5 +1,6 @@
 package dev.datlag.esports.prodigy.ui.screen.settings
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,12 +10,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
-import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.getValueBlocking
 import dev.datlag.esports.prodigy.common.launchIO
+import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.model.ThemeMode
@@ -26,11 +28,11 @@ import java.io.File
 
 @Composable
 actual fun SettingsScreen(component: SettingsComponent) {
-    val steamDirs by SteamLauncher.steamFolders.collectAsStateSafe { emptyList() }
+    val steamDirs by SteamLauncher.steamFolders.collectAsStateWithLifecycle(initialValue = emptyList())
     val dialogState by component.dialog.subscribeAsState()
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier.fillMaxWidth().padding(16.dp)
     ) {
         item {
             Text(
@@ -90,9 +92,7 @@ actual fun SettingsScreen(component: SettingsComponent) {
             )
         }
         item {
-            val themeMode by component.themeMode.collectAsStateSafe {
-                ThemeMode.SYSTEM
-            }
+            val themeMode by component.themeMode.collectAsStateWithLifecycle(initialValue = ThemeMode.SYSTEM)
             var showMenu by remember { mutableStateOf(false) }
 
             Row(
@@ -190,7 +190,7 @@ actual fun SettingsScreen(component: SettingsComponent) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val contentColors by component.contentColors.collectAsStateSafe { true }
+                val contentColors by component.contentColors.collectAsStateWithLifecycle(initialValue = true)
 
                 Text(
                     text = "Use Content Colors"

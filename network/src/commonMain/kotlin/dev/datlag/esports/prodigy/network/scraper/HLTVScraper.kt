@@ -11,6 +11,7 @@ import dev.datlag.esports.prodigy.network.common.parseToEpochSeconds
 import dev.datlag.esports.prodigy.network.fetcher.KtorFetcher
 import io.ktor.client.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 import it.skrape.core.document
 import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
@@ -29,6 +30,7 @@ object HLTVScraper {
                     val contentCol = document.findFirstOrNull(".colCon .contentCol")
                     val leftCol = document.findFirstOrNull(".colCon .leftCol")
                     val teamEntries = leftCol?.findAll(".rank") ?: emptyList()
+                    val newsEntries = contentCol?.findAll(".newsline") ?: emptyList()
 
                     val hero = scopeCatching {
                         val heroCon = contentCol?.findFirst(".hero-con") ?: return@scopeCatching null
@@ -62,7 +64,22 @@ object HLTVScraper {
                         }.getOrNull()
                     }
 
-                    Result.success(Home(hero, teams))
+                    val news = newsEntries.mapNotNull { newsElement ->
+                        scopeCatching {
+                            val href = newsElement.eachHref.firstOrNull() ?: String()
+
+                            Home.News(
+                                title = newsElement.findFirstOrNull(".newstext")?.text?.ifBlank { null } ?: String(),
+                                href = scopeCatching {
+                                    URLBuilder(baseUri).takeFrom(href).buildString()
+                                }.getOrNull() ?: scopeCatching {
+                                    URLBuilder(href).takeFrom(baseUri).buildString()
+                                }.getOrNull() ?: href
+                            )
+                        }.getOrNull()
+                    }
+
+                    Result.success(Home(hero, teams, news))
                 }
             }
         }

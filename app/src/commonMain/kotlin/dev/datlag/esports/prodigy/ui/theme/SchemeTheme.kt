@@ -4,9 +4,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import dev.datlag.esports.prodigy.color.theme.Theme
-import dev.datlag.esports.prodigy.common.collectAsStateSafe
 import dev.datlag.esports.prodigy.common.getValueBlocking
 import dev.datlag.esports.prodigy.common.launchIO
+import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -127,7 +127,7 @@ fun SchemeTheme(key: Any?, content: @Composable () -> Unit) {
                     null
                 }
             }
-        }.collectAsStateSafe { null }
+        }.collectAsStateWithLifecycle(initialValue = null)
 
         val scheme = (if (LocalDarkMode.current) themeHolder?.dark else themeHolder?.light) ?: MaterialTheme.colorScheme
 
@@ -137,7 +137,9 @@ fun SchemeTheme(key: Any?, content: @Composable () -> Unit) {
             androidx.compose.material.MaterialTheme(
                 colors = scheme.toLegacyColors(LocalDarkMode.current)
             ) {
-                content()
+                SchemeThemeSystemProvider(scheme) {
+                    content()
+                }
             }
         }
     } else {
@@ -149,3 +151,6 @@ data class ThemeHolder(
     val dark: ColorScheme,
     val light: ColorScheme
 )
+
+@Composable
+expect fun SchemeThemeSystemProvider(scheme: ColorScheme, content: @Composable () -> Unit)

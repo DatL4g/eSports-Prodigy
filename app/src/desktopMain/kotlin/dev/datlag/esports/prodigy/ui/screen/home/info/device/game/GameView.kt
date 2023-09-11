@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.common.openInBrowser
 import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.game.model.LocalGameInfo
@@ -23,7 +23,7 @@ import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun GameView(component: GameComponent) {
-    val caches by component.game.dxvkCaches.collectAsStateSafe { emptyMap() }
+    val caches by component.game.dxvkCaches.collectAsStateWithLifecycle(initialValue = emptyMap())
     val unsupportedUserChartGame = component.unsupportedUserChartGames.firstOrNull {
         it.steamId != null && it.steamId.equals(component.game.steam?.manifest?.appId, true)
                 || component.game.name.contains(it.name, true)
@@ -130,7 +130,7 @@ fun GameView(component: GameComponent) {
                 }
             } else {
                 item {
-                    val users by SteamLauncher.loggedInUsers.collectAsStateSafe { emptyList() }
+                    val users by SteamLauncher.loggedInUsers.collectAsStateWithLifecycle(initialValue = emptyList())
                     var width by remember(component.game.name) { mutableStateOf(0) }
                     var height by remember(component.game.name) { mutableStateOf(0) }
 

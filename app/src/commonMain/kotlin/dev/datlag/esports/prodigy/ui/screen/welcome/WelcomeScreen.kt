@@ -39,13 +39,14 @@ import kotlin.math.max
 @Composable
 fun WelcomeScreen(component: WelcomeComponent) {
     val pageCount = remember { 3 }
-    val state = rememberPagerState()
+    val state = rememberPagerState {
+        pageCount
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         HorizontalPager(
-            pageCount = pageCount,
-            modifier = Modifier.fillMaxSize(),
-            state = state
+            state = state,
+            modifier = Modifier.fillMaxSize()
         ) { index ->
             Box(
                 modifier = Modifier.fillMaxSize()

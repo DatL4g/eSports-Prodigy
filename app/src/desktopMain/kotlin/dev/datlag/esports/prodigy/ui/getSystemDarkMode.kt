@@ -1,16 +1,24 @@
 package dev.datlag.esports.prodigy.ui
 
 import androidx.compose.foundation.DarkDefaultContextMenuRepresentation
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LightDefaultContextMenuRepresentation
 import androidx.compose.foundation.LocalContextMenuRepresentation
+import androidx.compose.foundation.text.LocalTextContextMenu
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.awt.ComposeWindow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.LayoutDirection
+import com.dzirbel.contextmenu.ContextMenuColors
+import com.dzirbel.contextmenu.MaterialContextMenuRepresentation
+import com.dzirbel.contextmenu.MaterialTextContextMenu
 import com.mayakapps.compose.windowstyler.WindowBackdrop
 import com.mayakapps.compose.windowstyler.WindowCornerPreference
 import com.mayakapps.compose.windowstyler.WindowFrameStyle
@@ -62,18 +70,12 @@ actual fun loadImageScheme(key: Any, painter: Painter) {
 
 actual val isDesktop: Boolean = true
 
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 actual fun SystemProvider(content: @Composable () -> Unit) {
-    val isDarkTheme = LocalDarkMode.current
     val backgroundColor = MaterialTheme.colorScheme.background
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground
     val backdrop = WindowBackdrop.Solid(backgroundColor)
-
-    val contextMenuStyling = if (isDarkTheme) {
-        DarkDefaultContextMenuRepresentation
-    } else {
-        LightDefaultContextMenuRepresentation
-    }
 
     WindowStyle(
         backdropType = backdrop,
@@ -86,7 +88,8 @@ actual fun SystemProvider(content: @Composable () -> Unit) {
     )
 
     CompositionLocalProvider(
-        LocalContextMenuRepresentation provides contextMenuStyling,
+        LocalContextMenuRepresentation provides MaterialContextMenuRepresentation(colors = ContextMenuColors(MaterialTheme.colorScheme)),
+        LocalTextContextMenu provides MaterialTextContextMenu,
         LocalScaling provides windowScaling()
     ) {
         content()
@@ -155,3 +158,12 @@ fun windowDevice(window: Window): GraphicsDevice {
 
     return device
 }
+
+@Composable
+fun ContextMenuColors(scheme: ColorScheme = MaterialTheme.colorScheme) = ContextMenuColors(
+    surface = scheme.surface,
+    text = scheme.onSurface,
+    icon = scheme.onSurface,
+    divider = scheme.onSurfaceVariant,
+    shortcutText = scheme.onSurfaceVariant
+)

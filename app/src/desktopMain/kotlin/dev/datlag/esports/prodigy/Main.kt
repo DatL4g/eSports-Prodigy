@@ -13,9 +13,11 @@ import androidx.datastore.core.DataStore
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
+import com.arkivanov.essenty.lifecycle.Lifecycle
+import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import dev.datlag.esports.prodigy.common.basedOnSize
-import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.model.common.normalize
@@ -43,6 +45,9 @@ fun main() {
 
     val windowState = WindowState()
     val lifecycle = LifecycleRegistry()
+    val lifecycleOwner = object : LifecycleOwner {
+        override val lifecycle: Lifecycle = lifecycle
+    }
     val di = DI {
         import(NetworkModule.di)
     }
@@ -110,14 +115,15 @@ fun main() {
             SteamLauncher.userSteamFolders.emitAll(savedPaths)
         }
 
-        val celebrity by SteamLauncher.loggedInUsers.mapNotNull { it.firstNotNullOfOrNull { u -> u.celebrity } }.collectAsStateSafe { null }
+        val celebrity by SteamLauncher.loggedInUsers.mapNotNull { it.firstNotNullOfOrNull { u -> u.celebrity } }.collectAsStateWithLifecycle(initialValue = null)
 
         CompositionLocalProvider(
             LocalOrientation provides Orientation.basedOnSize(windowState),
             LocalKamelConfig provides imageConfig,
             LocalCommonizer provides Commonizer(),
             LocalCelebrity provides celebrity,
-            LocalWindow provides this.window
+            LocalWindow provides this.window,
+            LocalLifecycleOwner provides lifecycleOwner
         ) {
             App(di) {
                 root.render()

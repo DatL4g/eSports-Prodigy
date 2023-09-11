@@ -7,11 +7,14 @@ import com.arkivanov.essenty.parcelable.Parcelize
 sealed class View : Parcelable {
 
     @Parcelize
-    object Info : View(), Parcelable
+    data object Info : View(), Parcelable
 
     @Parcelize
-    object CounterStrike : View(), Parcelable
+    data object CounterStrike : View(), Parcelable
 
     @Parcelize
-    object Other : View(), Parcelable
+    data object RocketLeague : View(), Parcelable
+
+    @Parcelize
+    data object Other : View(), Parcelable
 }

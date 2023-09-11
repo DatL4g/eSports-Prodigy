@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.datlag.esports.prodigy.common.*
+import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.model.common.safeSubList
 import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.network.Status
@@ -72,8 +73,8 @@ private fun ExpandedView(component: CounterStrikeComponent) {
 
 @Composable
 private fun MainView(component: CounterStrikeComponent, modifier: Modifier) {
-    val home by component.home.collectAsStateSafe { null }
-    val homeStatus by component.homeStatus.collectAsStateSafe { Status.LOADING }
+    val home by component.home.collectAsStateWithLifecycle(initialValue = null)
+    val homeStatus by component.homeStatus.collectAsStateWithLifecycle(initialValue = Status.LOADING)
 
     if (homeStatus is Status.LOADING) {
         Box(
@@ -117,9 +118,48 @@ private fun MainView(component: CounterStrikeComponent, modifier: Modifier) {
                         }
                     }
                 }
-                fullRowItems(home?.teams ?: emptyList()) { team ->
-                    TeamCard(team) {
+                fullRowItemsIndexed(home?.teams ?: emptyList()) { index, team ->
+                    TeamCard(team, index) {
                         component.teamClicked(team)
+                    }
+                }
+            }
+            if (!home?.news.isNullOrEmpty()) {
+                fullRow {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "News",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Button(
+                            onClick = {
+
+                            }
+                        ) {
+                            Text(text = "More articles")
+                        }
+                    }
+                }
+                fullRowItems(home?.news ?: emptyList()) { news ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = news.title,
+                            modifier = Modifier.weight(1F)
+                        )
+                        Button(
+                            onClick = {
+                                component.articleClicked(news.href)
+                            }
+                        ) {
+                            Text(text = "Details")
+                        }
                     }
                 }
             }

@@ -17,7 +17,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.game.model.steam.User
 import dev.datlag.esports.prodigy.ui.loadImageScheme
 import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
@@ -88,7 +88,7 @@ fun UserChartCard(
 
                     when (val resource = user.avatarFile?.let { asyncPainterResource(it) }) {
                         null, is Resource.Failure -> {
-                            val fallbackAvatar by avatar.collectAsStateSafe { null }
+                            val fallbackAvatar by avatar.collectAsStateWithLifecycle(initialValue = null)
 
                             when (val fallbackResource = fallbackAvatar?.let { asyncPainterResource(it) }) {
                                 null, is Resource.Failure, is Resource.Loading -> {

@@ -12,6 +12,7 @@ include("nanoid")
 include("charts")
 include("network")
 include("database")
+include("compose-collapsing-toolbar")
 
 pluginManagement {
     repositories {

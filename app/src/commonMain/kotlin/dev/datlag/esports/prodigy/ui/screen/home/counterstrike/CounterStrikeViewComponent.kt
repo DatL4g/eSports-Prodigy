@@ -17,6 +17,7 @@ import dev.datlag.esports.prodigy.model.hltv.Team
 import dev.datlag.esports.prodigy.network.Status
 import dev.datlag.esports.prodigy.network.repository.HLTVRepository
 import dev.datlag.esports.prodigy.ui.navigation.Component
+import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.article.ArticleViewComponent
 import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.team.TeamViewComponent
 import kotlinx.coroutines.flow.*
 import org.kodein.di.DI
@@ -45,7 +46,13 @@ class CounterStrikeViewComponent(
                 config.initialTeam,
                 di,
                 ::componentBack
-            )
+            ) as Component
+            is CounterStrikeConfig.Article -> ArticleViewComponent(
+                componentContext,
+                config.href,
+                di,
+                ::componentBack
+            ) as Component
         }
     }
 
@@ -58,6 +65,10 @@ class CounterStrikeViewComponent(
 
     override fun teamClicked(team: Home.Team) {
         navigation.activate(CounterStrikeConfig.Team(team))
+    }
+
+    override fun articleClicked(href: String) {
+        navigation.activate(CounterStrikeConfig.Article(href))
     }
 
     private fun componentBack() {

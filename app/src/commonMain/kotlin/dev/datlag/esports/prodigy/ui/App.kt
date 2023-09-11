@@ -9,7 +9,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.datastore.core.DataStore
-import dev.datlag.esports.prodigy.common.collectAsStateSafe
+import com.arkivanov.essenty.lifecycle.Lifecycle
+import com.arkivanov.essenty.lifecycle.LifecycleOwner
+import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.moriatsushi.insetsx.rememberWindowInsetsController
+import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.common.getValueBlocking
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import dev.datlag.esports.prodigy.game.Celebrity
@@ -24,6 +28,11 @@ import dev.datlag.esports.prodigy.other.Commonizer
 val LocalCommonizer = compositionLocalOf<Commonizer> { error("No Commonizer state provided") }
 val LocalCelebrity = compositionLocalOf<Celebrity?> { null }
 val LocalScaling = compositionLocalOf<Double> { 1.0 }
+val LocalLifecycleOwner = compositionLocalOf<LifecycleOwner> {
+    object : LifecycleOwner {
+        override val lifecycle: Lifecycle = LifecycleRegistry()
+    }
+}
 
 @Composable
 fun App(
@@ -33,9 +42,7 @@ fun App(
 ) {
     val settings: DataStore<AppSettings> by di.instance()
 
-    val themeMode by settings.data.map { ThemeMode.ofValue(it.appearance.themeMode) }.collectAsStateSafe {
-        ThemeMode.SYSTEM
-    }
+    val themeMode by settings.data.map { ThemeMode.ofValue(it.appearance.themeMode) }.collectAsStateWithLifecycle(initialValue = ThemeMode.SYSTEM)
     val detectedTheme by getSystemDarkMode(systemDarkTheme)
     val useDarkTheme = when (themeMode) {
         is ThemeMode.LIGHT -> false
@@ -43,7 +50,15 @@ fun App(
         else -> detectedTheme
     }
 
-    val contentColors by settings.data.map { it.appearance.contentColors }.collectAsStateSafe { true }
+    val contentColors by settings.data.map { it.appearance.contentColors }.collectAsStateWithLifecycle(initialValue = true)
+    val windowInsetsController = rememberWindowInsetsController()
+
+    LaunchedEffect(useDarkTheme) {
+        windowInsetsController?.apply {
+            setStatusBarContentColor(dark = !useDarkTheme)
+            setNavigationBarsContentColor(dark = !useDarkTheme)
+        }
+    }
 
     CompositionLocalProvider(
         LocalDarkMode provides useDarkTheme,

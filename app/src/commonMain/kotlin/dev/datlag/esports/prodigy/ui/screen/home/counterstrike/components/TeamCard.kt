@@ -11,10 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.datlag.esports.prodigy.common.ifTrue
+import dev.datlag.esports.prodigy.common.shimmer
 import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.ui.isDesktop
 import dev.datlag.esports.prodigy.ui.loadImageScheme
@@ -26,11 +29,18 @@ import io.ktor.http.*
 @Composable
 fun TeamCard(
     team: Home.Team,
+    index: Int,
     onDetailsClicked: () -> Unit
 ) {
     ElevatedCard {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier.fillMaxWidth().ifTrue(index <= 2) { shimmer(
+                shimmerColor = when (index) {
+                    0 -> Color(0xFFFFD700)
+                    1 -> Color(0xFFC0C0C0)
+                    else -> Color(0xFFBF8970)
+                }
+            ) }.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

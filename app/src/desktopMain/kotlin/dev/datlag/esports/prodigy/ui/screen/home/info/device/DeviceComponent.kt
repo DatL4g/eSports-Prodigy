@@ -1,5 +1,6 @@
 package dev.datlag.esports.prodigy.ui.screen.home.info.device
 
+import androidx.compose.ui.geometry.Offset
 import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.value.Value
 import dev.datlag.esports.prodigy.game.model.LocalGame
@@ -18,5 +19,5 @@ actual interface DeviceComponent : Component {
 
     actual fun navigateToUser()
 
-    actual fun navigateToSettings()
+    actual fun navigateToSettings(offset: Offset?)
 }

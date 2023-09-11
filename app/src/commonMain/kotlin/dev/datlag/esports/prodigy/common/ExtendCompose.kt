@@ -1,18 +1,24 @@
 package dev.datlag.esports.prodigy.common
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridItemScope
-import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.background
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isUnspecified
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.*
 import dev.datlag.esports.prodigy.ui.LocalScaling
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -36,6 +42,19 @@ fun <T> LazyGridScope.fullRowItems(
     items(
         items = list,
         span = {
+            GridItemSpan(this.maxLineSpan)
+        },
+        itemContent = content
+    )
+}
+
+fun <T> LazyGridScope.fullRowItemsIndexed(
+    list: List<T>,
+    content: @Composable LazyGridItemScope.(Int, T) -> Unit
+) {
+    itemsIndexed(
+        items = list,
+        span = { _, _ ->
             GridItemSpan(this.maxLineSpan)
         },
         itemContent = content
@@ -104,5 +123,50 @@ fun Size.heightOr(default: Float): Float {
         default
     } else {
         this.height
+    }
+}
+
+val DefaultMeasurePolicy: MeasureScope.(measurables: List<Measurable>, constraints: Constraints) -> MeasureResult
+    get() = { measurables, constraints ->
+        val placeables = measurables.map { measurable -> measurable.measure(constraints) }
+        val maxWidth = placeables.maxOf { placeable -> placeable.width }
+        val maxHeight = placeables.maxOf { placeable -> placeable.height }
+
+        layout(maxWidth, maxHeight) {
+            placeables.forEach { placeable ->
+                placeable.place(0, 0)
+            }
+        }
+    }
+
+fun Modifier.shimmer(
+    defaultColor: Color = Color.Transparent,
+    shimmerColor: Color = Color(0xFF8F8B8B),
+    duration: Int = 4000
+): Modifier = composed {
+    var size by remember {
+        mutableStateOf(IntSize.Zero)
+    }
+    val transition = rememberInfiniteTransition()
+    val startOffsetX by transition.animateFloat(
+        initialValue = -2 * size.width.toFloat(),
+        targetValue = 2 * size.width.toFloat(),
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = duration)
+        )
+    )
+
+    background(
+        brush = Brush.linearGradient(
+            colors = listOf(
+                defaultColor,
+                shimmerColor,
+                defaultColor
+            ),
+            start = Offset(startOffsetX, 0F),
+            end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())
+        )
+    ).onGloballyPositioned {
+        size = it.size
     }
 }
