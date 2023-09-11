@@ -38,9 +38,8 @@ import kotlin.math.max
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WelcomeScreen(component: WelcomeComponent) {
-    val pageCount = remember { 3 }
     val state = rememberPagerState {
-        pageCount
+        3
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -70,7 +69,7 @@ fun WelcomeScreen(component: WelcomeComponent) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             val hasPrevious = state.currentPage > 0
-            val lastPage = state.currentPage == pageCount - 1
+            val lastPage = state.currentPage == state.pageCount - 1
             val scope = rememberCoroutineScope()
 
             if (hasPrevious) {
@@ -116,7 +115,7 @@ fun WelcomeScreen(component: WelcomeComponent) {
         }
         PagerIndicator(
             state = state,
-            pageCount = pageCount,
+            pageCount = state.pageCount,
             indicatorColor = MaterialTheme.colorScheme.primary,
             modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 32.dp)
         )

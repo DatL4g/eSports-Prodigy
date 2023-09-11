@@ -3,7 +3,7 @@ package dev.datlag.esports.prodigy.ui.screen.settings.dialog
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AlertDialog
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
@@ -35,21 +35,18 @@ fun SteamFinderDialog(component: SteamFinderComponent) {
         onDismissRequest = {
             component.dismiss()
         },
+        icon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Find Steam"
+            )
+        },
         title = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Find Steam"
-                )
-                Text(
-                    text = "Find Steam",
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
+            Text(
+                text = "Find Steam",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge
+            )
         },
         text = {
             Column {

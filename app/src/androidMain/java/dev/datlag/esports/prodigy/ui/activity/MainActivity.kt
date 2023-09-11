@@ -3,6 +3,7 @@ package dev.datlag.esports.prodigy.ui.activity
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalConfiguration
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
 
         val di = ((applicationContext as? App) ?: (application as App)).di
         val imageConfig = KamelConfig {

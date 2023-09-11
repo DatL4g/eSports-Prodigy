@@ -28,7 +28,7 @@ group = artifact
 version = appVersion
 
 kotlin {
-    android("android") {
+    androidTarget("android") {
         jvmToolchain(CompileOptions.jvmTargetVersion)
     }
     jvm("desktop") {
@@ -162,6 +162,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        compose = true
     }
 }
 
