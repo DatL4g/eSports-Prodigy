@@ -123,8 +123,8 @@ object SchemeTheme {
 }
 
 @Composable
-fun SchemeTheme(key: Any?, content: @Composable () -> Unit) {
-    if (LocalContentColors.current) {
+fun SchemeTheme(key: Any?, ignoreSettings: Boolean = false, content: @Composable () -> Unit) {
+    if (LocalContentColors.current || ignoreSettings) {
         val themeHolder by SchemeTheme.itemScheme.map {
             it.firstNotNullOfOrNull { entry ->
                 if (entry.key == key) {

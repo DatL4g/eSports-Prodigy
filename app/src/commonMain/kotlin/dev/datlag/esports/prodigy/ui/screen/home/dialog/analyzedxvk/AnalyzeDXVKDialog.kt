@@ -120,7 +120,7 @@ private fun DragDropArea(component: AnalyzeDXVKComponent) {
 private fun CacheCard(cache: DxvkStateCache) {
     val isInvalid = cache.invalidEntries > 0
 
-    SchemeTheme(key = if (isInvalid) SchemeTheme.COLOR_KEY.ERROR else null) {
+    SchemeTheme(key = if (isInvalid) SchemeTheme.COLOR_KEY.ERROR else null, ignoreSettings = true) {
         OutlinedCard {
             Text(
                 modifier = Modifier.padding(16.dp).fillMaxWidth(),
