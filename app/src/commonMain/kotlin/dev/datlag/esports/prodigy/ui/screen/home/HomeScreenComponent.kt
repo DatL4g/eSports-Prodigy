@@ -8,6 +8,7 @@ import androidx.compose.ui.geometry.Offset
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.router.pages.*
+import com.arkivanov.decompose.router.slot.*
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
@@ -20,6 +21,8 @@ import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.CounterStrikeView
 import dev.datlag.esports.prodigy.ui.screen.home.info.InfoViewComponent
 import org.kodein.di.DI
 import dev.datlag.esports.prodigy.SharedRes
+import dev.datlag.esports.prodigy.ui.dialog.DialogComponent
+import dev.datlag.esports.prodigy.ui.screen.home.dialog.analyzedxvk.AnalyzeDXVKDialogComponent
 import dev.datlag.esports.prodigy.ui.screen.home.other.OtherScreenComponent
 import dev.datlag.esports.prodigy.ui.screen.home.rocketleague.RocketLeagueViewComponent
 
@@ -74,9 +77,27 @@ class HomeScreenComponent(
         createChild(config, componentContext)
     }
 
+    private val dialogNavigation = SlotNavigation<DialogConfig>()
+    private val _dialog = childSlot(
+        source = dialogNavigation
+    ) { config, componentContext ->
+        when (config) {
+            is DialogConfig.AnalyzeDXVK -> AnalyzeDXVKDialogComponent(
+                componentContext = componentContext,
+                onDismissed = dialogNavigation::dismiss,
+                di = di
+            )
+        }
+    }
+    override val dialog: Value<ChildSlot<DialogConfig, DialogComponent>> = _dialog
+
     @OptIn(ExperimentalDecomposeApi::class)
     override fun selectPage(index: Int) {
         pagesNavigation.select(index = index)
+    }
+
+    override fun showDialog(config: DialogConfig) {
+        dialogNavigation.activate(config)
     }
 
     override val settingsVisible = MutableValue(false)

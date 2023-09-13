@@ -8,11 +8,13 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.toArgb
 import androidx.datastore.core.DataStore
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.moriatsushi.insetsx.rememberWindowInsetsController
+import dev.datlag.esports.prodigy.color.utils.ThemeUtils
 import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.common.getValueBlocking
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
@@ -79,6 +81,7 @@ fun App(
                         color = MaterialTheme.colorScheme.background,
                         contentColor = MaterialTheme.colorScheme.onBackground
                     ) {
+                        ProvideColorSchemeThemes()
                         content()
                     }
                 }
@@ -97,3 +100,12 @@ expect val isDesktop: Boolean
 
 @Composable
 expect fun SystemProvider(content: @Composable () -> Unit)
+
+@Composable
+private fun ProvideColorSchemeThemes() {
+    val error = MaterialTheme.colorScheme.error.toArgb()
+
+    SchemeTheme.createColorScheme(SchemeTheme.COLOR_KEY.ERROR) {
+        ThemeUtils.themeFromSourceColor(error)
+    }
+}

@@ -9,6 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import dev.icerock.moko.resources.FontResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import java.io.File
 
 expect fun FontResource.toComposeFont(
     weight: FontWeight = FontWeight.Normal,
@@ -33,3 +34,6 @@ expect fun Tooltip(
     tooltip: @Composable () -> Unit = { },
     content: @Composable () -> Unit
 )
+
+@Composable
+expect fun DragDrop(key: Any, predicate: (File) -> Boolean = { true }, result: (List<File>) -> Unit)

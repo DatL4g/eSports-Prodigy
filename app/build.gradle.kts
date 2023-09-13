@@ -63,6 +63,7 @@ kotlin {
                 api(libs.moko.resources.compose)
                 api(libs.kamel)
                 api(libs.napier)
+                api(libs.filepicker)
 
                 api(libs.windowsize.multiplatform)
                 api(libs.markdown.renderer)
@@ -111,7 +112,6 @@ kotlin {
                 implementation(libs.batik.transcoder)
                 implementation(libs.context.menu)
                 implementation(libs.coroutines.swing)
-                implementation(libs.filepicker)
                 implementation(libs.kscript)
                 implementation(libs.ktor.okhttp)
                 implementation(libs.sekret)

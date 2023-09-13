@@ -1,11 +1,16 @@
 package dev.datlag.esports.prodigy.ui.screen.home
 
+import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DataUsage
+import androidx.compose.material.icons.filled.Extension
+import androidx.compose.material.icons.outlined.Extension
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -14,55 +19,24 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.pages.Pages
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.datlag.esports.prodigy.ui.custom.ExpandedPages
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
+import dev.datlag.esports.prodigy.common.onClick
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun HomeScreen(component: HomeComponent) {
-    val settingsVisible by component.settingsVisible.subscribeAsState()
-    val animationProgress by animateFloatAsState(
-        targetValue = if (settingsVisible) 1F else 0F,
-        animationSpec = tween()
-    )
-    val transition = updateTransition(targetState = animationProgress)
-    val animatedShape by transition.animateValue(
-        TwoWayConverter(
-            convertToVector = { AnimationVector1D(0F) },
-            convertFromVector = { GenericShape { _, _ -> } }
-        )
-    ) { progress ->
-        GenericShape { size, _ ->
-            val centerH = size.width / 2F
-            val multiplierW = 1.5F + size.height / size.width
-
-            moveTo(
-                x = centerH - centerH * progress * multiplierW,
-                y = 0F
-            )
-
-            val currentWidth = (centerH * progress * multiplierW * 2.5F)
-
-            cubicTo(
-                x1 = centerH - centerH * progress * 1.5f,
-                y1 = currentWidth * 0.5f,
-                x2 = centerH + centerH * progress * 1.5f,
-                y2 = currentWidth * 0.5f,
-                x3 = centerH + centerH * progress * multiplierW,
-                y3 = 0F
-            )
-
-            close()
-        }
-    }
+    val dialogState by component.dialog.subscribeAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -73,19 +47,13 @@ fun HomeScreen(component: HomeComponent) {
             WindowWidthSizeClass.Expanded -> ExpandedScreen(component)
         }
 
-        if (animationProgress > 0F) {
-            Surface(
-                color = Color.Red,
-                modifier = Modifier.fillMaxSize().graphicsLayer {
-                    clip = true
-                    shape = animatedShape
-                }
-            ) {  }
+        dialogState.child?.also { (_, instance) ->
+            instance.render()
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalDecomposeApi::class)
 @Composable
 fun CompactScreen(
     component: HomeComponent
@@ -93,6 +61,9 @@ fun CompactScreen(
     var selectedPage by remember { mutableStateOf(0) }
 
     Scaffold(
+        floatingActionButton = {
+            ExtensionFAB(component)
+        },
         bottomBar = {
             NavigationBar {
                 component.pagerItems.forEach { item ->
@@ -127,7 +98,7 @@ fun CompactScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalDecomposeApi::class)
 @Composable
 fun MediumScreen(
     component: HomeComponent
@@ -136,7 +107,7 @@ fun MediumScreen(
 
     Scaffold(
         floatingActionButton = {
-
+            ExtensionFAB(component)
         }
     ) {
         Row(modifier = Modifier.padding(it)) {
@@ -172,14 +143,18 @@ fun MediumScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalDecomposeApi::class)
 @Composable
 fun ExpandedScreen(
     component: HomeComponent
 ) {
     var selectedPage by remember { mutableStateOf(0) }
 
-    Scaffold {
+    Scaffold(
+        floatingActionButton = {
+            ExtensionFAB(component)
+        }
+    ) {
         PermanentNavigationDrawer(
             modifier = Modifier.padding(it),
             drawerContent = {
@@ -250,3 +225,88 @@ fun NavIcon(item: HomeComponent.PagerItem) {
         }
     }
 }
+
+@Composable
+private fun ExtensionFAB(component: HomeComponent) {
+    Column(
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+    ) {
+        var showOtherFABs by remember { mutableStateOf(false) }
+
+        AnimatedVisibility(
+            visible = showOtherFABs,
+            enter = scaleIn(
+                animationSpec = bouncySpring(),
+                transformOrigin = TransformOrigin(1F, 0.5F)
+            ) + fadeIn(
+                animationSpec = bouncySpring()
+            ),
+            exit = scaleOut(
+                transformOrigin = TransformOrigin(1F, 0.5F)
+            ) + fadeOut(
+                animationSpec = bouncySpring()
+            )
+        ) {
+            LabelFAB(
+                label = "Analyze DXVK State-Cache",
+                onClick = {
+                    showOtherFABs = false
+                    component.showDialog(DialogConfig.AnalyzeDXVK)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.DataUsage,
+                    contentDescription = null
+                )
+            }
+        }
+
+        FloatingActionButton(
+            onClick = {
+                showOtherFABs = !showOtherFABs
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Extension,
+                contentDescription = "Extension"
+            )
+        }
+    }
+}
+
+@Composable
+private fun LabelFAB(label: String, onClick: () -> Unit, icon: @Composable () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Surface(
+            modifier = Modifier.onClick {
+                onClick()
+            },
+            tonalElevation = 8.dp,
+            shadowElevation = 4.dp,
+            shape = RoundedCornerShape(4.dp)
+        ) {
+            Text(
+                modifier = Modifier.padding(4.dp),
+                text = label,
+                maxLines = 1
+            )
+        }
+
+        SmallFloatingActionButton(
+            onClick = {
+                onClick()
+            }
+        ) {
+            icon()
+        }
+    }
+}
+
+private fun <T> bouncySpring() = spring<T>(
+    dampingRatio = Spring.DampingRatioMediumBouncy,
+    stiffness = Spring.StiffnessMedium
+)

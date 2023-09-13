@@ -114,6 +114,12 @@ object SchemeTheme {
             itemScheme.emit(currentMap)
         }
     }
+
+    data object COLOR_KEY {
+        private const val SUFFIX = "ColorKey"
+
+        const val ERROR = "Error$SUFFIX"
+    }
 }
 
 @Composable

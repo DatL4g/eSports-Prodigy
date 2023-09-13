@@ -5,20 +5,23 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isUnspecified
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.*
 import dev.datlag.esports.prodigy.ui.LocalScaling
 import kotlinx.coroutines.launch
+import kotlin.math.ln
 import kotlin.math.max
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -169,4 +172,33 @@ fun Modifier.shimmer(
     ).onGloballyPositioned {
         size = it.size
     }
+}
+
+fun Modifier.dashedBorder(width: Dp, radius: Dp, color: Color) = this.drawBehind {
+    drawIntoCanvas {
+        val paint = Paint().apply {
+            strokeWidth = width.toPx()
+            this.color = color
+            style = PaintingStyle.Stroke
+            pathEffect = PathEffect.dashPathEffect(floatArrayOf(10F, 10F), 0F)
+        }
+        it.drawRoundRect(
+            width.toPx(),
+            width.toPx(),
+            size.width - width.toPx(),
+            size.height - width.toPx(),
+            radius.toPx(),
+            radius.toPx(),
+            paint
+        )
+    }
+}
+
+fun Color.blend(
+    blendValue: Float,
+    other: Color
+): Color {
+    if (blendValue <= 0F) return this
+    val alpha = ((4.5f * ln(blendValue + 1)) + 2f) / 100f
+    return this.copy(alpha = alpha).compositeOver(other)
 }

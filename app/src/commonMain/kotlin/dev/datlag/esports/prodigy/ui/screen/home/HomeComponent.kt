@@ -1,9 +1,11 @@
 package dev.datlag.esports.prodigy.ui.screen.home
 
 import com.arkivanov.decompose.router.pages.ChildPages
+import com.arkivanov.decompose.router.slot.ChildSlot
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import dev.datlag.esports.prodigy.ui.dialog.DialogComponent
 import dev.datlag.esports.prodigy.ui.navigation.Component
 import dev.icerock.moko.resources.StringResource
 
@@ -17,6 +19,10 @@ interface HomeComponent : Component {
     fun selectPage(index: Int)
 
     val settingsVisible: Value<Boolean>
+
+    val dialog: Value<ChildSlot<DialogConfig, DialogComponent>>
+
+    fun showDialog(config: DialogConfig)
 
     data class PagerItem(
         internal val key: Int,

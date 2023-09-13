@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.icerock.moko.resources.FontResource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import java.io.File
 
 actual fun FontResource.toComposeFont(
     weight: FontWeight,
@@ -59,3 +60,6 @@ actual fun Tooltip(
 ) {
     content()
 }
+
+@Composable
+actual fun DragDrop(key: Any, predicate: (File) -> Boolean, result: (List<File>) -> Unit) { }

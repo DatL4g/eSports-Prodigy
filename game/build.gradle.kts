@@ -9,7 +9,7 @@ plugins {
 group = "dev.datlag.esports.prodigy.game"
 
 kotlin {
-    android("android")
+    androidTarget("android")
     jvm("desktop")
 
     sourceSets {

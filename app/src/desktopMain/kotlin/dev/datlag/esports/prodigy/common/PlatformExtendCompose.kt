@@ -20,11 +20,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.WindowState
 import dev.datlag.esports.prodigy.model.common.negativeIf
+import dev.datlag.esports.prodigy.model.common.scopeCatching
+import dev.datlag.esports.prodigy.ui.LocalWindow
 import dev.datlag.esports.prodigy.ui.Orientation
 import dev.icerock.moko.resources.FontResource
 import dev.icerock.moko.resources.compose.toComposeFont
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import java.awt.datatransfer.DataFlavor
+import java.awt.dnd.DnDConstants
+import java.awt.dnd.DropTarget
+import java.awt.dnd.DropTargetAdapter
+import java.awt.dnd.DropTargetDropEvent
+import java.awt.dnd.DropTargetListener
+import java.io.File
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -143,4 +152,33 @@ actual fun Tooltip(
         tooltip = tooltip,
         content = content
     )
+}
+
+@Composable
+actual fun DragDrop(key: Any, predicate: (File) -> Boolean, result: (List<File>) -> Unit) {
+    val currentWindow = LocalWindow.current
+
+    LaunchedEffect(key) {
+        currentWindow.dropTarget = DropTarget().apply {
+            addDropTargetListener(object : DropTargetAdapter() {
+                override fun drop(event: DropTargetDropEvent?) {
+                    event?.acceptDrop(DnDConstants.ACTION_REFERENCE)
+                    val dropped = event?.transferable?.getTransferData(DataFlavor.javaFileListFlavor) as? List<*>
+                    dropped?.mapNotNull {
+                        it as? File
+                    }?.mapNotNull {
+                        if (predicate(it)) {
+                            it
+                        } else {
+                            null
+                        }
+                    }?.let { list ->
+                        if (list.isNotEmpty()) {
+                            result(list)
+                        }
+                    }
+                }
+            })
+        }
+    }
 }
