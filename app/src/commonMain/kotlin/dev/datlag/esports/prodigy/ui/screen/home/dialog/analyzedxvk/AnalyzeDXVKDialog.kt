@@ -1,8 +1,11 @@
 package dev.datlag.esports.prodigy.ui.screen.home.dialog.analyzedxvk
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DataUsage
@@ -10,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,7 +27,9 @@ import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.game.dxvk.DxvkStateCache
 import dev.datlag.esports.prodigy.model.common.canReadSafely
 import dev.datlag.esports.prodigy.model.common.homeDirectory
+import dev.datlag.esports.prodigy.model.common.move
 import dev.datlag.esports.prodigy.ui.theme.SchemeTheme
+import kotlinx.coroutines.flow.mapNotNull
 import java.io.File
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -54,12 +60,12 @@ fun AnalyzeDXVKDialog(component: AnalyzeDXVKComponent) {
                 val caches by component.dxvkStateCaches.collectAsStateWithLifecycle(emptyList())
 
                 DragDropArea(component)
-                FlowRow(
+                Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     caches.forEach {
-                        CacheCard(it)
+                        CacheCard(it, component)
                     }
                 }
             }
@@ -100,7 +106,7 @@ private fun DragDropArea(component: AnalyzeDXVKComponent) {
         }
         FilePicker(
             show = showPicker,
-            initialDirectory = homeDirectory()?.absolutePath,
+            initialDirectory = homeDirectory()?.canonicalPath,
             fileExtensions = listOf("dxvk-cache")
         ) { file ->
             showPicker = false
@@ -117,11 +123,11 @@ private fun DragDropArea(component: AnalyzeDXVKComponent) {
 }
 
 @Composable
-private fun CacheCard(cache: DxvkStateCache) {
-    val isInvalid = cache.invalidEntries > 0
+private fun CacheCard(cache: DxvkStateCache, component: AnalyzeDXVKComponent) {
+    val isInvalid = remember(cache.invalidEntries) { cache.invalidEntries > 0 }
 
     SchemeTheme(key = if (isInvalid) SchemeTheme.COLOR_KEY.ERROR else null, ignoreSettings = true) {
-        OutlinedCard {
+        OutlinedCard(modifier = Modifier.fillMaxWidth().animateContentSize()) {
             Text(
                 modifier = Modifier.padding(16.dp).fillMaxWidth(),
                 text = cache.file.name,
@@ -131,7 +137,8 @@ private fun CacheCard(cache: DxvkStateCache) {
 
             Row(
                 modifier = Modifier.padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -155,6 +162,19 @@ private fun CacheCard(cache: DxvkStateCache) {
                     Text(text = cache.header.version.toString())
                     Text(text = cache.totalEntries.toString())
                     Text(text = cache.invalidEntries.toString())
+                }
+                Column(
+                    modifier = Modifier.weight(1F),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Button(
+                        onClick = {
+                            component.repairCache(cache)
+                        },
+                        enabled = isInvalid
+                    ) {
+                        Text("Repair")
+                    }
                 }
             }
         }

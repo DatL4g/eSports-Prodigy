@@ -21,6 +21,12 @@ sealed class DXVKException : Exception() {
             get() = "Got an invalid entry, this may occur on mismatching hash"
     }
 
+    data class VersionMismatch(val current: UInt, val other: UInt) : DXVKException() {
+
+        override val message: String
+            get() = "Can't combine the provided caches as their version does not equal. Current: $current, Other: $other"
+    }
+
     data class ReadError(val type: ReadErrorType) : DXVKException() {
 
         private val errorMessageType: String = when (type) {

@@ -103,7 +103,7 @@ class SteamFinderDialogComponent(
     override fun save() {
         scope.launchIO {
             appSettings.updatePaths(
-                steam = _unmanagedSteamDirs.value.mapNotNull { it.absolutePath }
+                steam = _unmanagedSteamDirs.value.mapNotNull { it.canonicalPath }
             )
             withMainContext {
                 onDismissed()

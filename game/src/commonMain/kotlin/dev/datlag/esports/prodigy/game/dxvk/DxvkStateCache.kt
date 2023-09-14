@@ -3,10 +3,7 @@ package dev.datlag.esports.prodigy.game.dxvk
 import dev.datlag.esports.prodigy.game.common.readU32
 import dev.datlag.esports.prodigy.game.common.writeU32
 import dev.datlag.esports.prodigy.game.dxvk.entry.DxvkStateCacheEntry
-import dev.datlag.esports.prodigy.model.common.openReadChannel
-import dev.datlag.esports.prodigy.model.common.openWriteChannel
-import dev.datlag.esports.prodigy.model.common.scopeCatching
-import dev.datlag.esports.prodigy.model.common.suspendCatching
+import dev.datlag.esports.prodigy.model.common.*
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -34,6 +31,22 @@ data class DxvkStateCache(
         writer.use {
             writeTo(it).getOrThrow()
         }
+    }
+
+    suspend fun combine(other: DxvkStateCache) = suspendCatching {
+        if (header.version != other.header.version) {
+            throw DXVKException.VersionMismatch(
+                header.version,
+                other.header.version
+            )
+        }
+        val newEntries = setFrom(entries, other.entries)
+        DxvkStateCache(
+            header = header.copy(entrySize = header.entrySize + other.header.entrySize),
+            entries = newEntries.toList(),
+            invalidEntries = invalidEntries + other.invalidEntries,
+            file = file
+        )
     }
 
     data class Header(

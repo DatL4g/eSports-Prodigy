@@ -4,8 +4,11 @@ import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import dev.datlag.esports.prodigy.common.ioScope
 import dev.datlag.esports.prodigy.common.launchIO
+import dev.datlag.esports.prodigy.game.dxvk.DXVKException
 import dev.datlag.esports.prodigy.game.dxvk.DxvkStateCache
 import dev.datlag.esports.prodigy.model.common.canReadSafely
+import dev.datlag.esports.prodigy.model.common.isSame
+import dev.datlag.esports.prodigy.model.common.move
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -25,6 +28,8 @@ class AnalyzeDXVKDialogComponent(
 
     private val _dxvkStateCaches: MutableStateFlow<List<DxvkStateCache>> = MutableStateFlow(emptyList())
     override val dxvkStateCaches: Flow<List<DxvkStateCache>> = _dxvkStateCaches
+
+    override val combineVersionMismatch: MutableStateFlow<Map<DxvkStateCache, Boolean>> = MutableStateFlow(mutableMapOf())
 
     @Composable
     override fun render() {
@@ -57,6 +62,29 @@ class AnalyzeDXVKDialogComponent(
                 } }.awaitAll().filterNotNull()
 
                 _dxvkStateCaches.emit(read)
+            }
+        }
+    }
+
+    override fun repairCache(cache: DxvkStateCache) {
+        scope.launchIO {
+            val originalName = cache.file.name
+            val backupFile = cache.file.move("$originalName.bak")
+
+            val loadBackupFile = cache.writeToFile(cache.file).isFailure
+            if (loadBackupFile) {
+                backupFile.move(originalName)
+            } else {
+                val currentList = _dxvkStateCaches.value.toMutableList()
+
+                val replaceIndex = currentList.indexOfFirst {
+                    it.file.canonicalPath == cache.file.canonicalPath
+                }
+                if (replaceIndex >= 0) {
+                    _dxvkStateCaches.emit(currentList.apply {
+                        set(replaceIndex, DxvkStateCache.fromFile(cache.file).getOrNull() ?: cache)
+                    })
+                }
             }
         }
     }

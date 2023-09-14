@@ -80,7 +80,7 @@ actual fun SettingsScreen(component: SettingsComponent) {
             Card(modifier = Modifier.padding(vertical = 8.dp).fillParentMaxWidth()) {
                 Text(
                     modifier = Modifier.padding(16.dp),
-                    text = it.absolutePath
+                    text = it.canonicalPath
                 )
             }
         }

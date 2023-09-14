@@ -297,6 +297,7 @@ private fun LabelFAB(label: String, onClick: () -> Unit, icon: @Composable () ->
         }
 
         SmallFloatingActionButton(
+            modifier = Modifier.padding(end = 4.dp),
             onClick = {
                 onClick()
             }

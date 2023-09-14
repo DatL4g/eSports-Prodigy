@@ -150,7 +150,7 @@ fun CacheCard(
                 }
             }
         }
-        DirectoryPicker(showExportPicker, homeDirectory()?.absolutePath) { path ->
+        DirectoryPicker(showExportPicker, homeDirectory()?.canonicalPath) { path ->
             showExportPicker = false
 
             if (path?.ifEmpty { null } != null) {

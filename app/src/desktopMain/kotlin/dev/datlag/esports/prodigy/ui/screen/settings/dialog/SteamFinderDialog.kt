@@ -65,7 +65,7 @@ fun SteamFinderDialog(component: SteamFinderComponent) {
                                         entryWidth.value.toDp()
                                     }, 300.dp)
                                 ),
-                                text = it.absolutePath,
+                                text = it.canonicalPath,
                                 overflow = TextOverflow.Ellipsis,
                                 softWrap = true,
                                 maxLines = 2
@@ -193,7 +193,7 @@ private fun ItemCard(
                 )
             }
             Text(
-                text = item.absolutePath
+                text = item.canonicalPath
             )
             if (!managed) {
                 IconButton(

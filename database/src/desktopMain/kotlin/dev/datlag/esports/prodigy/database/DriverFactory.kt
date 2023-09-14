@@ -9,13 +9,13 @@ actual class DriverFactory(
     private val counterStrikeFile: File
 ) {
     actual fun createHLTVDriver(): SqlDriver {
-        val driver = JdbcSqliteDriver("jdbc:sqlite:${hltvFile.absolutePath}")
+        val driver = JdbcSqliteDriver("jdbc:sqlite:${hltvFile.canonicalPath}")
         HLTVDB.Schema.create(driver)
         return driver
     }
 
     actual fun createCounterStrikeDriver(): SqlDriver {
-        val driver = JdbcSqliteDriver("jdbc:sqlite:${counterStrikeFile.absolutePath}")
+        val driver = JdbcSqliteDriver("jdbc:sqlite:${counterStrikeFile.canonicalPath}")
         CounterStrikeDB.Schema.create(driver)
         return driver
     }

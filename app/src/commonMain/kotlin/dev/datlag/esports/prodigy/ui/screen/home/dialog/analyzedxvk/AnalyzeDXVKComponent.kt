@@ -8,7 +8,10 @@ import java.io.File
 interface AnalyzeDXVKComponent : DialogComponent {
 
     val dxvkStateCaches: Flow<List<DxvkStateCache>>
+    val combineVersionMismatch: Flow<Map<DxvkStateCache, Boolean>>
 
     fun analyzeFiles(vararg files: File?)
     fun analyzeFiles(files: Collection<File>) = analyzeFiles(*files.toTypedArray())
+
+    fun repairCache(cache: DxvkStateCache)
 }

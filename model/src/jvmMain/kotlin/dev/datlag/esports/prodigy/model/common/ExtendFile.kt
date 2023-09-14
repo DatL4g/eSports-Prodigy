@@ -157,19 +157,17 @@ fun findSystemRoots(): List<File> {
         FileSystems.getDefault()?.rootDirectories?.mapNotNull {
             it?.toFile()
         }
-    }.getOrNull() ?: scopeCatching {
+    }.getOrNull()?.ifEmpty { null } ?: scopeCatching {
         File.listRoots().filterNotNull()
     }.getOrNull()?.toList()?.ifEmpty { null } ?: emptyList()).normalize()
 
     return (if (!windowsRoot.isNullOrBlank()) {
         roots.sortedByDescending {
-            it.absolutePath.trim().equals(windowsRoot, true) || it.isSame(File(windowsRoot))
+            it.canonicalPath.trim().equals(windowsRoot, true) || it.isSame(File(windowsRoot))
         }
     } else {
         roots
-    }).also {
-        println(it.map { f -> f.absolutePath })
-    }
+    })
 }
 
 fun File.isDirectorySafely(): Boolean {
