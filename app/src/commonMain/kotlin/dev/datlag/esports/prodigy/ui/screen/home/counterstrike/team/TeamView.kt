@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -130,6 +131,7 @@ fun TeamView(component: TeamComponent) {
                             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
                         ) {
                             val commonizer = LocalCommonizer.current
+                            val uriHandler = LocalUriHandler.current
 
                             team?.socials?.let { socials ->
                                 socials.instagram?.let {
@@ -150,9 +152,11 @@ fun TeamView(component: TeamComponent) {
                                 socials.twitter?.let {
                                     FilledIconButton(
                                         onClick = {
-                                            commonizer.openInBrowser(
+                                            if(commonizer.openInBrowser(
                                                 url = it
-                                            )
+                                            ).isFailure) {
+                                                uriHandler.openUri(it)
+                                            }
                                         }
                                     ) {
                                         Icon(
@@ -165,9 +169,11 @@ fun TeamView(component: TeamComponent) {
                                 socials.facebook?.let {
                                     FilledIconButton(
                                         onClick = {
-                                            commonizer.openInBrowser(
+                                            if(commonizer.openInBrowser(
                                                 url = it
-                                            )
+                                            ).isFailure) {
+                                                uriHandler.openUri(it)
+                                            }
                                         }
                                     ) {
                                         Icon(

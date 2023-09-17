@@ -49,6 +49,23 @@ data class DxvkStateCache(
         )
     }
 
+    suspend fun repair() = suspendCatching {
+        if (invalidEntries <= 0) {
+            return@suspendCatching this@DxvkStateCache
+        }
+
+        val originalName = file.name
+        val backupFile = file.move("$originalName.bak")
+
+        val loadBackupFile = writeToFile(file).isFailure
+        if (loadBackupFile) {
+            backupFile.move(originalName)
+            this@DxvkStateCache
+        } else {
+            fromFile(file).getOrNull() ?: this@DxvkStateCache
+        }
+    }
+
     data class Header(
         val magic: String,
         val version: UInt,

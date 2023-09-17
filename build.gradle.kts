@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.sekret) apply false
     alias(libs.plugins.serialization) apply false
     alias(libs.plugins.sqldelight) apply false
+    alias(libs.plugins.mosaic) apply false
     alias(libs.plugins.versions)
 }
 
@@ -27,9 +28,6 @@ buildscript {
         gradlePluginPortal()
         maven { url = uri("https://jitpack.io") }
         maven { url = uri("https://plugins.gradle.org/m2/") }
-    }
-    dependencies {
-        // classpath(libs.moko.resources.generator)
     }
 }
 

@@ -30,3 +30,11 @@ fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> {
         max(safeFrom, min(to, lastIndex))
     )
 }
+
+fun Collection<String>.contains(element: String, ignoreCase: Boolean): Boolean {
+    return if (ignoreCase) {
+        this.any { it.equals(element, true) }
+    } else {
+        this.contains(element)
+    }
+}

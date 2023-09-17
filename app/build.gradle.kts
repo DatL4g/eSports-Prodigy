@@ -66,7 +66,6 @@ kotlin {
                 api(libs.filepicker)
 
                 api(libs.windowsize.multiplatform)
-                api(libs.markdown.renderer)
                 api(libs.insetsx)
 
                 api(project(":color"))
@@ -123,6 +122,8 @@ kotlin {
                 }
 
                 implementation(libs.window.styler)
+
+                implementation(project(":terminal"))
             }
         }
     }

@@ -2,6 +2,7 @@ package dev.datlag.esports.prodigy.ui.theme
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -40,4 +41,8 @@ fun RightRoundedShape(leftSideRounding: Dp = 2.dp): Shape {
         topStart = CornerSize(leftSideRounding),
         bottomStart = CornerSize(leftSideRounding)
     )
+}
+
+fun MiddleRoundedShape(sideRounding: Dp = 2.dp): Shape {
+    return RoundedCornerShape(sideRounding)
 }

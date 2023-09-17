@@ -1,6 +1,7 @@
 [versions]
 aboutlibraries = "10.8.3"
 activity = "1.7.2"
+airline = "2.9.0"
 android = "8.0.2"
 android-core = "1.12.0"
 appcompat = "1.6.1"
@@ -32,9 +33,9 @@ ktorfit = "1.5.0"
 ktorfit-plugin = "1.0.0"
 lang = "3.13.0"
 lifecycle = "2.6.2"
-markdown-renderer = "0.8.0"
 material = "1.9.0"
 moko-resources = "0.23.0"
+mosaic = "0.9.0"
 multidex = "2.0.1"
 napier = "2.6.1"
 osdetector = "1.7.3"
@@ -56,6 +57,7 @@ aboutlibraries =  { group = "com.mikepenz", name = "aboutlibraries-core", versio
 aboutlibraries-compose =  { group = "com.mikepenz", name = "aboutlibraries-compose", version.ref = "aboutlibraries" }
 activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+airline = { group = "com.github.rvesse", name = "airline", version.ref = "airline" }
 android = { group = "androidx.core", name = "core-ktx", version.ref = "android-core" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 appdirs = { group = "net.harawata", name = "appdirs", version.ref = "appdirs" }
@@ -92,7 +94,6 @@ ktor-serialization-xml = { group = "io.ktor", name = "ktor-serialization-kotlinx
 ktorfit = { group = "de.jensklingenberg.ktorfit", name = "ktorfit-lib", version.ref = "ktorfit" }
 lang = { group = "org.apache.commons", name = "commons-lang3", version.ref = "lang" }
 lifecycle = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
-markdown-renderer = { group = "com.mikepenz", name = "multiplatform-markdown-renderer", version.ref = "markdown-renderer" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 moko-resources-compose = { group = "dev.icerock.moko", name = "resources-compose", version.ref = "moko-resources" }
 moko-resources-generator = { group = "dev.icerock.moko", name = "resources-generator", version.ref = "moko-resources" }
@@ -124,6 +125,7 @@ compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfit-plugin" }
 moko-resources = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko-resources" }
+mosaic = { id = "com.jakewharton.mosaic", version.ref = "mosaic" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 osdetector = { id = "com.google.osdetector", version.ref = "osdetector" }
 parcelize = { id = "kotlin-parcelize", version.ref = "kotlin" }

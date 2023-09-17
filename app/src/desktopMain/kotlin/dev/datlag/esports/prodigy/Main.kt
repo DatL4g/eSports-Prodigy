@@ -23,6 +23,7 @@ import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.model.common.normalize
 import dev.datlag.esports.prodigy.module.NetworkModule
 import dev.datlag.esports.prodigy.other.Commonizer
+import dev.datlag.esports.prodigy.terminal.CLI
 import dev.datlag.esports.prodigy.ui.*
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
 import dev.icerock.moko.resources.desc.Resource
@@ -39,7 +40,23 @@ import org.kodein.di.instance
 import java.io.File
 
 @OptIn(ExperimentalDecomposeApi::class, ExperimentalComposeUiApi::class)
-fun main() {
+fun main(vararg args: String) {
+    if (args.isEmpty()) {
+        runWindow()
+    } else {
+        parseCmd(args.toList())
+    }
+}
+
+private fun parseCmd(args: Collection<String>) {
+    CLI.initAndRun(args) {
+        println("Could not parse commandline arguments, launching UI.")
+        runWindow()
+    }
+}
+
+@OptIn(ExperimentalDecomposeApi::class)
+private fun runWindow() {
     val appTitle = StringDesc.Resource(SharedRes.strings.app_name).localized()
     AppIO.applyTitle(appTitle)
 

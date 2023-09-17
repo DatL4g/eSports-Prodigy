@@ -13,6 +13,7 @@ include("charts")
 include("network")
 include("database")
 include("compose-collapsing-toolbar")
+include("terminal")
 
 pluginManagement {
     repositories {

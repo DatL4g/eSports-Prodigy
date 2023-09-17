@@ -19,14 +19,13 @@ import it.skrape.fetcher.response
 import it.skrape.fetcher.skrape
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import org.jsoup.Jsoup
 
-class WebRepository() {
+class WebRepository {
 
     private val options = MutableDataSet().apply {
         set(Parser.EXTENSIONS, listOf(
-            TablesExtension.create(),
-            StrikethroughExtension.create(),
-            SubscriptExtension.create()
+            TablesExtension.create()
         ))
         set(Parser.HTML_BLOCK_DEEP_PARSER, true)
         set(Parser.HTML_BLOCK_DEEP_PARSE_NON_BLOCK, true)
@@ -45,8 +44,17 @@ class WebRepository() {
                 if (this.responseStatus.code !in 200..204) {
                     null
                 } else {
-                    val contentText = document.findFirstOrNull(".newsitem")?.text ?: document.wholeText
-                    htmlToMarkdownConverter.convert(contentText)
+                    val contentText = document.findFirstOrNull(".newsitem")?.html ?: document.html
+                    val parsed = Jsoup.parse(contentText, url)
+
+                    parsed.select("a").forEach { e ->
+                        e.attr("href", e.absUrl("href"))
+                    }
+                    parsed.select("img").forEach { e ->
+                        e.attr("src", e.absUrl("src"))
+                    }
+
+                    htmlToMarkdownConverter.convert(parsed.html())
                 }
             }
         })
