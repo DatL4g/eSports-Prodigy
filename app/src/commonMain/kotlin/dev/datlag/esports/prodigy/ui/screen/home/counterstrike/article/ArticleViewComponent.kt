@@ -12,13 +12,12 @@ import org.kodein.di.instance
 
 class ArticleViewComponent(
     componentContext: ComponentContext,
-    private val href: String,
+    override val href: String,
     override val di: DI,
     private val onBack: () -> Unit
 ) : ArticleComponent, ComponentContext by componentContext {
 
     private val webRepository: WebRepository by di.instance()
-    override val content: Flow<String?> = webRepository.skrapeAsMarkdown(href).flowOn(ioDispatcher())
 
     @Composable
     override fun render() {

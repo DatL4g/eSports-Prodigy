@@ -14,6 +14,10 @@ import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.moriatsushi.insetsx.rememberWindowInsetsController
+import com.svenjacobs.reveal.RevealCanvas
+import com.svenjacobs.reveal.RevealCanvasState
+import com.svenjacobs.reveal.RevealState
+import com.svenjacobs.reveal.rememberRevealCanvasState
 import dev.datlag.esports.prodigy.color.utils.ThemeUtils
 import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.common.getValueBlocking
@@ -35,6 +39,8 @@ val LocalLifecycleOwner = compositionLocalOf<LifecycleOwner> {
         override val lifecycle: Lifecycle = LifecycleRegistry()
     }
 }
+val LocalRevealCanvasState = compositionLocalOf<RevealCanvasState> { error("No RevealCanvas state provided") }
+val LocalRevealState = compositionLocalOf<RevealState> { error("No Reveal state provided") }
 
 @Composable
 fun App(
@@ -81,8 +87,19 @@ fun App(
                         color = MaterialTheme.colorScheme.background,
                         contentColor = MaterialTheme.colorScheme.onBackground
                     ) {
-                        ProvideColorSchemeThemes()
-                        content()
+                        val revealCanvasState = rememberRevealCanvasState()
+
+                        RevealCanvas(
+                            modifier = Modifier.fillMaxSize(),
+                            revealCanvasState = revealCanvasState
+                        ) {
+                            CompositionLocalProvider(
+                                LocalRevealCanvasState provides revealCanvasState
+                            ) {
+                                ProvideColorSchemeThemes()
+                                content()
+                            }
+                        }
                     }
                 }
             }

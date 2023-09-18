@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ArticleComponent : Component {
 
-    val content: Flow<String?>
+    val href: String
 
     fun back()
 }

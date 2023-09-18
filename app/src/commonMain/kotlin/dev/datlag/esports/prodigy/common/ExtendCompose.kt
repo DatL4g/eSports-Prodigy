@@ -5,6 +5,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -201,4 +203,17 @@ fun Color.blend(
     if (blendValue <= 0F) return this
     val alpha = ((4.5f * ln(blendValue + 1)) + 2f) / 100f
     return this.copy(alpha = alpha).compositeOver(other)
+}
+
+@Composable
+fun CornerSize.toDp(shapeSize: Size): Dp = with(LocalDensity.current) {
+    this@toDp.toPx(shapeSize, this).toDp()
+}
+
+@Composable
+fun CornerBasedShape.radiusDp(shapeSize: Size): Dp {
+    val topMax = max(this.topStart.toDp(shapeSize), this.topEnd.toDp(shapeSize))
+    val bottomMax = max(this.bottomStart.toDp(shapeSize), this.bottomEnd.toDp(shapeSize))
+
+    return max(topMax, bottomMax)
 }

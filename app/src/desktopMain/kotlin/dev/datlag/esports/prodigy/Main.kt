@@ -8,7 +8,6 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
-import androidx.compose.ui.window.singleWindowApplication
 import androidx.datastore.core.DataStore
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.ExperimentalDecomposeApi
@@ -16,6 +15,7 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleC
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.sun.javafx.application.PlatformImpl
 import dev.datlag.esports.prodigy.common.basedOnSize
 import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
@@ -77,6 +77,11 @@ private fun runWindow() {
     }
     Napier.base(DebugAntilog())
 
+    val finishListener = object : PlatformImpl.FinishListener {
+        override fun exitCalled() { }
+        override fun idle(implicitExit: Boolean) { }
+    }
+
     singleWindowApplication(
         state = windowState,
         title = appTitle,
@@ -93,6 +98,15 @@ private fun runWindow() {
                 }
             }
             true
+        },
+        exitProcessOnExit = true,
+        onCloseRequest = {
+            PlatformImpl.removeListener(finishListener)
+
+            false
+        },
+        onCreateApplication = {
+            PlatformImpl.addListener(finishListener)
         }
     ) {
         LifecycleController(lifecycle, windowState)

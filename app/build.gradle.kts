@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.osdetector)
     id("kotlin-parcelize") apply false
     alias(libs.plugins.serialization)
+    alias(libs.plugins.sekret)
 }
 
 val artifact = "dev.datlag.esports.prodigy"
@@ -26,6 +27,16 @@ val appCode = 100
 
 group = artifact
 version = appVersion
+
+val javafx = CompileOptions.jvmTarget
+val javafxModules = listOf(
+    "javafx.base",
+    "javafx.graphics", // depends on base
+    "javafx.controls", // depends on base & graphics
+    "javafx.media", // depends on base & graphics
+    "javafx.swing", // depends on base & graphics
+    "javafx.web", // depends on base & graphics & controls & media
+)
 
 kotlin {
     androidTarget("android") {
@@ -64,6 +75,9 @@ kotlin {
                 api(libs.kamel)
                 api(libs.napier)
                 api(libs.filepicker)
+                api(libs.webview)
+                api(libs.reveal)
+                api(libs.reveal.shapes)
 
                 api(libs.windowsize.multiplatform)
                 api(libs.insetsx)
@@ -84,7 +98,6 @@ kotlin {
 
             apply(plugin = "kotlin-parcelize")
             apply(plugin = "org.gradle.android.cache-fix")
-            apply(plugin = "net.afanasev.sekret")
             dependencies {
                 implementation(libs.activity)
                 implementation(libs.activity.compose)
@@ -103,7 +116,6 @@ kotlin {
         val desktopMain by getting {
             dependsOn(commonMain)
 
-            apply(plugin = "net.afanasev.sekret")
             dependencies {
                 implementation(compose.desktop.currentOs)
 
@@ -122,6 +134,11 @@ kotlin {
                 }
 
                 implementation(libs.window.styler)
+
+                val javaFxSuffix = getJavaFxSuffix()
+                javafxModules.forEach { artifact ->
+                    implementation(javaFxLib(artifact, javafx, javaFxSuffix))
+                }
 
                 implementation(project(":terminal"))
             }
@@ -323,6 +340,7 @@ compose {
                 }
 
                 includeAllModules = true
+                javafxModules.forEach(modules::add)
             }
         }
     }
@@ -361,6 +379,21 @@ fun getHost(): Host {
             }
         }
     }
+}
+
+fun getJavaFxSuffix(): String {
+    return when (osdetector.classifier) {
+        "linux-x86_64" -> "linux"
+        "linux-aarch_64" -> "linux-aarch64"
+        "windows-x86_64" -> "win"
+        "osx-x86_64" -> "mac"
+        "osx-aarch_64" -> "mac-aarch64"
+        else -> getHost().label
+    }
+}
+
+fun javaFxLib(artifactId: String, version: String, suffix: String): String {
+    return "org.openjfx:${artifactId.replace('.', '-')}:${version}:${suffix}"
 }
 
 enum class Host(val label: String) {

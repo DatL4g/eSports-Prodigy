@@ -1,17 +1,18 @@
 package dev.datlag.esports.prodigy.ui.screen.home.counterstrike.article
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
+import web.WebView
+import web.rememberWebViewState
+import web.rememberWebViewStateWithHTMLData
 
 @Composable
 fun ArticleView(component: ArticleComponent) {
-    val content by component.content.collectAsStateWithLifecycle(initialValue = null)
+    val state = rememberWebViewState(component.href)
 
-    if (content.isNullOrBlank()) {
-        Text(text = "Loading")
-    } else {
-        Text(text = "Finished")
-    }
+    WebView(state, modifier = Modifier.fillMaxSize())
 }

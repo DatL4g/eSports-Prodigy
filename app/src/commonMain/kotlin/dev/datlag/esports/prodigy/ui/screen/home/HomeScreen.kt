@@ -18,6 +18,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -27,33 +28,66 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.pages.Pages
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import com.svenjacobs.reveal.*
+import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.ui.custom.ExpandedPages
 import dev.icerock.moko.resources.ImageResource
 import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import dev.datlag.esports.prodigy.common.onClick
+import dev.datlag.esports.prodigy.common.radiusDp
+import dev.datlag.esports.prodigy.ui.LocalRevealCanvasState
+import dev.datlag.esports.prodigy.ui.LocalRevealState
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun HomeScreen(component: HomeComponent) {
     val dialogState by component.dialog.subscribeAsState()
+    val revealState = rememberRevealState()
+    val scope = rememberCoroutineScope()
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        when (calculateWindowSizeClass().widthSizeClass) {
-            WindowWidthSizeClass.Compact -> CompactScreen(component)
-            WindowWidthSizeClass.Medium -> MediumScreen(component)
-            WindowWidthSizeClass.Expanded -> ExpandedScreen(component)
+    Reveal(
+        modifier = Modifier.fillMaxSize(),
+        revealCanvasState = LocalRevealCanvasState.current,
+        revealState = revealState,
+        onOverlayClick = {
+            scope.launchIO { revealNextOrHide(revealState, it) }
+        },
+        overlayContent = {
+            RevealOverlay(it)
         }
+    ) {
+        CompositionLocalProvider(
+            LocalRevealState provides revealState
+        ) {
+            LaunchedEffect(revealState) {
+                if (revealState.isVisible) {
+                    return@LaunchedEffect
+                }
+                delay(2.seconds)
+                revealState.reveal(RevealKeys.Navigation)
+            }
 
-        dialogState.child?.also { (_, instance) ->
-            instance.render()
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                when (calculateWindowSizeClass().widthSizeClass) {
+                    WindowWidthSizeClass.Compact -> CompactScreen(component)
+                    WindowWidthSizeClass.Medium -> MediumScreen(component)
+                    WindowWidthSizeClass.Expanded -> ExpandedScreen(component)
+                }
+
+                dialogState.child?.also { (_, instance) ->
+                    instance.render()
+                }
+            }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalDecomposeApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalDecomposeApi::class)
 @Composable
 fun CompactScreen(
     component: HomeComponent
@@ -65,7 +99,10 @@ fun CompactScreen(
             ExtensionFAB(component)
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(modifier = Modifier.revealable(
+                key = RevealKeys.Navigation,
+                state = LocalRevealState.current
+            )) {
                 component.pagerItems.forEach { item ->
                     NavigationBarItem(
                         selected = selectedPage == item.key,
@@ -98,7 +135,7 @@ fun CompactScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalDecomposeApi::class)
+@OptIn(ExperimentalDecomposeApi::class)
 @Composable
 fun MediumScreen(
     component: HomeComponent
@@ -112,7 +149,10 @@ fun MediumScreen(
     ) {
         Row(modifier = Modifier.padding(it)) {
             NavigationRail(
-                modifier = Modifier.fillMaxHeight()
+                modifier = Modifier.fillMaxHeight().revealable(
+                    key = RevealKeys.Navigation,
+                    state = LocalRevealState.current
+                )
             ) {
                 Spacer(modifier = Modifier.weight(1F))
                 component.pagerItems.forEach { item ->
@@ -164,6 +204,10 @@ fun ExpandedScreen(
                         topEnd = 16.dp,
                         bottomEnd = 16.dp,
                         bottomStart = 0.dp
+                    ),
+                    modifier = Modifier.revealable(
+                        key = RevealKeys.Navigation,
+                        state = LocalRevealState.current
                     )
                 ) {
                     Spacer(modifier = Modifier.weight(1F))
@@ -265,7 +309,12 @@ private fun ExtensionFAB(component: HomeComponent) {
         FloatingActionButton(
             onClick = {
                 showOtherFABs = !showOtherFABs
-            }
+            },
+            modifier = Modifier.revealable(
+                key = RevealKeys.Features,
+                state = LocalRevealState.current,
+                shape = RevealShape.RoundRect(MaterialTheme.shapes.medium.radiusDp(Size.Unspecified))
+            )
         ) {
             Icon(
                 imageVector = Icons.Default.Extension,
@@ -311,3 +360,10 @@ private fun <T> bouncySpring() = spring<T>(
     dampingRatio = Spring.DampingRatioMediumBouncy,
     stiffness = Spring.StiffnessMedium
 )
+
+private suspend fun revealNextOrHide(revealState: RevealState, key: Key) {
+    when (key) {
+        RevealKeys.Navigation -> revealState.reveal(RevealKeys.Features)
+        else -> revealState.hide()
+    }
+}
