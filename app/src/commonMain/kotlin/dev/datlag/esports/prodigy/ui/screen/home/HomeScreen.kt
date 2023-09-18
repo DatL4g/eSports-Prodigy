@@ -101,7 +101,8 @@ fun CompactScreen(
         bottomBar = {
             NavigationBar(modifier = Modifier.revealable(
                 key = RevealKeys.Navigation,
-                state = LocalRevealState.current
+                state = LocalRevealState.current,
+                padding = PaddingValues(0.dp)
             )) {
                 component.pagerItems.forEach { item ->
                     NavigationBarItem(
@@ -151,7 +152,8 @@ fun MediumScreen(
             NavigationRail(
                 modifier = Modifier.fillMaxHeight().revealable(
                     key = RevealKeys.Navigation,
-                    state = LocalRevealState.current
+                    state = LocalRevealState.current,
+                    padding = PaddingValues(0.dp)
                 )
             ) {
                 Spacer(modifier = Modifier.weight(1F))
@@ -207,7 +209,8 @@ fun ExpandedScreen(
                     ),
                     modifier = Modifier.revealable(
                         key = RevealKeys.Navigation,
-                        state = LocalRevealState.current
+                        state = LocalRevealState.current,
+                        padding = PaddingValues(0.dp)
                     )
                 ) {
                     Spacer(modifier = Modifier.weight(1F))

@@ -15,7 +15,6 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleC
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.sun.javafx.application.PlatformImpl
 import dev.datlag.esports.prodigy.common.basedOnSize
 import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
@@ -77,11 +76,6 @@ private fun runWindow() {
     }
     Napier.base(DebugAntilog())
 
-    val finishListener = object : PlatformImpl.FinishListener {
-        override fun exitCalled() { }
-        override fun idle(implicitExit: Boolean) { }
-    }
-
     singleWindowApplication(
         state = windowState,
         title = appTitle,
@@ -99,15 +93,7 @@ private fun runWindow() {
             }
             true
         },
-        exitProcessOnExit = true,
-        onCloseRequest = {
-            PlatformImpl.removeListener(finishListener)
-
-            false
-        },
-        onCreateApplication = {
-            PlatformImpl.addListener(finishListener)
-        }
+        exitProcessOnExit = true
     ) {
         LifecycleController(lifecycle, windowState)
 
