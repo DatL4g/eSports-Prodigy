@@ -27,7 +27,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.datlag.esports.prodigy.SharedRes
+import dev.datlag.esports.prodigy.common.bounceClick
 import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
+import dev.datlag.esports.prodigy.common.pressClick
 import dev.datlag.esports.prodigy.common.scaledDp
 import dev.datlag.esports.prodigy.game.common.containsInvalidEntries
 import dev.datlag.esports.prodigy.game.model.LocalGame
@@ -152,7 +154,7 @@ private fun MainView(component: DeviceComponent, modifier: Modifier = Modifier) 
             Column(
                 modifier = Modifier.padding(vertical = 16.dp).onClick {
                     component.gameClicked(game)
-                }
+                }.bounceClick(0.95F)
             ) {
                 Card(
                     modifier = Modifier.padding(vertical = 16.dp).fillMaxWidth()

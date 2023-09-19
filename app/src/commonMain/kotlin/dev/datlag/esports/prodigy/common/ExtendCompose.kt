@@ -3,6 +3,10 @@ package dev.datlag.esports.prodigy.common
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CornerBasedShape
@@ -18,11 +22,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.*
+import dev.datlag.esports.prodigy.model.common.negative
 import dev.datlag.esports.prodigy.ui.LocalScaling
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.ln
 import kotlin.math.max
 
@@ -216,4 +223,43 @@ fun CornerBasedShape.radiusDp(shapeSize: Size): Dp {
     val bottomMax = max(this.bottomStart.toDp(shapeSize), this.bottomEnd.toDp(shapeSize))
 
     return max(topMax, bottomMax)
+}
+
+fun Modifier.bounceClick(minScale: Float = 0.9F) = composed {
+    var buttonState by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(if (buttonState) minScale else 1F)
+
+    graphicsLayer {
+        scaleX = scale
+        scaleY = scale
+    }.pointerInput(buttonState) {
+        awaitPointerEventScope {
+            buttonState = if (buttonState) {
+                waitForUpOrCancellation()
+                false
+            } else {
+                awaitFirstDown(false)
+                true
+            }
+        }
+    }
+}
+
+fun Modifier.pressClick(maxTranslation: Float = 10F) = composed {
+    var buttonState by remember { mutableStateOf(false) }
+    val translation by animateFloatAsState(if (buttonState) maxTranslation else 0F)
+
+    graphicsLayer {
+        translationY = translation
+    }.pointerInput(buttonState) {
+        awaitPointerEventScope {
+            buttonState = if (buttonState) {
+                waitForUpOrCancellation()
+                false
+            } else {
+                awaitFirstDown(false)
+                true
+            }
+        }
+    }
 }

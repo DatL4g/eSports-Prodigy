@@ -29,6 +29,7 @@ import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.pages.Pages
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.svenjacobs.reveal.*
+import dev.datlag.esports.prodigy.common.bounceClick
 import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.ui.custom.ExpandedPages
 import dev.icerock.moko.resources.ImageResource
@@ -62,14 +63,6 @@ fun HomeScreen(component: HomeComponent) {
         CompositionLocalProvider(
             LocalRevealState provides revealState
         ) {
-            LaunchedEffect(revealState) {
-                if (revealState.isVisible) {
-                    return@LaunchedEffect
-                }
-                delay(2.seconds)
-                revealState.reveal(RevealKeys.Navigation)
-            }
-
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -185,7 +178,7 @@ fun MediumScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalDecomposeApi::class)
+@OptIn(ExperimentalDecomposeApi::class)
 @Composable
 fun ExpandedScreen(
     component: HomeComponent
@@ -317,7 +310,7 @@ private fun ExtensionFAB(component: HomeComponent) {
                 key = RevealKeys.Features,
                 state = LocalRevealState.current,
                 shape = RevealShape.RoundRect(MaterialTheme.shapes.medium.radiusDp(Size.Unspecified))
-            )
+            ).bounceClick()
         ) {
             Icon(
                 imageVector = Icons.Default.Extension,
