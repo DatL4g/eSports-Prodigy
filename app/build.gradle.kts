@@ -137,7 +137,7 @@ kotlin {
 
                 val javaFxSuffix = getJavaFxSuffix()
                 javafxModules.forEach { artifact ->
-                    implementation(javaFxLib(artifact, javafx, javaFxSuffix))
+                    runtimeOnly(javaFxLib(artifact, javafx, javaFxSuffix))
                 }
 
                 implementation(project(":terminal"))
