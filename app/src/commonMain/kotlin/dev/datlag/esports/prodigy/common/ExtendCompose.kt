@@ -12,6 +12,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -26,6 +27,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.*
+import com.svenjacobs.reveal.RevealShape
 import dev.datlag.esports.prodigy.model.common.negative
 import dev.datlag.esports.prodigy.ui.LocalScaling
 import kotlinx.coroutines.launch
@@ -223,6 +225,11 @@ fun CornerBasedShape.radiusDp(shapeSize: Size): Dp {
     val bottomMax = max(this.bottomStart.toDp(shapeSize), this.bottomEnd.toDp(shapeSize))
 
     return max(topMax, bottomMax)
+}
+
+@Composable
+fun CornerBasedShape.revealShape(shapeSize: Size): RevealShape {
+    return RevealShape.RoundRect(this.radiusDp(Size.Unspecified))
 }
 
 fun Modifier.bounceClick(minScale: Float = 0.9F) = composed {

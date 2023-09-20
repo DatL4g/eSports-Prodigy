@@ -3,6 +3,8 @@ TODO
 app/release/*
 !app/release/.gitkeep
 app/resources/common/*
+app/jcef-bundle
+app/jcef-bundle/*
 
 # Ignore changes to generated file
 sekret/src/nativeMain/kotlin/sekret.kt

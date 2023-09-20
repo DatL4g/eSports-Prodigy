@@ -24,6 +24,7 @@ import dev.datlag.esports.prodigy.module.NetworkModule
 import dev.datlag.esports.prodigy.other.Commonizer
 import dev.datlag.esports.prodigy.terminal.CLI
 import dev.datlag.esports.prodigy.ui.*
+import dev.datlag.esports.prodigy.ui.browser.Cef
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
@@ -76,7 +77,7 @@ private fun runWindow() {
     }
     Napier.base(DebugAntilog())
 
-    singleWindowApplication(
+    disposableSingleWindowApplication(
         state = windowState,
         title = appTitle,
         onKeyEvent = {
@@ -133,6 +134,8 @@ private fun runWindow() {
         }
 
         val celebrity by SteamLauncher.loggedInUsers.mapNotNull { it.firstNotNullOfOrNull { u -> u.celebrity } }.collectAsStateWithLifecycle(initialValue = null)
+
+        Cef.initAsync(rememberCoroutineScope())
 
         CompositionLocalProvider(
             LocalOrientation provides Orientation.basedOnSize(windowState),

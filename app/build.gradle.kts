@@ -75,7 +75,7 @@ kotlin {
                 api(libs.kamel)
                 api(libs.napier)
                 api(libs.filepicker)
-                api(libs.webview)
+                // api(libs.webview)
                 api(libs.reveal)
                 api(libs.reveal.shapes)
 
@@ -127,6 +127,7 @@ kotlin {
                 implementation(libs.ktor.okhttp)
                 implementation(libs.sekret)
 
+                implementation(libs.jcef.maven)
                 implementation(libs.jna)
                 implementation(libs.jna.platform)
                 implementation(libs.jfa.get().toString()) {

@@ -20,6 +20,7 @@ filepicker = "2.1.0"
 flower = "3.0.0"
 grpc = "1.58.0"
 instesx = "0.1.0-alpha10"
+jcef-maven = "110.0.25.1"
 jfa = "1.2.0"
 jna = "5.13.0"
 kamel = "0.7.3"
@@ -80,6 +81,7 @@ flower = { group = "io.github.hadiyarajesh.flower-core", name = "flower", versio
 flowredux = { group = "com.freeletics.flowredux", name = "flowredux", version.ref = "flowredux" }
 grpc = { group = "io.grpc", name = "grpc-protobuf", version.ref = "grpc" }
 insetsx = { group = "com.moriatsushi.insetsx", name = "insetsx", version.ref = "instesx" }
+jcef-maven = { group = "me.friwi", name = "jcefmaven", version.ref = "jcef-maven" }
 jfa = { group = "de.jangassen", name = "jfa", version.ref = "jfa" }
 jna = { group = "net.java.dev.jna", name = "jna", version.ref = "jna" }
 jna-platform = { group = "net.java.dev.jna", name = "jna-platform", version.ref = "jna" }

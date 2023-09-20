@@ -9,3 +9,6 @@ actual val Dispatchers.DeviceMain: MainCoroutineDispatcher
 
 actual val Dispatchers.DeviceIO: CoroutineDispatcher
     get() = IO
+
+actual val Dispatchers.DeviceDefault : CoroutineDispatcher
+    get() = Default

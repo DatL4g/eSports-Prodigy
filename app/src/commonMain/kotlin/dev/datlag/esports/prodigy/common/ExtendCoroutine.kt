@@ -28,9 +28,11 @@ fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope = C
 
 fun LifecycleOwner.ioScope() = CoroutineScope(ioDispatcher() + SupervisorJob(), lifecycle)
 fun LifecycleOwner.mainScope() = CoroutineScope(mainDispatcher() + SupervisorJob(), lifecycle)
+fun LifecycleOwner.defaultScope() = CoroutineScope(defaultDispatcher() + SupervisorJob(), lifecycle)
 
 fun mainDispatcher(): MainCoroutineDispatcher = Dispatchers.DeviceMain
 fun ioDispatcher(): CoroutineDispatcher = Dispatchers.DeviceIO
+fun defaultDispatcher(): CoroutineDispatcher = Dispatchers.DeviceDefault
 
 fun CoroutineScope.launchIO(block: suspend CoroutineScope.() -> Unit): Job {
     return this.launch(ioDispatcher()) {
@@ -44,12 +46,22 @@ fun CoroutineScope.launchMain(block: suspend CoroutineScope.() -> Unit): Job {
     }
 }
 
+fun CoroutineScope.launchDefault(block: suspend CoroutineScope.() -> Unit): Job {
+    return this.launch(defaultDispatcher()) {
+        block()
+    }
+}
+
 fun LifecycleOwner.launchIO(block: suspend  CoroutineScope.() -> Unit): Job {
     return ioScope().launchIO(block)
 }
 
 fun LifecycleOwner.launchMain(block: suspend  CoroutineScope.() -> Unit): Job {
     return mainScope().launchMain(block)
+}
+
+fun LifecycleOwner.launchDefault(block: suspend  CoroutineScope.() -> Unit): Job {
+    return defaultScope().launchDefault(block)
 }
 
 suspend fun <T> withIOContext(
@@ -68,6 +80,14 @@ suspend fun <T> withMainContext(
     }
 }
 
+suspend fun <T> withDefaultContext(
+    block: suspend CoroutineScope.() -> T
+): T {
+    return withContext(defaultDispatcher()) {
+        block()
+    }
+}
+
 fun <T> runBlockingIO(block: suspend CoroutineScope.() -> T): T {
     return runBlocking(ioDispatcher()) {
         block()
@@ -76,6 +96,12 @@ fun <T> runBlockingIO(block: suspend CoroutineScope.() -> T): T {
 
 fun <T> runBlockingMain(block: suspend CoroutineScope.() -> T): T {
     return runBlocking(mainDispatcher()) {
+        block()
+    }
+}
+
+fun <T> runBlockingDefault(block: suspend CoroutineScope.() -> T): T {
+    return runBlocking(defaultDispatcher()) {
         block()
     }
 }
