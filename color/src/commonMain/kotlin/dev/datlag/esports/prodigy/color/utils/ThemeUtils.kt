@@ -86,7 +86,13 @@ object ThemeUtils {
 
         val result = QuantizerCelebi.quantize(pixelColors.toIntArray(), 128)
         val ranked = Score.score(result)
-        return ranked[0]
+        return ranked.firstNotNullOfOrNull {
+            if (ignoreColor(it)) {
+                null
+            } else {
+                it
+            }
+        } ?: ranked[0]
     }
 
     internal fun byteArrayToTheme(pixels: ByteArray, hasAlpha: Boolean, vararg customColors: CustomColor): Theme {
@@ -96,11 +102,35 @@ object ThemeUtils {
     internal fun intArrayMainColor(pixels: IntArray): Int {
         val result = QuantizerCelebi.quantize(pixels, 128)
         val ranked = Score.score(result)
-        return ranked[0]
+        return ranked.firstNotNullOfOrNull {
+            if (ignoreColor(it)) {
+                null
+            } else {
+                it
+            }
+        } ?: ranked[0]
     }
 
     internal fun intArrayToTheme(pixels: IntArray, vararg customColors: CustomColor): Theme {
         return themeFromSourceColor(intArrayMainColor(pixels), *customColors)
     }
 
+    internal fun ignoreColor(color: Int): Boolean {
+        val ignoredIntColors = setOf<Int>(
+            0x000000,
+            0xFFFFFF,
+            -16777216,
+            -1
+        )
+        val ignoredLongColors = setOf<Long>(
+            0xFF000000,
+            0xFFFFFFFF,
+            0x00FFFFFF,
+            0x00000000
+        )
+
+        return ignoredIntColors.any { it == color } || ignoredLongColors.any {
+            it == color.toLong() || it.toInt() == color
+        }
+    }
 }

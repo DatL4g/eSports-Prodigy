@@ -5,6 +5,8 @@ app/release/*
 app/resources/common/*
 app/jcef-bundle
 app/jcef-bundle/*
+jcef-bundle
+jcef-bundle/*
 
 # Ignore changes to generated file
 sekret/src/nativeMain/kotlin/sekret.kt

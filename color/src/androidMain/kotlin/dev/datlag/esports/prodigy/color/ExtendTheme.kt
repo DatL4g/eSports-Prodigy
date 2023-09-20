@@ -26,7 +26,13 @@ fun ThemeUtils.themeFromImage(image: Bitmap, vararg customColors: CustomColor = 
 
     val result = QuantizerCelebi.quantize(pixelColors.toIntArray(), 128)
     val ranked = Score.score(result)
-    val top = ranked[0]
+    val top = ranked.firstNotNullOfOrNull {
+        if (ignoreColor(it)) {
+            null
+        } else {
+            it
+        }
+    } ?: ranked[0]
 
     return themeFromSourceColor(top, *customColors)
 }
