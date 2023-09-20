@@ -26,6 +26,7 @@ import dev.datlag.esports.prodigy.terminal.CLI
 import dev.datlag.esports.prodigy.ui.*
 import dev.datlag.esports.prodigy.ui.browser.Cef
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
+import dev.datlag.sekret.Sekret
 import dev.icerock.moko.resources.desc.Resource
 import dev.icerock.moko.resources.desc.StringDesc
 import io.github.aakira.napier.DebugAntilog
@@ -136,6 +137,8 @@ private fun runWindow() {
         val celebrity by SteamLauncher.loggedInUsers.mapNotNull { it.firstNotNullOfOrNull { u -> u.celebrity } }.collectAsStateWithLifecycle(initialValue = null)
 
         Cef.initAsync(rememberCoroutineScope())
+
+        Sekret().talkBack()?.let { Napier.i(it) }
 
         CompositionLocalProvider(
             LocalOrientation provides Orientation.basedOnSize(windowState),

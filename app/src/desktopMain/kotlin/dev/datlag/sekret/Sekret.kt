@@ -39,4 +39,6 @@ class Sekret {
     }
 
     external fun userCipher(it: String): String?
+
+    external fun talkBack(): String?
 }

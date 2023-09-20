@@ -252,6 +252,11 @@ val createSekretFile = tasks.create("createSekretFile") {
             appendLine("import kotlinx.cinterop.*")
             appendLine()
             appendLine()
+            appendLine("@OptIn(ExperimentalForeignApi::class)")
+            appendLine("@CName(\"Java_dev_datlag_sekret_Sekret_talkBack\")")
+            appendLine("fun talkBack(env: CPointer<JNIEnvVar>, clazz: jclass): jstring? {")
+            appendLine("    return \"Initialized native library.\".toJString(env)")
+            appendLine("}")
         })
     }
 }
@@ -268,9 +273,9 @@ val createSekret = tasks.create("createSekret") {
             val keyName = entry.key as String
             val obfuscated = encode(entry.value as String, packageName)
 
-            var method = "@CName(\"Java_dev_datlag_sekret_Sekret_${keyName}\")\n"
+            var method = "@OptIn(ExperimentalForeignApi::class)"
+            method += "@CName(\"Java_dev_datlag_sekret_Sekret_${keyName}\")\n"
             method += "fun ${keyName}(env: CPointer<JNIEnvVar>, clazz: jclass, it: jstring): jstring? {\n"
-            method += "    initRuntimeIfNeeded()\n\n"
             method += "    val obfuscatedSecret = intArrayOf(\n"
             method += "        $obfuscated\n"
             method += "    )\n"
