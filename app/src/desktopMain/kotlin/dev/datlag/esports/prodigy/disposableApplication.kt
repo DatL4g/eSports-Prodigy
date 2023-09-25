@@ -6,8 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.window.*
+import com.multiplatform.webview.web.Cef
 import dev.datlag.esports.prodigy.ui.browser.ApplicationDisposer
-import dev.datlag.esports.prodigy.ui.browser.Cef
 import dev.datlag.esports.prodigy.ui.browser.LocalApplicationDisposer
 import kotlin.system.exitProcess
 

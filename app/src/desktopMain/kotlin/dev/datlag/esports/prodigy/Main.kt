@@ -15,8 +15,10 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleC
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.multiplatform.webview.web.Cef
 import dev.datlag.esports.prodigy.common.basedOnSize
 import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
+import dev.datlag.esports.prodigy.common.withIOContext
 import dev.datlag.esports.prodigy.datastore.preferences.AppSettings
 import dev.datlag.esports.prodigy.game.SteamLauncher
 import dev.datlag.esports.prodigy.model.common.normalize
@@ -24,7 +26,7 @@ import dev.datlag.esports.prodigy.module.NetworkModule
 import dev.datlag.esports.prodigy.other.Commonizer
 import dev.datlag.esports.prodigy.terminal.CLI
 import dev.datlag.esports.prodigy.ui.*
-import dev.datlag.esports.prodigy.ui.browser.Cef
+import dev.datlag.esports.prodigy.ui.browser.ApplicationDisposer
 import dev.datlag.esports.prodigy.ui.navigation.NavHostComponent
 import dev.datlag.sekret.Sekret
 import dev.icerock.moko.resources.desc.Resource
@@ -36,6 +38,7 @@ import io.kamel.image.config.*
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.withContext
 import org.kodein.di.DI
 import org.kodein.di.instance
 import java.io.File
@@ -135,18 +138,29 @@ private fun runWindow() {
         }
 
         val celebrity by SteamLauncher.loggedInUsers.mapNotNull { it.firstNotNullOfOrNull { u -> u.celebrity } }.collectAsStateWithLifecycle(initialValue = null)
+        val restartRequiredInitial = LocalRestartRequired.current
+        var restartRequired by remember { mutableStateOf(restartRequiredInitial) }
 
-        Cef.initAsync(rememberCoroutineScope())
+        LaunchedEffect(ApplicationDisposer.current) {
+            withIOContext {
+                Cef.init(builder = {
+                    installDir = File("jcef-bundle")
+                }, onRestartRequired = {
+                    restartRequired = true
+                })
+            }
+        }
 
         Sekret().talkBack()?.let { Napier.i(it) }
 
         CompositionLocalProvider(
             LocalOrientation provides Orientation.basedOnSize(windowState),
             LocalKamelConfig provides imageConfig,
-            LocalCommonizer provides Commonizer(),
+            LocalCommonizer provides Commonizer(ApplicationDisposer.current),
             LocalCelebrity provides celebrity,
             LocalWindow provides this.window,
-            LocalLifecycleOwner provides lifecycleOwner
+            LocalLifecycleOwner provides lifecycleOwner,
+            LocalRestartRequired provides restartRequired
         ) {
             App(di) {
                 root.render()

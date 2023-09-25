@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import dev.datlag.esports.prodigy.model.common.scopeCatching
+import io.github.aakira.napier.Napier
 
 actual class Commonizer(private val context: Context) {
     actual fun openInBrowser(url: String, error: String): Result<Any> {
@@ -21,6 +22,10 @@ actual class Commonizer(private val context: Context) {
         return scopeCatching {
             ContextCompat.startActivity(context, newIntent, null)
         }
+    }
+
+    actual fun restartApp() {
+        Napier.i { "Not implemented" }
     }
 
 }

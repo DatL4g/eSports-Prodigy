@@ -41,6 +41,7 @@ val LocalLifecycleOwner = compositionLocalOf<LifecycleOwner> {
 }
 val LocalRevealCanvasState = compositionLocalOf<RevealCanvasState> { error("No RevealCanvas state provided") }
 val LocalRevealState = compositionLocalOf<RevealState> { error("No Reveal state provided") }
+val LocalRestartRequired = compositionLocalOf<Boolean> { false }
 
 @Composable
 fun App(

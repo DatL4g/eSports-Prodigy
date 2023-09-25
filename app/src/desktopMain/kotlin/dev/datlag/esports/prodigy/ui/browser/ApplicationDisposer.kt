@@ -2,6 +2,7 @@ package dev.datlag.esports.prodigy.ui.browser
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 
 val LocalApplicationDisposer = staticCompositionLocalOf<ApplicationDisposer> {
