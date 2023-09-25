@@ -151,7 +151,7 @@ private fun runWindow() {
             }
         }
 
-        Sekret().talkBack()?.let { Napier.i(it) }
+        Sekret().talkBack()?.let { Napier.i(it) } ?: Napier.e("Sekret was not loaded")
 
         CompositionLocalProvider(
             LocalOrientation provides Orientation.basedOnSize(windowState),
