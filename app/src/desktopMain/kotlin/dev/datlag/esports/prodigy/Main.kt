@@ -144,7 +144,7 @@ private fun runWindow() {
         LaunchedEffect(ApplicationDisposer.current) {
             withIOContext {
                 Cef.init(builder = {
-                    installDir = File("jcef-bundle")
+                    installDir = File(AppIO.getWriteableExecutableFolder(), "jcef-bundle")
                 }, onRestartRequired = {
                     restartRequired = true
                 })

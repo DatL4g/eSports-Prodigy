@@ -126,5 +126,18 @@ object AppIO {
         return returnFile
     }
 
+    fun getWriteableExecutableFolder(): File {
+        val resDir = systemProperty("compose.application.resources.dir")?.let { File(it) }
+        return if (resDir.existsRWSafely()) {
+            resDir!!
+        } else {
+            if (File("./").canWriteSafely()) {
+                File("./")
+            } else {
+                getFileInSiteDataDir("./")
+            }
+        }
+    }
+
     private const val APP_NAME = "eSports-Prodigy"
 }
