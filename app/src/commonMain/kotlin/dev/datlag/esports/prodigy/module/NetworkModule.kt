@@ -11,6 +11,7 @@ import dev.datlag.esports.prodigy.network.repository.HLTVRepository
 import dev.datlag.esports.prodigy.network.repository.SteamRepository
 import dev.datlag.esports.prodigy.network.repository.WebRepository
 import dev.datlag.esports.prodigy.network.state.OctaneEventsStateMachine
+import dev.datlag.esports.prodigy.network.state.cs.HLTVHomeStateMachine
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -61,7 +62,7 @@ object NetworkModule {
 
         bindSingleton {
             // ToDo("save home data")
-            HLTVRepository(instance(), null, instance("HLTVNewsList"))
+            HLTVRepository(instance(), instance("HLTVNewsList"))
         }
 
         bindSingleton {
@@ -111,6 +112,9 @@ object NetworkModule {
         }
         bindSingleton {
             OctaneEventsStateMachine(instance())
+        }
+        bindSingleton {
+            HLTVHomeStateMachine(instance(), null)
         }
     }
 }

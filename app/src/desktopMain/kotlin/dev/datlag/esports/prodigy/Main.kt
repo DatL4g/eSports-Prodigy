@@ -145,6 +145,7 @@ private fun runWindow() {
             withIOContext {
                 Cef.init(builder = {
                     installDir = File(AppIO.getWriteableExecutableFolder(), "jcef-bundle")
+                }, initProgress = {
                 }, onRestartRequired = {
                     restartRequired = true
                 })

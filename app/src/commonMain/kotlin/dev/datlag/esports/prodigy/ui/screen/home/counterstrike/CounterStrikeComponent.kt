@@ -5,14 +5,14 @@ import com.arkivanov.decompose.value.Value
 import dev.datlag.esports.prodigy.model.hltv.Home
 import dev.datlag.esports.prodigy.model.hltv.News
 import dev.datlag.esports.prodigy.model.hltv.Team
+import dev.datlag.esports.prodigy.model.state.cs.HomeRequest
 import dev.datlag.esports.prodigy.network.Status
 import dev.datlag.esports.prodigy.ui.navigation.Component
 import kotlinx.coroutines.flow.Flow
 
 interface CounterStrikeComponent : Component {
 
-    val home: Flow<Home?>
-    val homeStatus: Flow<Status>
+    val homeRequestState: Flow<HomeRequest>
     val child: Value<ChildSlot<CounterStrikeConfig, Component>>
 
     fun teamClicked(team: Home.Team)

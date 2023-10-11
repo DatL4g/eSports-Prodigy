@@ -16,6 +16,7 @@ import dev.datlag.esports.prodigy.model.hltv.News
 import dev.datlag.esports.prodigy.model.hltv.Team
 import dev.datlag.esports.prodigy.network.Status
 import dev.datlag.esports.prodigy.network.repository.HLTVRepository
+import dev.datlag.esports.prodigy.network.state.cs.HLTVHomeStateMachine
 import dev.datlag.esports.prodigy.ui.navigation.Component
 import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.article.ArticleViewComponent
 import dev.datlag.esports.prodigy.ui.screen.home.counterstrike.team.TeamViewComponent
@@ -32,8 +33,8 @@ class CounterStrikeViewComponent(
     private val hltvRepo: HLTVRepository by di.instance()
     private val db: HLTVDB by di.instance()
 
-    override val home: Flow<Home?> = hltvRepo.home.flowOn(ioDispatcher())
-    override val homeStatus: Flow<Status> = hltvRepo.homeStatus.flowOn(ioDispatcher())
+    private val homeStateMachine by di.instance<HLTVHomeStateMachine>()
+    override val homeRequestState = homeStateMachine.state.flowOn(ioDispatcher())
 
     private val navigation = SlotNavigation<CounterStrikeConfig>()
     private val _child = childSlot(
