@@ -293,9 +293,17 @@ compose {
             mainClass = "$artifact.MainKt"
             dependsOn(createNativeLib)
 
-            if (getHost() == Host.Linux) {
-                jvmArgs("--add-opens", "java.desktop/sun.awt.X11=ALL-UNNAMED")
-                jvmArgs("--add-opens", "java.desktop/sun.awt.wl=ALL-UNNAMED")
+            when (getHost()) {
+                Host.Linux -> {
+                    jvmArgs("--add-opens", "java.desktop/sun.awt.X11=ALL-UNNAMED")
+                    jvmArgs("--add-opens", "java.desktop/sun.awt.wl=ALL-UNNAMED")
+                }
+                Host.MAC -> {
+                    jvmArgs("--add-opens", "java.desktop/sun.awt=ALL-UNNAMED")
+                    jvmArgs("--add-opens", "java.desktop/sun.lwawt=ALL-UNNAMED")
+                    jvmArgs("--add-opens", "java.desktop/sun.lwawt.macosx=ALL-UNNAMED")
+                }
+                else -> { }
             }
 
             nativeDistributions {
@@ -337,16 +345,6 @@ compose {
                 modules("java.desktop/sun.awt.X11=ALL-UNNAMED", "java.desktop/sun.awt.wl=ALL-UNNAMED")
                 includeAllModules = true
             }
-        }
-    }
-}
-
-
-afterEvaluate {
-    tasks.withType<JavaExec> {
-        if (getHost() == Host.Linux) {
-            jvmArgs("--add-opens", "java.desktop/sun.awt.X11=ALL-UNNAMED")
-            jvmArgs("--add-opens", "java.desktop/sun.awt.wl=ALL-UNNAMED")
         }
     }
 }
