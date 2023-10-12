@@ -75,39 +75,4 @@ class HLTVRepository(
             })
         }
     }
-
-    fun team(href: String, id: Number) = dbBoundResource(
-        makeNetworkRequest = {
-            val result = HLTVScraper.scrapeTeam(href, id, client)
-            if (result.isSuccess) {
-                ApiSuccessResponse(result.getOrNull(), emptySet())
-            } else {
-                ApiErrorResponse(result.exceptionOrNull()?.message ?: String(), 0)
-            }
-        },
-        shouldMakeNetworkRequest = {
-            it == null
-        },
-        fetchFromLocal = {
-            flowOf(teams.getOrDefault(href, null))
-        },
-        saveResponseData = {
-            teams[href] = it
-        }
-    ).transform {
-        return@transform emit(when (it.status) {
-            is Resource.Status.Loading -> {
-                (it.status as? Resource.Status.Loading)?.data
-            }
-            is Resource.Status.EmptySuccess -> {
-                teams.getOrDefault(href, null)
-            }
-            is Resource.Status.Error -> {
-                (it.status as? Resource.Status.Error)?.data
-            }
-            is Resource.Status.Success -> {
-                (it.status as? Resource.Status.Success)?.data
-            }
-        })
-    }
 }

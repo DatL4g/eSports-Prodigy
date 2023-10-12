@@ -145,6 +145,9 @@ private fun runWindow() {
             withIOContext {
                 Cef.init(builder = {
                     installDir = File(AppIO.getWriteableExecutableFolder(), "jcef-bundle")
+                    settings {
+                        logSeverity = Cef.Settings.LogSeverity.Disable
+                    }
                 }, initProgress = {
                 }, onRestartRequired = {
                     restartRequired = true

@@ -38,7 +38,10 @@ import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import dev.icerock.moko.resources.ImageResource
 import dev.datlag.esports.prodigy.SharedRes
+import dev.datlag.esports.prodigy.common.launchIO
 import dev.datlag.esports.prodigy.common.lifecycle.collectAsStateWithLifecycle
+import dev.datlag.esports.prodigy.model.state.cs.TeamAction
+import dev.datlag.esports.prodigy.model.state.cs.TeamRequest
 import dev.datlag.esports.prodigy.ui.LocalCommonizer
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
@@ -47,8 +50,16 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun TeamView(component: TeamComponent) {
-    val team by component.team.collectAsStateWithLifecycle(initialValue = null)
-    val teamId = remember(team) { team?.id ?: component.initialTeam.id }
+    val teamState by component.teamState.collectAsStateWithLifecycle(
+        TeamRequest.Loading(component.initialTeam.href, component.initialTeam.id)
+    )
+
+    val teamId = remember(teamState) {
+        when (val currentState = teamState) {
+            is TeamRequest.Success -> currentState.team.id
+            else -> component.initialTeam.id
+        }
+    }
     val suffix = if (LocalDarkMode.current) {
         "dark"
     } else {
@@ -98,28 +109,31 @@ fun TeamView(component: TeamComponent) {
                             )
                         }
 
-                        TeamIcon(team, component.initialTeam, teamId)
+                        TeamIcon((teamState as? TeamRequest.Success)?.team, component.initialTeam, teamId)
                         Column(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            if (team != null) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Image(
-                                        modifier = Modifier.size(18.dp),
-                                        painter = painterResource(CountryImage.getByCode(team!!.country.code)),
-                                        contentDescription = team!!.country.name,
-                                        contentScale = ContentScale.Inside
-                                    )
-                                    Text(
-                                        text = team!!.country.name
-                                    )
+                            when (val currentState = teamState) {
+                                is TeamRequest.Success -> {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Image(
+                                            modifier = Modifier.size(18.dp),
+                                            painter = painterResource(CountryImage.getByCode(currentState.team.country.code)),
+                                            contentDescription = currentState.team.country.name,
+                                            contentScale = ContentScale.Inside
+                                        )
+                                        Text(
+                                            text = currentState.team.country.name
+                                        )
+                                    }
                                 }
+                                else -> { }
                             }
                             Text(
-                                text = team?.name ?: component.initialTeam.name,
+                                text = (teamState as? TeamRequest.Success)?.team?.name ?: component.initialTeam.name,
                                 fontWeight = FontWeight.Bold,
                                 style = MaterialTheme.typography.headlineLarge
                             )
@@ -133,78 +147,84 @@ fun TeamView(component: TeamComponent) {
                             val commonizer = LocalCommonizer.current
                             val uriHandler = LocalUriHandler.current
 
-                            team?.socials?.let { socials ->
-                                socials.instagram?.let {
-                                    FilledIconButton(
-                                        onClick = {
-                                            commonizer.openInBrowser(
-                                                url = it
-                                            )
-                                        }
-                                    ) {
-                                        Icon(
-                                            modifier = Modifier.size(24.dp),
-                                            painter = painterResource(SharedRes.images.Instagram),
-                                            contentDescription = "Instagram",
-                                        )
-                                    }
-                                }
-                                socials.twitter?.let {
-                                    FilledIconButton(
-                                        onClick = {
-                                            if(commonizer.openInBrowser(
-                                                url = it
-                                            ).isFailure) {
-                                                uriHandler.openUri(it)
+                            when (val currentState = teamState) {
+                                is TeamRequest.Success -> {
+                                    currentState.team.socials.let { social ->
+                                        social.instagram?.let {
+                                            FilledIconButton(
+                                                onClick = {
+                                                    commonizer.openInBrowser(
+                                                        url = it
+                                                    )
+                                                }
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier.size(24.dp),
+                                                    painter = painterResource(SharedRes.images.Instagram),
+                                                    contentDescription = "Instagram",
+                                                )
                                             }
                                         }
-                                    ) {
-                                        Icon(
-                                            modifier = Modifier.size(24.dp),
-                                            painter = painterResource(SharedRes.images.Twitter),
-                                            contentDescription = "Twitter"
-                                        )
-                                    }
-                                }
-                                socials.facebook?.let {
-                                    FilledIconButton(
-                                        onClick = {
-                                            if(commonizer.openInBrowser(
-                                                url = it
-                                            ).isFailure) {
-                                                uriHandler.openUri(it)
+                                        social.twitter?.let {
+                                            FilledIconButton(
+                                                onClick = {
+                                                    if(commonizer.openInBrowser(url = it).isFailure) {
+                                                        uriHandler.openUri(it)
+                                                    }
+                                                }
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier.size(24.dp),
+                                                    painter = painterResource(SharedRes.images.Twitter),
+                                                    contentDescription = "Twitter"
+                                                )
                                             }
                                         }
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Facebook,
-                                            contentDescription = "Facebook"
-                                        )
+                                        social.facebook?.let {
+                                            FilledIconButton(
+                                                onClick = {
+                                                    if(commonizer.openInBrowser(url = it).isFailure) {
+                                                        uriHandler.openUri(it)
+                                                    }
+                                                }
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Facebook,
+                                                    contentDescription = "Facebook"
+                                                )
+                                            }
+                                        }
                                     }
                                 }
+                                else -> { }
                             }
                         }
                     }
                 }
                 item {
-                    Column(
-                        modifier = Modifier.fillParentMaxWidth().padding(extraPadding),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = "Players",
-                            fontWeight = FontWeight.SemiBold,
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        FlowRow(
-                            modifier = Modifier.fillParentMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
-                        ) {
-                            team?.players?.filter { it.type.isPlayer }?.forEach { player ->
-                                PlayerCard(player)
+                    when (val currentState = teamState) {
+                        is TeamRequest.Success -> {
+                            Column(
+                                modifier = Modifier.fillParentMaxWidth().padding(extraPadding),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    text = "Players",
+                                    fontWeight = FontWeight.SemiBold,
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+                                FlowRow(
+                                    modifier = Modifier.fillParentMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically)
+                                ) {
+                                    currentState.team.players.filter { it.type.isPlayer }.forEach { player ->
+                                        PlayerCard(player)
+                                    }
+                                }
                             }
                         }
+                        else -> { }
                     }
                 }
             }

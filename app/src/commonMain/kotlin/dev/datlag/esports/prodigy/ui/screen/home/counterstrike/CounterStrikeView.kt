@@ -86,7 +86,7 @@ private fun MainView(component: CounterStrikeComponent, modifier: Modifier) {
                 if (currentState.home.hero != null) {
                     fullRow {
                         HeroImage(currentState.home.hero!!) {
-
+                            component.articleClicked(currentState.home.hero!!.href)
                         }
                     }
                 }
