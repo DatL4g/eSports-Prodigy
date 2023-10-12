@@ -12,4 +12,7 @@ sealed class CounterStrikeConfig : Parcelable {
 
     @Parcelize
     data class Article(val href: String) : CounterStrikeConfig(), Parcelable
+
+    @Parcelize
+    data object News : CounterStrikeConfig(), Parcelable
 }

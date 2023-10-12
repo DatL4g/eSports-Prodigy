@@ -18,4 +18,6 @@ interface CounterStrikeComponent : Component {
     fun teamClicked(team: Home.Team)
     fun articleClicked(href: String)
 
+    fun newsClicked()
+
 }

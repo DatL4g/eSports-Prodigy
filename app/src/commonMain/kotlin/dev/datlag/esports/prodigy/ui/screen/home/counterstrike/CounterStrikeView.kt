@@ -129,7 +129,7 @@ private fun MainView(component: CounterStrikeComponent, modifier: Modifier) {
                             )
                             Button(
                                 onClick = {
-
+                                    component.newsClicked()
                                 }
                             ) {
                                 Text(text = "More articles")

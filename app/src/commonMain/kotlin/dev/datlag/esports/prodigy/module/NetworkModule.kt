@@ -2,6 +2,7 @@ package dev.datlag.esports.prodigy.module
 
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.ktorfitBuilder
+import dev.datlag.esports.prodigy.database.HLTVDB
 import dev.datlag.esports.prodigy.network.OctaneAPI
 import dev.datlag.esports.prodigy.network.Steam
 import dev.datlag.esports.prodigy.network.SteamAPI
@@ -12,6 +13,7 @@ import dev.datlag.esports.prodigy.network.repository.SteamRepository
 import dev.datlag.esports.prodigy.network.repository.WebRepository
 import dev.datlag.esports.prodigy.network.state.OctaneEventsStateMachine
 import dev.datlag.esports.prodigy.network.state.cs.HLTVHomeStateMachine
+import dev.datlag.esports.prodigy.network.state.cs.HLTVNewsStateMachine
 import dev.datlag.esports.prodigy.network.state.cs.HLTVTeamStateMachine
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
@@ -116,6 +118,18 @@ object NetworkModule {
         }
         bindSingleton {
             HLTVHomeStateMachine(instance(), null)
+        }
+        bindSingleton {
+            val hltvDB: HLTVDB = instance()
+
+            HLTVNewsStateMachine(instance(), instance("HLTVNewsList")) { saveNews ->
+                hltvDB.hLTVQueries.transaction {
+                    saveNews.forEach { news ->
+                        hltvDB.hLTVQueries.insertNewsCountry(news.country.name, news.country.code)
+                        hltvDB.hLTVQueries.insertNews(news.link, news.title, news.date, news.country.code)
+                    }
+                }
+            }
         }
     }
 }
