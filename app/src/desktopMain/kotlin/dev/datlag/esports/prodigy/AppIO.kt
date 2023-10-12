@@ -24,7 +24,7 @@ object AppIO {
         val awtAppClassNameField = toolkit.javaClass.getDeclaredField("awtAppClassName")
         val working = try {
             awtAppClassNameField.isAccessible = true
-            true
+            awtAppClassNameField.isAccessible
         } catch (ignored: Throwable) {
             awtAppClassNameField.trySetAccessible()
         }
