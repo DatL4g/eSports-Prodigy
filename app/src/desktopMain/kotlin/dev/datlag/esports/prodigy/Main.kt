@@ -129,45 +129,24 @@ private fun runWindow() {
             SharedRes.assets.png.launcher_16
         )
 
-        val appSettings: DataStore<AppSettings> by di.instance()
-        LaunchedEffect(appSettings) {
-            val savedPaths = appSettings.data.map { it.paths.steamList.map { path ->
-                File(path)
-            }.normalize() }
-            SteamLauncher.userSteamFolders.emitAll(savedPaths)
-        }
+        InitSteamLauncher(di)
 
         val celebrity by SteamLauncher.loggedInUsers.mapNotNull { it.firstNotNullOfOrNull { u -> u.celebrity } }.collectAsStateWithLifecycle(initialValue = null)
-        val restartRequiredInitial = LocalRestartRequired.current
-        var restartRequired by remember { mutableStateOf(restartRequiredInitial) }
-
-        LaunchedEffect(ApplicationDisposer.current) {
-            withIOContext {
-                Cef.init(builder = {
-                    installDir = File(AppIO.getWriteableExecutableFolder(), "jcef-bundle")
-                    settings {
-                        logSeverity = Cef.Settings.LogSeverity.Disable
-                    }
-                }, initProgress = {
-                }, onRestartRequired = {
-                    restartRequired = true
-                })
-            }
-        }
 
         Sekret().talkBack()?.let { Napier.i(it) } ?: Napier.e("Sekret was not loaded")
 
-        CompositionLocalProvider(
-            LocalOrientation provides Orientation.basedOnSize(windowState),
-            LocalKamelConfig provides imageConfig,
-            LocalCommonizer provides Commonizer(ApplicationDisposer.current),
-            LocalCelebrity provides celebrity,
-            LocalWindow provides this.window,
-            LocalLifecycleOwner provides lifecycleOwner,
-            LocalRestartRequired provides restartRequired
-        ) {
-            App(di) {
-                root.render()
+        InitCEF {
+            CompositionLocalProvider(
+                LocalOrientation provides Orientation.basedOnSize(windowState),
+                LocalKamelConfig provides imageConfig,
+                LocalCommonizer provides Commonizer(ApplicationDisposer.current),
+                LocalCelebrity provides celebrity,
+                LocalWindow provides this.window,
+                LocalLifecycleOwner provides lifecycleOwner
+            ) {
+                App(di) {
+                    root.render()
+                }
             }
         }
     }

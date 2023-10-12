@@ -12,6 +12,7 @@ import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewState
 import dev.datlag.esports.prodigy.ui.LocalCommonizer
 import dev.datlag.esports.prodigy.ui.LocalRestartRequired
+import dev.datlag.esports.prodigy.ui.custom.PlatformBrowser
 
 @Composable
 fun ArticleView(component: ArticleComponent) {
@@ -33,8 +34,10 @@ fun ArticleView(component: ArticleComponent) {
             }
         }
     } else {
-        val state = rememberWebViewState(component.href)
+        PlatformBrowser {
+            val state = rememberWebViewState(component.href)
 
-        WebView(state, modifier = Modifier.fillMaxSize())
+            WebView(state, modifier = Modifier.fillMaxSize())
+        }
     }
 }

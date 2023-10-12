@@ -305,6 +305,7 @@ compose {
                 }
                 else -> { }
             }
+            jvmArgs("--add-opens", "java.desktop/java.awt.peer=ALL-UNNAMED")
 
             nativeDistributions {
                 packageName = "eSports-Prodigy"
