@@ -49,8 +49,13 @@ actual fun PlatformBrowser(content: @Composable () -> Unit) {
                 Segment(name = "Initializing", start = 175F)
             )
 
+            val progressText = if (progress in 25F..<125F) {
+                " - ${(progress - 25F).toInt()}%"
+            } else {
+                ""
+            }
             Text(
-                text = seekerState.currentSegment.name,
+                text = seekerState.currentSegment.name + progressText,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium
             )
