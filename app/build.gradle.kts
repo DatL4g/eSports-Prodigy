@@ -293,6 +293,11 @@ compose {
             mainClass = "$artifact.MainKt"
             dependsOn(createNativeLib)
 
+            if (getHost() == Host.Linux) {
+                jvmArgs("--add-opens", "java.desktop/sun.awt.X11=ALL-UNNAMED")
+                jvmArgs("--add-opens", "java.desktop/sun.awt.wl=ALL-UNNAMED")
+            }
+
             nativeDistributions {
                 packageName = "eSports-Prodigy"
                 packageVersion = appVersion
@@ -329,8 +334,19 @@ compose {
                     iconFile.set(file("src/commonMain/resources/MR/assets/icns/launcher.icns"))
                 }
 
+                modules("java.desktop/sun.awt.X11=ALL-UNNAMED", "java.desktop/sun.awt.wl=ALL-UNNAMED")
                 includeAllModules = true
             }
+        }
+    }
+}
+
+
+afterEvaluate {
+    tasks.withType<JavaExec> {
+        if (getHost() == Host.Linux) {
+            jvmArgs("--add-opens", "java.desktop/sun.awt.X11=ALL-UNNAMED")
+            jvmArgs("--add-opens", "java.desktop/sun.awt.wl=ALL-UNNAMED")
         }
     }
 }

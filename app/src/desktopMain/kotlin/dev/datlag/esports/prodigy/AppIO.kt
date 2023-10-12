@@ -22,7 +22,12 @@ object AppIO {
     fun applyTitle(title: String) = scopeCatching {
         val toolkit = Toolkit.getDefaultToolkit()
         val awtAppClassNameField = toolkit.javaClass.getDeclaredField("awtAppClassName")
-        val working = awtAppClassNameField.trySetAccessible()
+        val working = try {
+            awtAppClassNameField.isAccessible = true
+            true
+        } catch (ignored: Throwable) {
+            awtAppClassNameField.trySetAccessible()
+        }
         awtAppClassNameField.set(toolkit, title)
         working
     }.getOrNull() ?: false
