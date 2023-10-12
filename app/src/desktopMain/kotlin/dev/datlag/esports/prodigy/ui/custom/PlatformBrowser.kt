@@ -32,7 +32,7 @@ actual fun PlatformBrowser(content: @Composable () -> Unit) {
             CEFState.EXTRACTING -> 125F
             CEFState.INSTALLING -> 150F
             CEFState.INITIALIZING -> 175F
-            else -> return
+            else -> 200F
         }
 
         Column(
